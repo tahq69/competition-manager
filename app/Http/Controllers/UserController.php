@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Contracts\IUserRepository;
+use App\Http\Requests\User\StoreUser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -21,7 +22,12 @@ class UserController extends Controller
      */
     public function __construct(IUserRepository $users)
     {
-        $this->middleware('auth:api');
+        $this->middleware('auth:api')
+            ->except('search', 'store');
+
+        $this->middleware('guest')
+            ->only('store');
+
         $this->users = $users;
     }
 
@@ -30,7 +36,7 @@ class UserController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function user(Request $request)
+    public function user(Request $request): JsonResponse
     {
         $userId = $request->user()->id;
         $user = $this->users
@@ -38,6 +44,20 @@ class UserController extends Controller
             ->find($userId);
 
         return new JsonResponse($user);
+    }
+
+    /**
+     * Search user entries by name property.
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function search(Request $request): JsonResponse
+    {
+        $users = $this->users
+            ->searchByName($request->term)
+            ->paginate($request->perPage ?: 15, [], ['id', 'name']);
+
+        return new JsonResponse($users);
     }
 
     /**
@@ -51,20 +71,26 @@ class UserController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @param  StoreUser $request
+     * @return JsonResponse
      */
-    public function store(Request $request)
+    public function store(StoreUser $request): JsonResponse
     {
-        //
+        $user = $this->users->create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+        ]);
+
+        return new JsonResponse($user);
     }
 
     /**
      * Display the specified resource.
      * @param  int $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function show($id)
+    public function show($id): JsonResponse
     {
         //
     }
@@ -73,9 +99,9 @@ class UserController extends Controller
      * Update the specified resource in storage.
      * @param  \Illuminate\Http\Request $request
      * @param  int $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id): JsonResponse
     {
         //
     }
@@ -83,9 +109,9 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      * @param  int $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function destroy($id)
+    public function destroy($id): JsonResponse
     {
         //
     }

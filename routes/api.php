@@ -5,4 +5,5 @@ Route::middleware('auth:api')->get('/user', function (\Illuminate\Http\Request $
 });
 
 Route::get('/users/user', 'UserController@user');
+Route::get('/users/search', 'UserController@search');
 Route::apiResource('/users', 'UserController');

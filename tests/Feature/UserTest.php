@@ -10,13 +10,16 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
  */
 class UserTest extends TestCase
 {
+    use RefreshDatabase;
+
     /**
-     * A basic test example.
+     * A basic user details request.
      * @return void
      */
     public function testCanGetAuthenticatedUser()
     {
         $user = factory(User::class)->create();
+
         $response = $this
             ->actingAs($user, 'api')
             ->get('/api/users/user');
@@ -26,6 +29,79 @@ class UserTest extends TestCase
             ->assertJson([
                 'email' => $user->email,
                 'roles' => []
+            ]);
+    }
+
+    /**
+     * A basic user search request.
+     * @return void
+     */
+    public function testCanFindUserByName()
+    {
+        $users = factory(User::class, 3)->create();
+        $searchFor = $users[0];
+
+        $response = $this->get('/api/users/search?term=' . $searchFor->name);
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'data' => [[
+                    'name' => $searchFor->name,
+                    'id' => $searchFor->id,
+                ]],
+            ]);
+    }
+
+    /**
+     * A basic user registration request.
+     * @return void
+     */
+    public function testCanRegisterNewUser()
+    {
+        $response = $this->json('post', '/api/users/', [
+            'email' => 'tahq69@gmail.com',
+            'name' => 'Igors krasjukovs',
+            'password' => 'secret',
+            'password_confirmation' => 'secret',
+        ]);
+
+        $this->assertDatabaseHas('users', [
+            'email' => 'tahq69@gmail.com',
+            'name' => 'Igors krasjukovs',
+        ]);
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'name' => 'Igors krasjukovs',
+            ]);
+    }
+
+    /**
+     * Failing user registration request.
+     * @return void
+     */
+    public function testRegistrationFailsOnInvalidPswConfirmation()
+    {
+        $response = $this->json('post', '/api/users/', [
+            'email' => 'tahq69@gmail.com',
+            'name' => 'Igors krasjukovs',
+            'password' => 'secret',
+            'password_confirmation' => '!secret_',
+        ]);
+
+        $this->assertDatabaseMissing('users', [
+            'email' => 'tahq69@gmail.com'
+        ]);
+
+        $response
+            ->assertStatus(422)
+            ->assertJson([
+                'message' => 'The given data was invalid.',
+                'errors' => [
+                    'password' => ['The password confirmation does not match.']
+                ]
             ]);
     }
 }
