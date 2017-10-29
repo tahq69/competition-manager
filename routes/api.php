@@ -1,9 +1,12 @@
 <?php
 
-Route::middleware('auth:api')->get('/user', function (\Illuminate\Http\Request $request) {
+$this->middleware('auth:api')->get('/user', function (\Illuminate\Http\Request $request) {
     return $request->user();
 });
 
-Route::get('/users/user', 'UserController@user');
-Route::get('/users/search', 'UserController@search');
-Route::apiResource('/users', 'UserController');
+$this->get('/users/user', 'UserController@user');
+$this->get('/users/search', 'UserController@search');
+$this->apiResource('/users', 'UserController');
+
+$this->post('password/email', 'Auth\\ForgotPasswordController@sendResetLinkEmail');
+$this->post('password/reset', 'Auth\\ResetPasswordController@reset')->name('password.reset');
