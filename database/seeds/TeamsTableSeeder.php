@@ -19,7 +19,7 @@ class TeamsTableSeeder extends Seeder
             'name' => 'Team Manager Team 1',
             'short' => 'TMT1',
             'created_by' => $manager->id,
-            'created_by_name' => $manager->name
+            'created_by_name' => $manager->name,
         ]);
 
         $team->save();

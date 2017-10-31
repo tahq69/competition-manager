@@ -10,3 +10,7 @@ $this->apiResource('/users', 'UserController');
 
 $this->post('password/email', 'Auth\\ForgotPasswordController@sendResetLinkEmail');
 $this->post('password/reset', 'Auth\\ResetPasswordController@reset')->name('password.reset');
+
+$this->resource('teams', 'TeamController', [
+    'only' => ['index'/*, 'store', 'show', 'update'*/]
+]);

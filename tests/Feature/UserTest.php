@@ -27,7 +27,8 @@ class UserTest extends TestCase
         $response
             ->assertStatus(200)
             ->assertJson([
-                'email' => $user->email,
+                'id' => $user->id,
+                'name' => $user->name,
                 'roles' => []
             ]);
     }
@@ -60,15 +61,9 @@ class UserTest extends TestCase
     public function testCanRegisterNewUser()
     {
         $response = $this->json('post', '/api/users/', [
-            'email' => 'tahq69@gmail.com',
             'name' => 'Igors krasjukovs',
             'password' => 'secret',
             'password_confirmation' => 'secret',
-        ]);
-
-        $this->assertDatabaseHas('users', [
-            'email' => 'tahq69@gmail.com',
-            'name' => 'Igors krasjukovs',
         ]);
 
         $response
@@ -76,6 +71,10 @@ class UserTest extends TestCase
             ->assertJson([
                 'name' => 'Igors krasjukovs',
             ]);
+
+        $this->assertDatabaseHas('users', [
+            'name' => 'Igors krasjukovs',
+        ]);
     }
 
     /**
@@ -91,10 +90,6 @@ class UserTest extends TestCase
             'password_confirmation' => '!secret_',
         ]);
 
-        $this->assertDatabaseMissing('users', [
-            'email' => 'tahq69@gmail.com'
-        ]);
-
         $response
             ->assertStatus(422)
             ->assertJson([
@@ -103,5 +98,9 @@ class UserTest extends TestCase
                     'password' => ['The password confirmation does not match.']
                 ]
             ]);
+
+        $this->assertDatabaseMissing('users', [
+            'name' => 'Igors krasjukovs'
+        ]);
     }
 }

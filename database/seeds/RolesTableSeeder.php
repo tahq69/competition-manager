@@ -14,19 +14,7 @@ class RolesTableSeeder extends Seeder
      */
     public function run()
     {
-        $roles = [
-            Role::SUPER_ADMIN,
-
-            Role::CREATE_POST,
-            Role::MANAGE_POSTS,
-
-            Role::CREATE_TEAMS,
-
-            Role::EDIT_COMPETITIONS,
-            Role::CREATE_COMPETITIONS,
-        ];
-
-        foreach ($roles as $role) {
+        foreach (Role::ALL_ROLES as $role) {
             Role::create(['key' => $role]);
         }
     }

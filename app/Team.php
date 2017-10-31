@@ -41,14 +41,6 @@ class Team extends Model
     ];
 
     /**
-     * The accessors to append to the model's array form.
-     * @var array
-     */
-    protected $appends = [
-        'created_from_now'
-    ];
-
-    /**
      * Members relation.
      * @return HasMany
      */

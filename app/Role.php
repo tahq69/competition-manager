@@ -24,6 +24,15 @@ class Role extends Model
     // Can create/manage own team competitions
     const CREATE_COMPETITIONS = 'CREATE_COMPETITIONS';
 
+    const ALL_ROLES = [
+        Role::SUPER_ADMIN,
+        Role::CREATE_POST,
+        Role::MANAGE_POSTS,
+        Role::CREATE_TEAMS,
+        Role::EDIT_COMPETITIONS,
+        Role::CREATE_COMPETITIONS,
+    ];
+
     /**
      * The table associated with the model.
      * @var string
