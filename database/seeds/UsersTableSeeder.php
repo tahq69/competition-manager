@@ -34,7 +34,7 @@ class UsersTableSeeder extends Seeder
         // Create extra 50 random users
         factory(App\User::class, 50)->create()->each(function ($user) {
             // Create random user posts
-            // factory(\App\Post::class, 3)->create(['author_id' => $user->id]);
+            factory(\App\Post::class, 3)->create(['author_id' => $user->id]);
         });
     }
 
@@ -49,7 +49,7 @@ class UsersTableSeeder extends Seeder
         // add super admin role for admin user
         $admin->roles()->sync([$this->findRoleId(Role::SUPER_ADMIN)]);
 
-        // factory(App\Post::class, 5)->create(['author_id' => $admin->id]);
+        factory(App\Post::class, 5)->create(['author_id' => $admin->id]);
     }
 
     private function createPostCreator()
@@ -63,7 +63,7 @@ class UsersTableSeeder extends Seeder
         // add create post role for user
         $user->roles()->sync([$this->findRoleId(Role::CREATE_POST)]);
 
-        // factory(App\Post::class, 20)->create(['author_id' => $user->id]);
+        factory(App\Post::class, 20)->create(['author_id' => $user->id]);
     }
 
     private function createPostManager()

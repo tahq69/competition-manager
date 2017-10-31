@@ -2,8 +2,15 @@
 
 use Illuminate\Database\Seeder;
 
+/**
+ * Class DatabaseSeeder
+ */
 class DatabaseSeeder extends Seeder
 {
+    /**
+     * List of tables to ignore when seeding is truncating database data.
+     * @var array
+     */
     private $ignoreTables = [
         'oauth_access_tokens',
         'oauth_auth_codes',
@@ -24,9 +31,9 @@ class DatabaseSeeder extends Seeder
 
         $this->call(RolesTableSeeder::class);
         $this->call(UsersTableSeeder::class);
-        /*$this->call(TeamsTableSeeder::class);
+        $this->call(TeamsTableSeeder::class);
         $this->call(TeamMembersTableSeeder::class);
-        $this->call(CompetitionsTableSeeder::class);*/
+        $this->call(CompetitionsTableSeeder::class);
 
         Eloquent::unguard(false);
     }
