@@ -10,4 +10,8 @@
 ### Help
 
 - Update model intellisence in IDE: `php artisan ide-helper:models`
- 
+
+### TODO:
+
+- Fix password reset email content.
+- Create password reset view in ui app.
