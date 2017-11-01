@@ -40,14 +40,10 @@ class UsersTableSeeder extends Seeder
 
     private function createAdmin()
     {
-        $admin = App\User::create([
-            'name' => 'TAHQ69',
-            'email' => static::SUPER_ADMIN_EMAIL,
-            'password' => bcrypt('password')
-        ]);
+        $admin = factory(\App\User::class)->states('super_admin')->create();
 
         // add super admin role for admin user
-        $admin->roles()->sync([$this->findRoleId(Role::SUPER_ADMIN)]);
+        $admin->roles()->sync([$this->roleId(Role::SUPER_ADMIN)]);
 
         factory(App\Post::class, 5)->create(['author_id' => $admin->id]);
     }
@@ -61,7 +57,7 @@ class UsersTableSeeder extends Seeder
         ]);
 
         // add create post role for user
-        $user->roles()->sync([$this->findRoleId(Role::CREATE_POST)]);
+        $user->roles()->sync([$this->roleId(Role::CREATE_POST)]);
 
         factory(App\Post::class, 20)->create(['author_id' => $user->id]);
     }
@@ -75,7 +71,7 @@ class UsersTableSeeder extends Seeder
         ]);
 
         // add manage posts role for user
-        $user->roles()->sync([$this->findRoleId(Role::MANAGE_POSTS)]);
+        $user->roles()->sync([$this->roleId(Role::MANAGE_POSTS)]);
     }
 
     private function createTeamManager()
@@ -86,7 +82,7 @@ class UsersTableSeeder extends Seeder
             'password' => bcrypt('password')
         ]);
 
-        $user->roles()->sync([$this->findRoleId(Role::CREATE_TEAMS)]);
+        $user->roles()->sync([$this->roleId(Role::CREATE_TEAMS)]);
     }
 
     private function createJudge()
@@ -98,25 +94,23 @@ class UsersTableSeeder extends Seeder
         ]);
 
         $user->roles()->sync([
-            $this->findRoleId(Role::CREATE_COMPETITIONS),
-            $this->findRoleId(Role::EDIT_COMPETITIONS),
+            $this->roleId(Role::CREATE_COMPETITIONS),
+            $this->roleId(Role::EDIT_COMPETITIONS),
         ]);
     }
 
-    private function findRoleId($role_key)
+    private function roleId($roleKey)
     {
         if (!$this->roles) {
-            $role_table = app(Role::class)->getTable();
-            $this->roles = DB::table($role_table)->get();
+            $roleTable = app(Role::class)->getTable();
+            $this->roles = DB::table($roleTable)->get();
         }
-        $result = 0;
-        $this->roles->filter(function ($role) use ($role_key) {
-            return $role->key == $role_key;
-        })->map(function ($role) use (&$result) {
-            $result = $role->id;
-            return $role->id;
-        });
 
-        return $result;
+        foreach ($this->roles as $role) {
+            if ($role->key == $roleKey)
+                return $role->id;
+        }
+
+        return 0;
     }
 }

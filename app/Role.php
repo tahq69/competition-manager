@@ -40,6 +40,14 @@ class Role extends Model
     protected $table = 'roles';
 
     /**
+     * The attributes that are mass assignable.
+     * @var array
+     */
+    protected $fillable = [
+        'key',
+    ];
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function users()

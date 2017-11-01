@@ -1,10 +1,12 @@
-<?php
-
-namespace Tests;
+<?php namespace Tests;
 
 use App\Role;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
+/**
+ * Class TestCase
+ * @package Tests
+ */
 abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
@@ -14,32 +16,51 @@ abstract class TestCase extends BaseTestCase
      */
     private $roles;
 
-    protected function createRoles()
+    /**
+     * @var boolean
+     */
+    private $rolesSeeded = false;
+
+    /**
+     * @return \App\User
+     */
+    protected function createSuperAdmin()
     {
-        foreach (Role::ALL_ROLES as $role) {
-            Role::create(['key' => $role]);
-        }
+        $user = factory(\App\User::class)->states('super_admin')->create();
+        $this->syncRole($user, \App\Role::SUPER_ADMIN);
+
+        return $user;
     }
 
-    protected function syncRole(\App\User $user, string $role)
+    private function syncRole(\App\User $user, string $role)
     {
         $user->roles()->sync([$this->findRoleId($role)]);
     }
 
-    private function findRoleId($role_key)
+    private function seedRoles()
     {
-        if (!$this->roles) {
-            $role_table = app(Role::class)->getTable();
-            $this->roles = \DB::table($role_table)->get();
-        }
-        $result = 0;
-        $this->roles->filter(function ($role) use ($role_key) {
-            return $role->key == $role_key;
-        })->map(function ($role) use (&$result) {
-            $result = $role->id;
-            return $role->id;
-        });
+        if ($this->rolesSeeded) return;
 
-        return $result;
+        foreach (Role::ALL_ROLES as $role) {
+            (new Role(['key' => $role]))->save();
+        }
+
+        $this->rolesSeeded = true;
+    }
+
+    private function findRoleId($roleKey)
+    {
+        $this->seedRoles();
+
+        if (!$this->roles) {
+            $this->roles = Role::all();
+        }
+
+        foreach ($this->roles as $role) {
+            if ($role->key == $roleKey)
+                return $role->id;
+        }
+
+        return 0;
     }
 }

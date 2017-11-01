@@ -61,6 +61,7 @@ class UserTest extends TestCase
     public function testCanRegisterNewUser()
     {
         $response = $this->json('post', '/api/users/', [
+            'email' => 'tahq69@gmail.com',
             'name' => 'Igors krasjukovs',
             'password' => 'secret',
             'password_confirmation' => 'secret',

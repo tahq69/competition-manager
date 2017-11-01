@@ -1,24 +1,27 @@
-<?php
-
-namespace Tests\Feature;
+<?php namespace Tests\Feature;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+/**
+ * Class TeamTest
+ * @package Tests\Feature
+ */
 class TeamTest extends TestCase
 {
+    use RefreshDatabase;
+
     /**
      * A basic team list request.
      * @return void
      */
-    public function testCanGetAuthenticatedUser()
+    public function testCanGetTeamsList()
     {
-        $user = factory(\App\User::class)->states('super_admin')->create();
-        $this->syncRole($user, \App\Role::SUPER_ADMIN);
+        $admin = $this->createSuperAdmin();
         $teams = factory(\App\Team::class, 2)->create();
 
         $response = $this
-            ->actingAs($user, 'api')
+            ->actingAs($admin, 'api')
             ->get('/api/teams');
 
         $response
