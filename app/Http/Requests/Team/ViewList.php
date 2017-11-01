@@ -23,8 +23,8 @@ class ViewList extends FormRequest
     public function rules()
     {
         return [
-            'per_page' => 'number',
-            'page' => 'number',
+            'per_page' => 'integer',
+            'page' => 'integer',
             'sort_by' => 'alpha_dash',
             'sort_direction' => 'alpha_dash',
         ];

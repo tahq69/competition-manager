@@ -51,7 +51,7 @@ class DatabaseSeeder extends Seeder
 
         // Truncate database tables
         foreach ($tables as $table) {
-            if (!in_array($table, $this->ignoreTables)) {
+            if (!in_array($table->TABLE_NAME, $this->ignoreTables)) {
                 DB::table($table->TABLE_NAME)->truncate();
             }
         }

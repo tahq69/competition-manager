@@ -13,6 +13,6 @@ class CompetitionsTableSeeder extends Seeder
      */
     public function run()
     {
-        factory(App\Competition::class, 30)->create();
+        factory(App\Competition::class, 20)->create();
     }
 }

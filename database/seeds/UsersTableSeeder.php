@@ -32,7 +32,7 @@ class UsersTableSeeder extends Seeder
         $this->createJudge();
 
         // Create extra 50 random users
-        factory(App\User::class, 50)->create()->each(function ($user) {
+        factory(App\User::class, 20)->create()->each(function ($user) {
             // Create random user posts
             factory(\App\Post::class, 3)->create(['author_id' => $user->id]);
         });

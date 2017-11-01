@@ -14,6 +14,6 @@ class TeamMembersTableSeeder extends Seeder
     public function run()
     {
         $team = \App\Team::query()->firstOrFail();
-        factory(\App\TeamMember::class, 50)->create(['team_id' => $team->id]);
+        factory(\App\TeamMember::class, 20)->create(['team_id' => $team->id]);
     }
 }

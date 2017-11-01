@@ -32,5 +32,7 @@ class TeamsTableSeeder extends Seeder
         ]);
 
         $temMember->save();
+
+        factory(\App\Team::class, 20)->create();
     }
 }

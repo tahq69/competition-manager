@@ -40,4 +40,37 @@ class TeamTest extends TestCase
                 ],
             ]);
     }
+
+    /**
+     * Pagination result of team list request
+     * @return void
+     */
+    public function testCanGetPagingTeamsList()
+    {
+        $admin = $this->createSuperAdmin();
+        $teams = factory(\App\Team::class, 4)->create();
+
+        $response = $this
+            ->actingAs($admin, 'api')
+            ->get('/api/teams?sort_by=id&sort_direction=asc&per_page=2&page=2');
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'current_page' => 2,
+                'total' => 4,
+                'data' => [
+                    [
+                        'name' => $teams[2]->name,
+                        'short' => $teams[2]->short,
+                        'id' => $teams[2]->id,
+                    ],
+                    [
+                        'name' => $teams[3]->name,
+                        'short' => $teams[3]->short,
+                        'id' => $teams[3]->id,
+                    ],
+                ],
+            ]);
+    }
 }
