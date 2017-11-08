@@ -50,7 +50,7 @@ abstract class Repository implements IRepository
      * @param string $direction
      * @return $this
      */
-    public function orderBy($by = 'id', $direction = 'asc')
+    public function orderBy($by = 'id', $direction = 'desc')
     {
         $this->query = $this->getQuery()->orderBy($by, $direction);
 
@@ -58,20 +58,35 @@ abstract class Repository implements IRepository
     }
 
     /**
-     * Set repository queryable ordering from a request
-     * @param Request $request
+     * Set repository querable ordering from a request and sort column mapping
+     * array.
+     * @param \Illuminate\Http\Request $request
+     * @param array $mapping
      * @param string $defaultOrder
      * @param string $defaultDirection
      * @return $this
      */
-    public function requestOrdered(
-        Request $request, $defaultOrder = 'id', $defaultDirection = 'asc'
+    public function setupOrdering(
+        \Illuminate\Http\Request $request,
+        array $mapping,
+        $defaultOrder = 'id',
+        $defaultDirection = 'desc'
     )
     {
-        $order = $request->sort_order ?: $defaultOrder;
-        $direction = $request->sort_direction ?: $defaultDirection;
+        $directions = ['asc', 'desc'];
 
-        $this->orderBy($order, $direction);
+        $by = $defaultOrder;
+        $direction = $defaultDirection;
+
+        if (array_key_exists($request->sort_by, $mapping)) {
+            $by = $mapping[$request->sort_by];
+        }
+
+        if (in_array($request->sort_direction, $directions)) {
+            $direction = $request->sort_direction;
+        }
+
+        $this->orderBy($by, $direction);
 
         return $this;
     }

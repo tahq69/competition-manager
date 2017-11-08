@@ -31,13 +31,20 @@ interface IRepository
     public function orderBy($by = 'id', $direction = 'desc');
 
     /**
-     * Set repository querable ordering from a request
-     * @param Request $request
+     * Set repository querable ordering from a request and sort column mapping
+     * array.
+     * @param \Illuminate\Http\Request $request
+     * @param array $mapping
      * @param string $defaultOrder
      * @param string $defaultDirection
      * @return $this
      */
-    public function requestOrdered(Request $request, $defaultOrder = 'id', $defaultDirection = 'asc');
+    public function setupOrdering(
+        \Illuminate\Http\Request $request,
+        array $mapping,
+        $defaultOrder = 'id',
+        $defaultDirection = 'desc'
+    );
 
     /**
      * Find single instance of model

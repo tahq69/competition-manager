@@ -29,13 +29,13 @@ class TeamTest extends TestCase
             ->assertJson([
                 'data' => [
                     [
-                        'name' => $teams[0]->name,
-                        'short' => $teams[0]->short,
-                        'id' => $teams[0]->id,
-                    ], [
                         'name' => $teams[1]->name,
                         'short' => $teams[1]->short,
                         'id' => $teams[1]->id,
+                    ], [
+                        'name' => $teams[0]->name,
+                        'short' => $teams[0]->short,
+                        'id' => $teams[0]->id,
                     ],
                 ],
             ]);

@@ -39,11 +39,18 @@ class TeamController extends Controller
             $this->teams->filterByManager($request->user()->id);
         }
 
-        $teams = $this->teams->paginate(
-            $request->per_page ?: 15, [], [
+        $orderingMapping = [
+            'id' => 'teams.id',
+            'name' => 'name',
+            'short' => 'short',
+            'created_at' => 'teams.created_at',
+        ];
+
+        $teams = $this->teams
+            ->setupOrdering($request, $orderingMapping)
+            ->paginate($request->per_page ?: 15, [], [
                 'teams.id', 'name', 'short', 'teams.created_at',
-            ]
-        );
+            ]);
 
         return new JsonResponse($teams);
     }
