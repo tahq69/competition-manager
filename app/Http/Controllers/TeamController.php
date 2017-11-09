@@ -1,9 +1,9 @@
 <?php namespace App\Http\Controllers;
 
 use App\Contracts\ITeamRepository;
+use App\Http\Requests;
 use App\Role;
 use Illuminate\Http\JsonResponse;
-use \App\Http\Requests;
 
 /**
  * Class TeamController
@@ -28,7 +28,6 @@ class TeamController extends Controller
 
     /**
      * Get list of teams.
-     * GET     /api/admin/teams
      * @param  \App\Http\Requests\Team\ViewList $request
      * @return JsonResponse
      */

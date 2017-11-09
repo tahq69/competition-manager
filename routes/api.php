@@ -14,3 +14,7 @@ $this->post('password/reset', 'Auth\\ResetPasswordController@reset')->name('pass
 $this->resource('teams', 'TeamController', [
     'only' => ['index'/*, 'store', 'show', 'update'*/]
 ]);
+
+$this->resource('teams.members', 'TeamMemberController', [
+    'only' => ['index'/*, 'store', 'show', 'update'*/]
+]);

@@ -1,0 +1,34 @@
+<?php namespace App\Http\Requests\TeamMembers;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+/**
+ * Class ViewList
+ * @package App\Http\Requests\TeamMembers
+ */
+class ViewList extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     * @return bool
+     */
+    public function authorize()
+    {
+        // Anyone can access team members list.
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     * @return array
+     */
+    public function rules()
+    {
+        return [
+            'per_page' => 'integer',
+            'page' => 'integer',
+            'sort_by' => 'alpha_dash',
+            'sort_direction' => 'alpha_dash',
+        ];
+    }
+}

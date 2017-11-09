@@ -178,7 +178,7 @@ abstract class Repository implements IRepository
 
     /**
      * Set filter params to querable
-     * @param array<array> $filters
+     * @param array $filters
      * @return $this
      * @throws \Exception
      */
@@ -211,6 +211,17 @@ abstract class Repository implements IRepository
         }
 
         return $this->query;
+    }
+
+    /**
+     * Update actual query with new operation.
+     * @param callable $queryFunction
+     * @return $this
+     */
+    protected function setQuery(callable $queryFunction)
+    {
+        $this->query = $queryFunction($this->getQuery());
+        return $this;
     }
 
     /**
