@@ -76,19 +76,16 @@ class TeamController extends Controller
      * }*/
 
     /**
-     * Get single team.
-     * GET     /api/admin/teams/{team}
-     * @param  int $teamId
+     * Get single team instance.
+     * @param  int $id
      * @return JsonResponse
+     */
+    public function show($id)
+    {
+        $team = $this->teams->find($id);
 
-    public function show($teamId)
-     * {
-     * $team = $this->teams->find($teamId);
-     *
-     * $this->authorize('view', $team);
-     *
-     * return new JsonResponse($team);
-     * }*/
+        return new JsonResponse($team);
+    }
 
     /**
      * Update existing team details.

@@ -37,8 +37,8 @@ class TeamMemberController extends Controller
 
     /**
      * Get list of team members.
-     * @param int $teamId
-     * @param Requests\TeamMembers\ViewList $request
+     * @param  int $teamId
+     * @param  Requests\TeamMembers\ViewList $request
      * @return JsonResponse
      */
     public function index(
@@ -62,5 +62,17 @@ class TeamMemberController extends Controller
             ]);
 
         return new JsonResponse($members);
+    }
+
+    /**
+     * Get single team member instance.
+     * @param  int $id
+     * @return JsonResponse
+     */
+    public function show($id): JsonResponse
+    {
+        $team = $this->members->find($id);
+
+        return new JsonResponse($team);
     }
 }

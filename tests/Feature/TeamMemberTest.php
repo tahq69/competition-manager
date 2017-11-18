@@ -52,4 +52,31 @@ class TeamMemberTest extends TestCase
                 ],
             ]);
     }
+
+    /**
+     * A basic team member request test.
+     * @return void
+     */
+    function testCanGetTeamMember()
+    {
+        $admin = $this->createSuperAdmin();
+        $team = factory(\App\Team::class)->create();
+        $member = factory(\App\TeamMember::class)->create([
+            'team_id' => $team->id,
+            'user_id' => $admin->id,
+        ]);
+
+        $url = "/api/teams/{$team->id}/members/{$member->id}";
+        $response = $this->actingAs($admin, 'api')->get($url);
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'id' => $member->id,
+                'name' => $member->name,
+                'team_id' => $member->team_id,
+                'user_id' => $member->user_id,
+                'membership_type' => $member->membership_type,
+            ]);
+    }
 }

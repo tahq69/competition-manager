@@ -12,9 +12,9 @@ $this->post('password/email', 'Auth\\ForgotPasswordController@sendResetLinkEmail
 $this->post('password/reset', 'Auth\\ResetPasswordController@reset')->name('password.reset');
 
 $this->resource('teams', 'TeamController', [
-    'only' => ['index'/*, 'store', 'show', 'update'*/]
+    'only' => ['index', 'show'/*, 'store', 'update'*/]
 ]);
 
 $this->resource('teams.members', 'TeamMemberController', [
-    'only' => ['index'/*, 'store', 'show', 'update'*/]
+    'only' => ['index', 'show'/*, 'store', 'update'*/]
 ]);

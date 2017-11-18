@@ -73,4 +73,25 @@ class TeamTest extends TestCase
                 ],
             ]);
     }
+
+    /**
+     * A basic team request test.
+     * @return void
+     */
+    function testCanGetTeam()
+    {
+        $admin = $this->createSuperAdmin();
+        $team = factory(\App\Team::class)->create();
+
+        $url = "/api/teams/{$team->id}";
+        $response = $this->actingAs($admin, 'api')->get($url);
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'id' => $team->id,
+                'name' => $team->name,
+                'short' => $team->short,
+            ]);
+    }
 }
