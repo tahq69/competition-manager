@@ -66,12 +66,13 @@ class TeamMemberController extends Controller
 
     /**
      * Get single team member instance.
-     * @param  int $id
+     * @param int $teamId
+     * @param int $memberId
      * @return JsonResponse
      */
-    public function show($id): JsonResponse
+    public function show(int $teamId, int $memberId): JsonResponse
     {
-        $team = $this->members->find($id);
+        $team = $this->members->find($memberId);
 
         return new JsonResponse($team);
     }

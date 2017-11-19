@@ -79,4 +79,32 @@ class TeamMemberTest extends TestCase
                 'membership_type' => $member->membership_type,
             ]);
     }
+
+    /**
+     * A team member request test where team has multiple members and we
+     * requesting not first one.
+     * @return void
+     */
+    function testCanGetCorrectMember()
+    {
+        $admin = $this->createSuperAdmin();
+        $teams = factory(\App\Team::class, 2)->create();
+        $members = factory(\App\TeamMember::class, 2)->create([
+            'team_id' => $teams[0]->id,
+            'user_id' => $admin->id,
+        ]);
+
+        $url = "/api/teams/{$teams[0]->id}/members/{$members[1]->id}";
+        $response = $this->actingAs($admin, 'api')->get($url);
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'id' => $members[1]->id,
+                'name' => $members[1]->name,
+                'team_id' => $members[1]->team_id,
+                'user_id' => $members[1]->user_id,
+                'membership_type' => $members[1]->membership_type,
+            ]);
+    }
 }
