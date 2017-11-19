@@ -107,4 +107,53 @@ class TeamMemberTest extends TestCase
                 'membership_type' => $members[1]->membership_type,
             ]);
     }
+
+    /**
+     * A basic team member store request test.
+     * @return void
+     */
+    function testCanStoreNewMemberForTeam()
+    {
+        $admin = $this->createSuperAdmin();
+        $team = factory(\App\Team::class)->create();
+        $url = "/api/teams/{$team->id}/members";
+
+        $response = $this->actingAs($admin, 'api')->postJson($url, [
+            'name' => 'New member name',
+        ]);
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'name' => 'New member name',
+                'team_id' => $team->id,
+                'user_id' => null,
+                'membership_type' => 'member',
+            ]);
+    }
+
+    /**
+     * A team member store request test where user identifier is presented.
+     * @return void
+     */
+    function testCanStoreNewMemberWithUserReferenceForTeam()
+    {
+        $admin = $this->createSuperAdmin();
+        $team = factory(\App\Team::class)->create();
+        $url = "/api/teams/{$team->id}/members";
+
+        $response = $this->actingAs($admin, 'api')->postJson($url, [
+            'name' => 'New member name',
+            'user_id' => $admin->id,
+        ]);
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'name' => 'New member name',
+                'team_id' => $team->id,
+                'user_id' => $admin->id,
+                'membership_type' => 'invited',
+            ]);
+    }
 }

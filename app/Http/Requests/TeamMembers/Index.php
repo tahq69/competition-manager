@@ -3,10 +3,10 @@
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * Class ViewList
+ * Class Index
  * @package App\Http\Requests\TeamMembers
  */
-class ViewList extends FormRequest
+class Index extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

@@ -11,7 +11,21 @@ interface ITeamMemberRepository extends IPaginateRepository
      * @param int $id
      * @return $this
      */
-    public function filterByTeam($id);
+    public function filterByTeam(int $id);
+
+    /**
+     * Set user id filter on querable.
+     * @param int $id
+     * @return $this
+     */
+    public function filterByUser(int $id);
+
+    /**
+     * Set membership type filter on querable.
+     * @param string $type
+     * @return $this
+     */
+    public function filterByMembership(string $type);
 
     /**
      * Join user details to member.

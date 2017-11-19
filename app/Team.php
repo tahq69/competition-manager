@@ -46,6 +46,17 @@ class Team extends Model
      */
     public function members()
     {
-        return $this->hasMany(TeamMember::class, 'team_id', 'id');
+        return $this->hasMany(TeamMember::class, 'team_id', 'id')
+            ->where('membership_type', TeamMember::MEMBER);
+    }
+
+    /**
+     * Members relation.
+     * @return HasMany
+     */
+    public function managers()
+    {
+        return $this->hasMany(TeamMember::class, 'team_id', 'id')
+            ->where('membership_type', TeamMember::MANAGER);
     }
 }

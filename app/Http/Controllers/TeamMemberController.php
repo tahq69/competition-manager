@@ -3,6 +3,8 @@
 use App\Contracts\ITeamMemberRepository;
 use App\Contracts\ITeamRepository;
 use App\Http\Requests;
+use App\Team;
+use App\TeamMember;
 use Illuminate\Http\JsonResponse;
 
 /**
@@ -38,11 +40,11 @@ class TeamMemberController extends Controller
     /**
      * Get list of team members.
      * @param  int $teamId
-     * @param  Requests\TeamMembers\ViewList $request
+     * @param  Requests\TeamMembers\Index $request
      * @return JsonResponse
      */
     public function index(
-        int $teamId, Requests\TeamMembers\ViewList $request
+        int $teamId, Requests\TeamMembers\Index $request
     ): JsonResponse
     {
         $orderingMapping = [
@@ -75,5 +77,48 @@ class TeamMemberController extends Controller
         $team = $this->members->find($memberId);
 
         return new JsonResponse($team);
+    }
+
+    /**
+     * Store new instance of team member.
+     * @param int $teamId
+     * @param Requests\TeamMembers\Store $request
+     * @return JsonResponse
+     */
+    public function store(
+        int $teamId, Requests\TeamMembers\Store $request
+    ): JsonResponse
+    {
+        /** @var Team $team */
+        $team = $this->teams->find($teamId);
+        $details = $request->only(['user_id', 'name']);
+
+        $member = array_key_exists('user_id', $details) && $details['user_id'] ?
+            $this->inviteMember($team, $details, $request->user()->id) :
+            $this->createMember($team, $details);
+
+        return new JsonResponse($member);
+    }
+
+    private function inviteMember(Team $team, array $details, int $managerId): TeamMember
+    {
+        $details['membership_type'] = TeamMember::INVITED;
+        $member = $this->teams->createMember($team, $details);
+
+        /* TODO: implement messaging service
+        $this->messaging->sendTeamMemberInvitation(
+            $managerId, $details['user_id'], $team->name, $member->id
+        ); */
+
+        return $member;
+    }
+
+    private function createMember(Team $team, array $details): TeamMember
+    {
+        $details['user_id'] = null;
+        $details['membership_type'] = TeamMember::MEMBER;
+        $member = $this->teams->createMember($team, $details);
+
+        return $member;
     }
 }
