@@ -16,5 +16,5 @@ $this->resource('teams', 'TeamController', [
 ]);
 
 $this->resource('teams.members', 'TeamMemberController', [
-    'only' => ['index', 'show', 'store',/* 'update'*/]
+    'only' => ['index', 'show', 'store', 'update'],
 ]);

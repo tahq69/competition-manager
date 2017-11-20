@@ -29,8 +29,7 @@ class TeamMemberController extends Controller
      * @param ITeamMemberRepository $members
      */
     public function __construct(
-        ITeamRepository $teams, ITeamMemberRepository $members
-    )
+        ITeamRepository $teams, ITeamMemberRepository $members)
     {
         $this->middleware('auth:api');
         $this->teams = $teams;
@@ -44,8 +43,7 @@ class TeamMemberController extends Controller
      * @return JsonResponse
      */
     public function index(
-        int $teamId, Requests\TeamMembers\Index $request
-    ): JsonResponse
+        int $teamId, Requests\TeamMembers\Index $request): JsonResponse
     {
         $orderingMapping = [
             'id' => 'id',
@@ -68,8 +66,8 @@ class TeamMemberController extends Controller
 
     /**
      * Get single team member instance.
-     * @param int $teamId
-     * @param int $memberId
+     * @param  int $teamId
+     * @param  int $memberId
      * @return JsonResponse
      */
     public function show(int $teamId, int $memberId): JsonResponse
@@ -81,13 +79,12 @@ class TeamMemberController extends Controller
 
     /**
      * Store new instance of team member.
-     * @param int $teamId
-     * @param Requests\TeamMembers\Store $request
+     * @param  int $teamId
+     * @param  Requests\TeamMembers\Store $request
      * @return JsonResponse
      */
     public function store(
-        int $teamId, Requests\TeamMembers\Store $request
-    ): JsonResponse
+        int $teamId, Requests\TeamMembers\Store $request): JsonResponse
     {
         /** @var Team $team */
         $team = $this->teams->find($teamId);
@@ -100,7 +97,45 @@ class TeamMemberController extends Controller
         return new JsonResponse($member);
     }
 
-    private function inviteMember(Team $team, array $details, int $managerId): TeamMember
+    /**
+     * Update existing instance of team member.
+     * @param  int $teamId
+     * @param  int $id
+     * @param  Requests\TeamMembers\Update $request
+     * @return JsonResponse
+     */
+    public function update(
+        int $teamId, int $id,
+        Requests\TeamMembers\Update $request): JsonResponse
+    {
+        $member = $this->members->find($id);
+        $details = $request->only(['user_id', 'name']);
+
+        if (
+            array_key_exists('user_id', $details) &&
+            $member->user_id != $details['user_id']) {
+
+            $team = $this->teams->find($teamId);
+            $details['membership_type'] = TeamMember::INVITED;
+
+            /* TODO: implement messaging service
+            $this->messaging->dismissTeamMemberInvitation(
+                $details['user_id'], $team->id
+            );
+
+            $this->messaging->sendTeamMemberInvitation(
+                $request->user()->id, $details['user_id'], $team->name,
+                $member->id
+            ); */
+        }
+
+        $this->members->update($details, $id, $member);
+
+        return new JsonResponse($member);
+    }
+
+    private function inviteMember(
+        Team $team, array $details, int $managerId): TeamMember
     {
         $details['membership_type'] = TeamMember::INVITED;
         $member = $this->teams->createMember($team, $details);

@@ -1,15 +1,16 @@
 <?php namespace App\Http\Requests\TeamMembers;
 
 use App\Contracts\ITeamMemberRepository;
+use App\Http\Requests\UserRolesPolicy;
 use App\TeamMember;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
- * Class Store
+ * Class Update
  * @package App\Http\Requests\TeamMembers
  */
-class Store extends FormRequest
+class Update extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -18,7 +19,7 @@ class Store extends FormRequest
      */
     public function authorize(ITeamMemberRepository $members)
     {
-        return Policy::canStore($members, $this->teamId());
+        return Policy::canUpdate($members, $this->teamId());
     }
 
     /**
@@ -30,19 +31,30 @@ class Store extends FormRequest
         return [
             'name' => [
                 'required',
-                'max:255'
+                'max:255',
             ],
             'user_id' => [
                 Rule::exists('users', 'id'),
                 Rule::unique('team_members', 'user_id')
                     ->where('team_id', $this->teamId())
-                    ->where('membership_type', TeamMember::MEMBER),
+                    ->where('membership_type', TeamMember::MEMBER)
+                    ->ignore($this->memberId()),
             ]
         ];
     }
 
     private function teamId()
     {
-        return \Route::current()->parameters()['team'];
+        return $this->parameters()['team'];
+    }
+
+    private function memberId()
+    {
+        return $this->parameters()['member'];
+    }
+
+    private function parameters()
+    {
+        return \Route::current()->parameters();
     }
 }

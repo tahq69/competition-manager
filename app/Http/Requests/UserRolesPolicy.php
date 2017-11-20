@@ -4,17 +4,17 @@ use App\Role;
 use App\User;
 
 /**
- * Trait UserRolesValidationRequest
+ * Class UserRolesValidationRequest
  * @package App\Http\Requests
  */
-trait UserRolesValidationRequest
+class UserRolesPolicy
 {
     /**
      * Get user roles key array.
      * @param User $user
      * @return array
      */
-    public function roles(User $user)
+    public static function roles(User $user)
     {
         $roles = $user->roles->map(function ($role) {
             return $role->key;
@@ -28,7 +28,7 @@ trait UserRolesValidationRequest
      * @param $role
      * @return bool
      */
-    public function hasRole($roles = [], $role)
+    public static function hasRole($roles = [], $role)
     {
         // Allow super admin do anything
         if (in_array(Role::SUPER_ADMIN, $roles)) return true;
@@ -43,10 +43,10 @@ trait UserRolesValidationRequest
      * @param array $searchFor
      * @return bool
      */
-    public function hasAnyRole($current = [], $searchFor = [])
+    public static function hasAnyRole($current = [], $searchFor = [])
     {
         foreach ($searchFor as $role)
-            if ($this->hasRole($current, $role))
+            if (UserRolesPolicy::hasRole($current, $role))
                 return true;
 
         return false;
