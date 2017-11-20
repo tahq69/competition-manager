@@ -18,3 +18,8 @@ $factory->state(App\User::class, 'super_admin', [
     'name' => 'TAHQ69',
     'email' => 'tahq69@gmail.com',
 ]);
+
+$factory->state(App\User::class, 'post_manager', [
+    'name' => 'post.creator',
+    'email' => 'post.creator@crip.lv',
+]);

@@ -120,6 +120,7 @@ class TeamMemberTest extends TestCase
 
         $response = $this->actingAs($admin, 'api')->postJson($url, [
             'name' => 'New member name',
+            'user_id' => 0,
         ]);
 
         $response
@@ -164,29 +165,37 @@ class TeamMemberTest extends TestCase
     function testCanUpdateTeamMember()
     {
         $admin = $this->createSuperAdmin();
+        $user = $this->createPostManager();
         $teams = factory(\App\Team::class, 2)->create();
-        $members = factory(\App\TeamMember::class, 2)->create([
+
+        factory(\App\TeamMember::class)->create([
             'team_id' => $teams[0]->id,
             'user_id' => $admin->id,
         ]);
 
-        $url = "/api/teams/{$teams[0]->id}/members/{$members[1]->id}";
+        $member = factory(\App\TeamMember::class)->create([
+            'team_id' => $teams[0]->id,
+            'user_id' => $user->id,
+        ]);
+
+        $url = "/api/teams/{$teams[0]->id}/members/{$member->id}";
         $response = $this->actingAs($admin, 'api')->patchJson($url, [
             'name' => 'New Member Name',
+            'user_id' => $member->user_id,
         ]);
 
         $response
             ->assertStatus(200)
             ->assertJson([
-                'id' => $members[1]->id,
+                'id' => $member->id,
                 'name' => 'New Member Name',
-                'team_id' => $members[1]->team_id,
-                'user_id' => $members[1]->user_id,
-                'membership_type' => $members[1]->membership_type,
+                'team_id' => $member->team_id,
+                'user_id' => $member->user_id,
+                'membership_type' => $member->membership_type,
             ]);
 
         $this->assertDatabaseHas('team_members', [
-            'id' => $members[1]->id,
+            'id' => $member->id,
             'name' => 'New Member Name',
         ]);
     }

@@ -32,6 +32,17 @@ abstract class TestCase extends BaseTestCase
         return $user;
     }
 
+    /**
+     * @return \App\User
+     */
+    protected function createPostManager()
+    {
+        $user = factory(\App\User::class)->states('post_manager')->create();
+        $this->syncRole($user, \App\Role::MANAGE_POSTS);
+
+        return $user;
+    }
+
     private function syncRole(\App\User $user, string $role)
     {
         $user->roles()->sync([$this->findRoleId($role)]);

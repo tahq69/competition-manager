@@ -1,7 +1,6 @@
 <?php namespace App\Http\Requests\TeamMembers;
 
 use App\Contracts\ITeamMemberRepository;
-use App\Http\Requests\UserRolesPolicy;
 use App\TeamMember;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -19,7 +18,7 @@ class Update extends FormRequest
      */
     public function authorize(ITeamMemberRepository $members)
     {
-        return Policy::canUpdate($members, $this->teamId());
+        return Policy::canUpdate($members, $this->route('team'));
     }
 
     /**
@@ -29,32 +28,30 @@ class Update extends FormRequest
     public function rules()
     {
         return [
-            'name' => [
-                'required',
-                'max:255',
-            ],
-            'user_id' => [
-                Rule::exists('users', 'id'),
-                Rule::unique('team_members', 'user_id')
-                    ->where('team_id', $this->teamId())
-                    ->where('membership_type', TeamMember::MEMBER)
-                    ->ignore($this->memberId()),
-            ]
+            'name' => 'required|min:3|max:255',
+            'user_id' => 'required|numeric',
         ];
     }
 
-    private function teamId()
+    /**
+     * Get the validator instance for the request.
+     * @return \Illuminate\Contracts\Validation\Validator
+     */
+    protected function getValidatorInstance()
     {
-        return $this->parameters()['team'];
-    }
+        $v = parent::getValidatorInstance();
+        $rules = [
+            Rule::exists('users', 'id'),
+            Rule::unique('team_members', 'user_id')
+                ->where('team_id', $this->route('team'))
+                ->where('membership_type', TeamMember::MEMBER)
+                ->ignore($this->route('member')),
+        ];
 
-    private function memberId()
-    {
-        return $this->parameters()['member'];
-    }
+        $v->sometimes('user_id', $rules, function ($input) {
+            return $input->has('user_id') && $input->user_id > 0;
+        });
 
-    private function parameters()
-    {
-        return \Route::current()->parameters();
+        return $v;
     }
 }

@@ -89,8 +89,9 @@ class TeamMemberController extends Controller
         /** @var Team $team */
         $team = $this->teams->find($teamId);
         $details = $request->only(['user_id', 'name']);
+        $details['user_id'] = $details['user_id'] > 0 ? $details['user_id'] : null;
 
-        $member = array_key_exists('user_id', $details) && $details['user_id'] ?
+        $member = $details['user_id'] > 0 ?
             $this->inviteMember($team, $details, $request->user()->id) :
             $this->createMember($team, $details);
 
@@ -110,11 +111,12 @@ class TeamMemberController extends Controller
     {
         $member = $this->members->find($id);
         $details = $request->only(['user_id', 'name']);
+        $details['user_id'] = $details['user_id'] > 0 ? $details['user_id'] : null;
 
         if (
             array_key_exists('user_id', $details) &&
-            $member->user_id != $details['user_id']) {
-
+            $member->user_id != $details['user_id']
+        ) {
             $team = $this->teams->find($teamId);
             $details['membership_type'] = TeamMember::INVITED;
 

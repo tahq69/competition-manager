@@ -13,9 +13,7 @@ class UsersTableSeeder extends Seeder
      */
     private $roles;
 
-    const SUPER_ADMIN_EMAIL = 'tahq69@gmail.com';
     const POST_MANAGER_EMAIL = 'post.manager@crip.lv';
-    const POST_CREATOR_EMAIL = 'post.creator@crip.lv';
     const TEAM_MANAGER_EMAIL = 'team.manager@crip.lv';
     const JUDGE_EMAIL = 'judge@crip.lv';
 
@@ -50,11 +48,7 @@ class UsersTableSeeder extends Seeder
 
     private function createPostCreator()
     {
-        $user = App\User::create([
-            'name' => 'post.creator',
-            'email' => static::POST_CREATOR_EMAIL,
-            'password' => bcrypt('password')
-        ]);
+        $user = factory(\App\User::class)->states('post_manager')->create();
 
         // add create post role for user
         $user->roles()->sync([$this->roleId(Role::CREATE_POST)]);

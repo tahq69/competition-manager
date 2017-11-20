@@ -18,7 +18,7 @@ class Store extends FormRequest
      */
     public function authorize(ITeamMemberRepository $members)
     {
-        return Policy::canStore($members, $this->teamId());
+        return Policy::canStore($members, $this->route('team'));
     }
 
     /**
@@ -28,21 +28,29 @@ class Store extends FormRequest
     public function rules()
     {
         return [
-            'name' => [
-                'required',
-                'max:255'
-            ],
-            'user_id' => [
-                Rule::exists('users', 'id'),
-                Rule::unique('team_members', 'user_id')
-                    ->where('team_id', $this->teamId())
-                    ->where('membership_type', TeamMember::MEMBER),
-            ]
+            'name' => 'required|min:3|max:255',
+            'user_id' => 'required|numeric',
         ];
     }
 
-    private function teamId()
+    /**
+     * Get the validator instance for the request.
+     * @return \Illuminate\Contracts\Validation\Validator
+     */
+    protected function getValidatorInstance()
     {
-        return \Route::current()->parameters()['team'];
+        $v = parent::getValidatorInstance();
+        $rules = [
+            Rule::exists('users', 'id'),
+            Rule::unique('team_members', 'user_id')
+                ->where('team_id', $this->route('team'))
+                ->where('membership_type', TeamMember::MEMBER),
+        ];
+
+        $v->sometimes('user_id', $rules, function ($input) {
+            return $input->has('user_id') && $input->user_id > 0;
+        });
+
+        return $v;
     }
 }
