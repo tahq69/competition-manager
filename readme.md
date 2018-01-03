@@ -15,3 +15,7 @@
 
 - Fix password reset email content.
 - Create password reset view in ui app.
+
+### Useful
+
+Create password grant client: `php artisan passport:client --password`

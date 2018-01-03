@@ -54,7 +54,7 @@ class UserController extends Controller
     public function search(Request $request): JsonResponse
     {
         $users = $this->users
-            ->searchByName($request->term)
+            ->searchByName($request->term ?: '')
             ->paginate($request->perPage ?: 15, [], ['id', 'name']);
 
         return new JsonResponse($users);
