@@ -20,5 +20,9 @@ $this->resource('teams.members', 'TeamMemberController', [
 ]);
 
 $this->resource('competitions', 'CompetitionController', [
-    'only' => ['index'],
+    'only' => ['index', 'show'],
+]);
+
+$this->resource('competitions.disciplines', 'DisciplineController', [
+    'only' => ['index', 'show'],
 ]);

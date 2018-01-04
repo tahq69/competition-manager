@@ -29,7 +29,7 @@ class CompetitionController extends Controller
     public function __construct(Competitions $competitions, Users $users)
     {
         $this->middleware('auth:api')
-            ->except('index');
+            ->except('index', 'show');
 
         $this->competitions = $competitions;
         $this->users = $users;
@@ -60,5 +60,17 @@ class CompetitionController extends Controller
             ]);
 
         return new JsonResponse($competitions);
+    }
+
+    /**
+     * Get single competition instance.
+     * @param  int $id
+     * @return JsonResponse
+     */
+    public function show(int $id): JsonResponse
+    {
+        $competition = $this->competitions->find($id);
+
+        return new JsonResponse($competition);
     }
 }
