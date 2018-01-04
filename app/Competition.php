@@ -3,6 +3,7 @@
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class Competition
@@ -86,5 +87,13 @@ class Competition extends Model
         return $this->belongsToMany(
             User::class, 'competition_managers', 'competition_id', 'user_id'
         )->withTimestamps();
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function disciplines()
+    {
+        return $this->hasMany(Discipline::class, 'competition_id', 'id');
     }
 }
