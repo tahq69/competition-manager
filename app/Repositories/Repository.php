@@ -111,6 +111,7 @@ abstract class Repository implements IRepository
      * @param array $filters
      * @param array $columns
      * @return Collection
+     * @throws \Exception
      */
     public function get(array $filters = [], $columns = ['*'])
     {
@@ -127,6 +128,7 @@ abstract class Repository implements IRepository
      * Create new instance in of model in database
      * @param array $input
      * @return Model
+     * @throws \Throwable
      */
     public function create(array $input)
     {
@@ -161,6 +163,7 @@ abstract class Repository implements IRepository
      * Delete record in database
      * @param int $id
      * @return boolean
+     * @throws \Exception
      */
     public function delete($id)
     {

@@ -31,6 +31,8 @@ class Discipline extends Model
 {
     use HasCompetitionTrait, HasAuditTrait;
 
+    const KICKBOXING = "KICKBOXING";
+
     /**
      * The table associated with the model.
      * @var string
