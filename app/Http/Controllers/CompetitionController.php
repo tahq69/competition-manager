@@ -42,11 +42,22 @@ class CompetitionController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        $orderingMapping = [
+            'id' => 'id',
+            'title' => 'title',
+            'judge_name' => 'judge_name',
+            'organization_date' => 'organization_date',
+        ];
+
         if ($request->owned) {
             $this->competitions->filterOwnedOrManaged();
         }
 
-        $competitions = $this->competitions->paginate($request->per_page ?: 15);
+        $competitions = $this->competitions
+            ->setupOrdering($request, $orderingMapping)
+            ->paginate($request->per_page ?: 15, [], [
+                'id', 'title', 'judge_id', 'judge_name', 'organization_date'
+            ]);
 
         return new JsonResponse($competitions);
     }
