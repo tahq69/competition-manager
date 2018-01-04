@@ -5,7 +5,27 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class Discipline
+ *
  * @package App
+ * @property int $id
+ * @property int $competition_id
+ * @property string $title
+ * @property string $short
+ * @property string $type
+ * @property string $game_type
+ * @property string $description
+ * @property int $created_by
+ * @property string $created_by_name
+ * @property int|null $updated_by
+ * @property string $updated_by_name
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Category[] $categories
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\CategoryGroup[] $category_groups
+ * @property-read \App\Competition $competition
+ * @property-read \App\User $creator
+ * @property-read \App\User|null $modifier
+ * @mixin \Eloquent
  */
 class Discipline extends Model
 {

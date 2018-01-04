@@ -19,3 +19,4 @@
 ### Useful
 
 Create password grant client: `php artisan passport:client --password`
+Generate model docs from db definitions: `php artisan ide-helper:models`

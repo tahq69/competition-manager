@@ -6,7 +6,27 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class CategoryGroup
+ *
  * @package App
+ * @property int $id
+ * @property string $title
+ * @property string $short
+ * @property int $competition_id
+ * @property string $discipline_title
+ * @property string $discipline_short
+ * @property int $discipline_id
+ * @property int $created_by
+ * @property string $created_by_name
+ * @property int|null $updated_by
+ * @property string $updated_by_name
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Category[] $categories
+ * @property-read \App\Competition $competition
+ * @property-read \App\User $creator
+ * @property-read \App\Discipline $discipline
+ * @property-read \App\User|null $modifier
+ * @mixin \Eloquent
  */
 class CategoryGroup extends Model
 {

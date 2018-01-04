@@ -4,7 +4,28 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Post
+ *
  * @package App
+ * @property int $id
+ * @property string $locale
+ * @property string $title
+ * @property string $body
+ * @property string $image
+ * @property string $state
+ * @property \Carbon\Carbon|null $publish_at
+ * @property int $author_id
+ * @property int $created_by
+ * @property string $created_by_name
+ * @property int|null $updated_by
+ * @property string $updated_by_name
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property-read \App\User $author
+ * @property-read \App\User $creator
+ * @property-read string $date_from_now
+ * @property-read string $short_body
+ * @property-read \App\User|null $modifier
+ * @mixin \Eloquent
  */
 class Post extends Model
 {

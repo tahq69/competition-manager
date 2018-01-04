@@ -5,7 +5,34 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class Message
+ *
  * @package App
+ * @property int $id
+ * @property string $subject
+ * @property string $body
+ * @property array $payload
+ * @property int $is_read
+ * @property int $importance_level
+ * @property string $type
+ * @property int $from_id
+ * @property string $from_name
+ * @property int $to_id
+ * @property string $to_name
+ * @property int|null $reply
+ * @property int $reply_count
+ * @property int $created_by
+ * @property string $created_by_name
+ * @property int|null $updated_by
+ * @property string $updated_by_name
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property-read \App\User $creator
+ * @property-read string $date_from_now
+ * @property-read \App\User|null $modifier
+ * @property-read \App\User $recipient
+ * @property-read \App\Message|null $replyOn
+ * @property-read \App\User $sender
+ * @mixin \Eloquent
  */
 class Message extends Model
 {
