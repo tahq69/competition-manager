@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Contracts\IDisciplineRepository as Disciplines;
+use App\Http\Requests\Discipline\Update as UpdateDisciplineRequest;
 use Illuminate\Http\JsonResponse;
 
 /**
@@ -52,6 +53,30 @@ class DisciplineController extends Controller
         $discipline = $this->disciplines
             ->whereCompetition($competitionId)
             ->find($id);
+
+        return new JsonResponse($discipline);
+    }
+
+    /**
+     * Update existing instance of competition discipline.
+     * @param  int $competitionId
+     * @param  int $id
+     * @param  UpdateDisciplineRequest $request
+     * @return JsonResponse
+     */
+    public function update(
+        int $competitionId, int $id,
+        UpdateDisciplineRequest $request): JsonResponse
+    {
+        $discipline = $this->disciplines
+            ->whereCompetition($competitionId)
+            ->find($id);
+
+        $details = $request->only([
+            'title', 'short', 'type', 'game_type', 'description',
+        ]);
+
+        $this->disciplines->update($details, $id, $discipline);
 
         return new JsonResponse($discipline);
     }
