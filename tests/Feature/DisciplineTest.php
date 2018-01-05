@@ -76,6 +76,42 @@ class DisciplineTest extends TestCase
     }
 
     /**
+     * A basic competition discipline create request.
+     * @return void
+     */
+    public function testCanCreateCompetitionDiscipline() {
+        $admin = $this->createSuperAdmin();
+        $competitions = factory(Competition::class, 3)->create();
+        $competitionId = $competitions[1]->id;
+
+        $url = "/api/competitions/{$competitionId}/disciplines";
+        $response = $this->actingAs($admin, 'api')->postJson($url, [
+            'competition_id' => $competitionId,
+            'title' => 'title',
+            'short' => 'short',
+            'type' => Discipline::KICKBOXING,
+            'game_type' => 'game_type',
+            'description' => 'description',
+        ]);
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'competition_id' => $competitionId,
+                'title' => 'title',
+                'short' => 'short',
+                'type' => Discipline::KICKBOXING,
+                'game_type' => 'game_type',
+                'description' => 'description',
+            ]);
+
+        $this->assertDatabaseHas('disciplines', [
+            'competition_id' => $competitionId,
+            'title' => 'title',
+        ]);
+    }
+
+    /**
      * A basic competition discipline update request.
      * @return void
      */

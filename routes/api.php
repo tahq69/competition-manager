@@ -24,5 +24,5 @@ $this->resource('competitions', 'CompetitionController', [
 ]);
 
 $this->resource('competitions.disciplines', 'DisciplineController', [
-    'only' => ['index', 'show', 'update'],
+    'only' => ['index', 'show', 'update', 'store'],
 ]);

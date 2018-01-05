@@ -1,7 +1,8 @@
 <?php namespace App\Http\Controllers;
 
-use App\Contracts\IDisciplineRepository as Disciplines;
+use App\Contracts\IDisciplineRepository as IDisciplines;
 use App\Http\Requests\Discipline\Update as UpdateDisciplineRequest;
+use App\Http\Requests\Discipline\Store as StoreDisciplineRequest;
 use Illuminate\Http\JsonResponse;
 
 /**
@@ -11,15 +12,15 @@ use Illuminate\Http\JsonResponse;
 class DisciplineController extends Controller
 {
     /**
-     * @var Disciplines
+     * @var IDisciplines
      */
     private $disciplines;
 
     /**
      * CompetitionController constructor.
-     * @param Disciplines $disciplines
+     * @param IDisciplines $disciplines
      */
-    public function __construct(Disciplines $disciplines)
+    public function __construct(IDisciplines $disciplines)
     {
         $this->middleware('auth:api')
             ->except('index', 'show');
@@ -53,6 +54,25 @@ class DisciplineController extends Controller
         $discipline = $this->disciplines
             ->whereCompetition($competitionId)
             ->find($id);
+
+        return new JsonResponse($discipline);
+    }
+
+    /**
+     * Store new instance of competition discipline.
+     * @param  int $competitionId
+     * @param  StoreDisciplineRequest $request
+     * @return JsonResponse
+     */
+    public function store(
+        int $competitionId, StoreDisciplineRequest $request): JsonResponse
+    {
+        $details = $request->only([
+            'title', 'short', 'type', 'game_type', 'description',
+            'competition_id',
+        ]);
+
+        $discipline = $this->disciplines->create($details);
 
         return new JsonResponse($discipline);
     }
