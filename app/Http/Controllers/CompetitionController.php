@@ -56,7 +56,8 @@ class CompetitionController extends Controller
         $competitions = $this->competitions
             ->setupOrdering($request, $orderingMapping)
             ->paginate($request->per_page ?: 15, [], [
-                'id', 'title', 'judge_id', 'judge_name', 'organization_date'
+                'id', 'title', 'subtitle', 'judge_id', 'judge_name',
+                'organization_date',
             ]);
 
         return new JsonResponse($competitions);
