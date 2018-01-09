@@ -15,7 +15,7 @@ class CompetitionsTableSeeder extends Seeder
      */
     public function run()
     {
-        factory(Competition::class, 20)->create()->each(function (Competition $cm) {
+        factory(Competition::class, 10)->create()->each(function (Competition $cm) {
             $cm->disciplines()->saveMany(
                 factory(Discipline::class, 2)->create(
                     ['competition_id' => $cm->id]

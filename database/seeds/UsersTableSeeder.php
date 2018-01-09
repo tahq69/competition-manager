@@ -13,10 +13,6 @@ class UsersTableSeeder extends Seeder
      */
     private $roles;
 
-    const POST_MANAGER_EMAIL = 'post.manager@crip.lv';
-    const TEAM_MANAGER_EMAIL = 'team.manager@crip.lv';
-    const JUDGE_EMAIL = 'judge@crip.lv';
-
     /**
      * Run the database seeds.
      * @return void
@@ -27,13 +23,9 @@ class UsersTableSeeder extends Seeder
         $this->createPostCreator();
         $this->createPostManager();
         $this->createTeamManager();
-        $this->createJudge();
 
-        // Create extra 50 random users
-        factory(App\User::class, 20)->create()->each(function ($user) {
-            // Create random user posts
-            factory(\App\Post::class, 3)->create(['author_id' => $user->id]);
-        });
+        // Create extra 10 random users
+        factory(App\User::class, 20)->create();
     }
 
     private function createAdmin()
@@ -48,21 +40,17 @@ class UsersTableSeeder extends Seeder
 
     private function createPostCreator()
     {
-        $user = factory(\App\User::class)->states('post_manager')->create();
+        $user = factory(\App\User::class)->states('post_creator')->create();
 
         // add create post role for user
         $user->roles()->sync([$this->roleId(Role::CREATE_POST)]);
 
-        factory(App\Post::class, 20)->create(['author_id' => $user->id]);
+        factory(App\Post::class, 10)->create(['author_id' => $user->id]);
     }
 
     private function createPostManager()
     {
-        $user = App\User::create([
-            'name' => 'post.manager',
-            'email' => static::POST_MANAGER_EMAIL,
-            'password' => bcrypt('password')
-        ]);
+        $user = factory(\App\User::class)->states('post_manager')->create();
 
         // add manage posts role for user
         $user->roles()->sync([$this->roleId(Role::MANAGE_POSTS)]);
@@ -70,27 +58,46 @@ class UsersTableSeeder extends Seeder
 
     private function createTeamManager()
     {
-        $user = App\User::create([
-            'name' => 'team.manager',
-            'email' => static::TEAM_MANAGER_EMAIL,
-            'password' => bcrypt('password')
-        ]);
+        $user = factory(\App\User::class)->states('team_owner')->create();
 
         $user->roles()->sync([$this->roleId(Role::CREATE_TEAMS)]);
-    }
 
-    private function createJudge()
-    {
-        $user = App\User::create([
-            'name' => 'judge',
-            'email' => static::JUDGE_EMAIL,
-            'password' => bcrypt('password')
-        ]);
+        // add teams for manager
+        factory(\App\Team::class, 5)->create([
+            'created_by' => $user->id,
+            'created_by_name' => $user->name,
+        ])->each(function ($team) use ($user) {
+            // Associate manager with created team
+            $manager = factory(\App\TeamMember::class)->create([
+                'team_id' => $team->id,
+                'user_id' => $user->id
+            ]);
 
-        $user->roles()->sync([
-            $this->roleId(Role::CREATE_COMPETITIONS),
-            $this->roleId(Role::EDIT_COMPETITIONS),
-        ]);
+            // Create members in team
+            factory(\App\TeamMember::class, 10)->create(['team_id' => $team->id]);
+
+            // Create additional managers for team
+            factory(\App\TeamMember::class, 2)->create([
+                'team_id' => $team->id,
+                'membership_type' => \App\TeamMember::MANAGER,
+                'user_id' => function () {
+                    return factory(\App\User::class)->create()->id;
+                }
+            ]);
+
+            // Assign member roles to manager
+            $manager->roles()->sync([
+                $this->roleId(Role::MANAGE_TEAMS),
+                $this->roleId(Role::MANAGE_MEMBERS),
+                $this->roleId(Role::MANAGE_MEMBER_ROLES),
+                $this->roleId(Role::CREATE_COMPETITIONS),
+                $this->roleId(Role::MANAGE_COMPETITIONS),
+                $this->roleId(Role::MANAGE_COMPETITION_AREAS),
+                $this->roleId(Role::MANAGE_COMPETITION_DISCIPLINES),
+                $this->roleId(Role::MANAGE_COMPETITION_MEMBERS),
+                $this->roleId(Role::MANAGE_COMPETITION_JUDGES),
+            ]);
+        });
     }
 
     private function roleId($roleKey)
