@@ -32,8 +32,10 @@ class CompetitionRepository extends PaginationRepository implements ICompetition
 
         $this->setQuery(function (Builder $query) {
             return $query
-                ->whereHas('managers', function (Builder $q) {
-                    $q->where('user_id', Auth::id());
+                ->whereHas('team', function (Builder $q) {
+                    $q->whereHas('managers', function (Builder $subQ) {
+                        $subQ->where('user_id', Auth::id());
+                    });
                 })
                 ->orWhere('created_by', Auth::id())
                 ->orWhere('judge_id', Auth::id());

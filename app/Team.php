@@ -76,4 +76,12 @@ class Team extends Model
         return $this->hasMany(TeamMember::class, 'team_id', 'id')
             ->where('membership_type', TeamMember::MANAGER);
     }
+
+    /**
+     * @return HasMany
+     */
+    public function competitions()
+    {
+        return $this->hasMany(Competition::class, 'competition_id', 'id');
+    }
 }

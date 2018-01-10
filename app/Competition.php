@@ -80,20 +80,18 @@ class Competition extends Model
     }
 
     /**
-     * @return BelongsToMany
-     */
-    public function managers()
-    {
-        return $this->belongsToMany(
-            User::class, 'competition_managers', 'competition_id', 'user_id'
-        )->withTimestamps();
-    }
-
-    /**
      * @return HasMany
      */
     public function disciplines()
     {
         return $this->hasMany(Discipline::class, 'competition_id', 'id');
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function team()
+    {
+        return $this->belongsTo(Team::class, 'team_id', 'id');
     }
 }

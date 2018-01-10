@@ -50,6 +50,7 @@ class CompetitionTest extends TestCase
     {
         $admin = $this->createSuperAdmin();
         $manager = $this->createPostManager();
+        $team = $this->createTeam([$manager]);
         $adminDetails = [$manager->id => [
             'created_by_name' => $manager->name,
             'created_by' => $manager->id,
@@ -58,10 +59,7 @@ class CompetitionTest extends TestCase
         // Create unowned competitions.
         factory(\App\Competition::class, 2)->create();
 
-        $competitions = factory(\App\Competition::class, 2)->create();
-        // Assign ownership to competitions.
-        $competitions[0]->managers()->sync($adminDetails);
-        $competitions[1]->managers()->sync($adminDetails);
+        $competitions = factory(\App\Competition::class, 2)->create(['team_id' => $team->id]);
 
         // And more unowned competitions.
         factory(\App\Competition::class, 2)->create();

@@ -43,9 +43,35 @@ abstract class TestCase extends BaseTestCase
         return $user;
     }
 
+    /**
+     * @param array $users
+     * @return \App\Team
+     */
+    protected function createTeam(array $users)
+    {
+        $team = factory(\App\Team::class)->create();
+
+        foreach ($users as $user) {
+            $manager = factory(\App\TeamMember::class)->create([
+                'team_id' => $team->id,
+                'membership_type' => \App\TeamMember::MANAGER,
+                'user_id' => $user->id,
+            ]);
+
+            $this->syncManagerRole($manager, Role::MANAGE_COMPETITIONS);
+        }
+
+        return $team;
+    }
+
     private function syncRole(\App\User $user, string $role)
     {
         $user->roles()->sync([$this->findRoleId($role)]);
+    }
+
+    private function syncManagerRole(\App\TeamMember $manager, string $role)
+    {
+        $manager->roles()->sync([$this->findRoleId($role)]);
     }
 
     private function seedRoles()

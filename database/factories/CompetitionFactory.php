@@ -4,6 +4,7 @@ use Faker\Generator as Faker;
 
 $factory->define(\App\Competition::class, function (Faker $faker) {
     $date = (new \Carbon\Carbon('now'))->addDays($faker->numberBetween(20, 40));
+    $team = factory(\App\Team::class)->create();
     return [
         'ambulance' => join('<br><br>', $faker->paragraphs(3)),
         'cooperation' => join('<br><br>', $faker->paragraphs(10)),
@@ -17,6 +18,10 @@ $factory->define(\App\Competition::class, function (Faker $faker) {
         'rules' => join('<br><br>', $faker->paragraphs(40)),
         'subtitle' => $faker->sentence(),
         'title' => $faker->sentence(),
+
+        'team_id' => $team->id,
+        'team_name' => $team->name,
+        'team_short' => $team->short,
 
         'judge_name' => $faker->name,
         'judge_id' => 5
