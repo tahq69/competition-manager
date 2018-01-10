@@ -17,7 +17,7 @@ class CompetitionTest extends TestCase
      */
     public function testCanGetCompetitionList()
     {
-        $admin = $this->createSuperAdmin();
+        factory(\App\User::class)->create();
         $competitions = factory(\App\Competition::class, 2)->create();
 
         $response = $this->get('/api/competitions');
@@ -48,13 +48,10 @@ class CompetitionTest extends TestCase
      */
     public function testCanGetCompetitionListFilteredByOwnership()
     {
-        $admin = $this->createSuperAdmin();
+        factory(\App\User::class)->create();
         $manager = $this->createPostManager();
         $team = $this->createTeam([$manager]);
-        $adminDetails = [$manager->id => [
-            'created_by_name' => $manager->name,
-            'created_by' => $manager->id,
-        ]];
+
 
         // Create unowned competitions.
         factory(\App\Competition::class, 2)->create();
@@ -88,7 +85,7 @@ class CompetitionTest extends TestCase
      */
     public function testCanGetCompetition()
     {
-        $admin = $this->createSuperAdmin();
+        factory(\App\User::class)->create();
         $competitions = factory(\App\Competition::class, 3)->create();
         $comp = $competitions[1];
 

@@ -2,6 +2,7 @@
 
 use App\Contracts\IUserRepository;
 use App\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
@@ -28,9 +29,11 @@ class UserRepository
      */
     public function searchByName(string $name): IUserRepository
     {
-        $this->query = $this->getQuery()->where(
-            'name', 'LIKE', "%$name%"
-        );
+        $this->setQuery(function (Builder $query) use ($name) {
+            return $query->where(
+                'name', 'LIKE', "%$name%"
+            );
+        });
 
         return $this;
     }
@@ -41,7 +44,9 @@ class UserRepository
      */
     public function withRoles(): IUserRepository
     {
-        $this->query = $this->getQuery()->with('roles');
+        $this->setQuery(function (Builder $query) {
+            return $query->with('roles');
+        });
 
         return $this;
     }

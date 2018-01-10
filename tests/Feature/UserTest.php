@@ -1,5 +1,6 @@
 <?php namespace Tests\Feature;
 
+use App\Role;
 use App\User;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -26,10 +27,39 @@ class UserTest extends TestCase
 
         $response
             ->assertStatus(200)
-            ->assertJson([
+            ->assertExactJson([
+                'created_at' => $user->created_at . "",
                 'id' => $user->id,
+                'md5' => $user->md5,
                 'name' => $user->name,
-                'roles' => []
+                'roles' => [],
+                'updated_at' => $user->updated_at . "",
+            ]);
+    }
+
+    /**
+     * A user details request with roles in response.
+     * @return void
+     */
+    public function testCanGetAuthenticatedUserWithRoles()
+    {
+        $user = $this->createPostManager();
+        $team = $this->createTeam([$user]);
+
+        $response = $this
+            ->actingAs($user, 'api')
+            ->get('/api/users/user');
+
+        $response
+            ->assertStatus(200)
+            ->assertExactJson([
+                'created_at' => $user->created_at . "",
+                'id' => $user->id,
+                'md5' => $user->md5,
+                'name' => $user->name,
+                'roles' => [['key' => Role::MANAGE_POSTS]],
+                'team_roles' => [$team->id => [['key' => Role::MANAGE_COMPETITIONS]]],
+                'updated_at' => $user->updated_at . "",
             ]);
     }
 
