@@ -41,7 +41,7 @@ class UserController extends Controller
         $userId = $request->user()->id;
         $user = $this->users
             ->withRoles()
-            ->find($userId);
+            ->findWithTeamRoles($userId);
 
         return new JsonResponse($user);
     }

@@ -33,6 +33,7 @@ class UserTest extends TestCase
                 'md5' => $user->md5,
                 'name' => $user->name,
                 'roles' => [],
+                'team_roles' => [],
                 'updated_at' => $user->updated_at . "",
             ]);
     }

@@ -24,4 +24,11 @@ interface IUserRepository extends IPaginateRepository
      * @return IUserRepository
      */
     public function withTeams(): IUserRepository;
+
+    /**
+     * Find user and attach user team roles to data.
+     * @param $userId
+     * @return \App\User
+     */
+    public function findWithTeamRoles(int $userId);
 }

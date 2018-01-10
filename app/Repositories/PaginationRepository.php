@@ -16,6 +16,7 @@ abstract class PaginationRepository
      * @param array $filters
      * @param array $columns
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @throws \Exception
      */
     public function paginate(
         $perPage = 15, array $filters = [], array $columns = ['*']

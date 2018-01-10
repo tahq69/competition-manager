@@ -77,6 +77,12 @@ class Role extends Model
     ];
 
     /**
+     * The attributes that should be hidden for serialization.
+     * @var array
+     */
+    protected $hidden = ['pivot'];
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function users()

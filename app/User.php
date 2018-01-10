@@ -1,5 +1,6 @@
 <?php namespace App;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Passport\HasApiTokens;
@@ -78,6 +79,14 @@ class User extends Authenticatable
         return $this->belongsToMany(
             Role::class, 'role_user', 'user_id', 'role_id'
         )->withTimestamps();
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function memberships()
+    {
+        return $this->hasMany(TeamMember::class, 'user_id', 'id');
     }
 
     /**

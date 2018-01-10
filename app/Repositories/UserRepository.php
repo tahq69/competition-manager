@@ -1,9 +1,11 @@
 <?php namespace App\Repositories;
 
 use App\Contracts\IUserRepository;
+use App\TeamMember;
 use App\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class UserRepository
@@ -45,7 +47,9 @@ class UserRepository
     public function withRoles(): IUserRepository
     {
         $this->setQuery(function (Builder $query) {
-            return $query->with('roles');
+            return $query->with(['roles' => function (BelongsToMany $q) {
+                return $q->select(['key']);
+            }]);
         });
 
         return $this;
@@ -65,5 +69,31 @@ class UserRepository
             }]);
 
         return $this;
+    }
+
+    /**
+     * Find user and attach user team roles to data.
+     * @param $userId
+     * @return \App\User
+     */
+    public function findWithTeamRoles(int $userId)
+    {
+        /** @var \App\User $user */
+        $user = $this->getQuery()->with(['memberships' => function (HasMany $query) {
+            $query
+                ->with(['roles' => function (BelongsToMany $q) {
+                    $q->select('key');
+                }])->select(['id', 'user_id', 'team_id']);
+        }])->find($userId)->toArray();
+
+        $user['team_roles'] = [];
+
+        collect($user['memberships'])->each(function ($manager) use (&$user) {
+            $user['team_roles'][$manager['team_id']] = $manager['roles'];
+        });
+
+        unset($user['memberships']);
+
+        return $user;
     }
 }
