@@ -6,24 +6,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class Team
- *
  * @package App
- * @property int $id
- * @property string $name
- * @property string $short
- * @property string $logo
- * @property int $_credits
- * @property int $created_by
- * @property string $created_by_name
- * @property int|null $updated_by
- * @property string $updated_by_name
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
- * @property-read \App\User $creator
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\TeamMember[] $managers
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\TeamMember[] $members
- * @property-read \App\User|null $modifier
- * @mixin \Eloquent
  */
 class Team extends Model
 {

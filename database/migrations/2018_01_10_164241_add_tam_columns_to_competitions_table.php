@@ -14,7 +14,7 @@ class AddTamColumnsToCompetitionsTable extends Migration
     public function up()
     {
         Schema::table('competitions', function (Blueprint $table) {
-            $table->unsignedInteger('team_id')->nullable();
+            $table->unsignedInteger('team_id');
             $table->foreign('team_id')
                 ->references('id')
                 ->on('teams')

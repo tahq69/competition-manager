@@ -4,14 +4,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Role
- *
  * @package App
- * @property int $id
- * @property string $key
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\User[] $users
- * @mixin \Eloquent
  */
 class Role extends Model
 {

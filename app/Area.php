@@ -6,25 +6,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class Area
- *
  * @package App
- * @property int $id
- * @property string $title
- * @property string $type
- * @property int|null $nr
- * @property string|null $description
- * @property int $competition_id
- * @property int $created_by
- * @property string $created_by_name
- * @property int|null $updated_by
- * @property string $updated_by_name
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Category[] $categories
- * @property-read \App\Competition $competition
- * @property-read \App\User $creator
- * @property-read \App\User|null $modifier
- * @mixin \Eloquent
  */
 class Area extends Model
 {

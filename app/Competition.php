@@ -7,34 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class Competition
- *
  * @package App
- * @property int $id
- * @property string $title
- * @property string $subtitle
- * @property string $cooperation
- * @property string $invitation
- * @property string $program
- * @property string $rules
- * @property string $ambulance
- * @property string $prizes
- * @property string $equipment
- * @property string $price
- * @property string|null $organization_date
- * @property string|null $registration_till
- * @property int|null $judge_id
- * @property string $judge_name
- * @property int $created_by
- * @property string $created_by_name
- * @property int|null $updated_by
- * @property string $updated_by_name
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
- * @property-read \App\User $creator
- * @property-read \App\User|null $judge
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\User[] $managers
- * @property-read \App\User|null $modifier
- * @mixin \Eloquent
  */
 class Competition extends Model
 {

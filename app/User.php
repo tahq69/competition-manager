@@ -9,23 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 /**
  * Class User
- *
  * @package App
- * @property int $id
- * @property string $name
- * @property string $email
- * @property string $password
- * @property string|null $remember_token
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Client[] $clients
- * @property-read string $md5
- * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Post[] $posts
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Role[] $roles
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Team[] $teams
- * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Token[] $tokens
- * @mixin \Eloquent
  */
 class User extends Authenticatable
 {

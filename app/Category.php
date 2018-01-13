@@ -5,33 +5,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class Category
- *
  * @package App
- * @property int $id
- * @property string $title
- * @property string $short
- * @property int $order
- * @property int $competition_id
- * @property int|null $area_id
- * @property string $discipline_title
- * @property string $discipline_short
- * @property int $discipline_id
- * @property string $category_group_title
- * @property string $category_group_short
- * @property int $category_group_id
- * @property int $created_by
- * @property string $created_by_name
- * @property int|null $updated_by
- * @property string $updated_by_name
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
- * @property-read \App\Area|null $area
- * @property-read \App\CategoryGroup $category_group
- * @property-read \App\Competition $competition
- * @property-read \App\User $creator
- * @property-read \App\Discipline $discipline
- * @property-read \App\User|null $modifier
- * @mixin \Eloquent
  */
 class Category extends Model
 {

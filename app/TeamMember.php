@@ -6,24 +6,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * Class TeamMember
- *
  * @package App
- * @property int $id
- * @property int|null $user_id
- * @property int $team_id
- * @property string $name
- * @property string $membership_type
- * @property int $created_by
- * @property string $created_by_name
- * @property int|null $updated_by
- * @property string $updated_by_name
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
- * @property-read \App\User $creator
- * @property-read \App\User|null $modifier
- * @property-read \App\Team $team
- * @property-read \App\User|null $user
- * @mixin \Eloquent
  */
 class TeamMember extends Model
 {
