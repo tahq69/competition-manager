@@ -1,10 +1,11 @@
 <?php
 
+use App\TeamMember;
 use Faker\Generator as Faker;
 
-$factory->define(\App\TeamMember::class, function (Faker $faker) {
+$factory->define(TeamMember::class, function (Faker $faker) {
     return [
-        'membership_type' => \App\TeamMember::MEMBER,
+        'membership_type' => TeamMember::MEMBER,
         'name' => $faker->name,
     ];
 });

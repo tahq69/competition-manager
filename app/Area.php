@@ -12,6 +12,11 @@ class Area extends Model
 {
     use HasAuditTrait, HasCompetitionTrait;
 
+    const ARENA = 'ARENA';
+    const CAGE = 'CAGE';
+    const RING = 'RING';
+    const TATAMI = 'TATAMI';
+
     /**
      * The table associated with the model.
      * @var string

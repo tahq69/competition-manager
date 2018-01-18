@@ -1,5 +1,8 @@
 <?php
 
+use App\Area;
+use App\Category;
+use App\CategoryGroup;
 use App\Competition;
 use App\Discipline;
 use Illuminate\Database\Seeder;
@@ -17,9 +20,31 @@ class CompetitionsTableSeeder extends Seeder
     {
         factory(Competition::class, 10)->create()->each(function (Competition $cm) {
             $cm->disciplines()->saveMany(
-                factory(Discipline::class, 2)->create(
-                    ['competition_id' => $cm->id]
-                )
+                factory(Discipline::class, 2)->create([
+                    'competition_id' => $cm->id
+                ])->each(function (Discipline $discipline) use ($cm) {
+                    // Lets create area for each discipline
+                    $area = factory(Area::class)->create([
+                        'competition_id' => $cm->id
+                    ]);
+                    factory(CategoryGroup::class, 4)->create([
+                        'competition_id' => $cm->id,
+                        'discipline_id' => $discipline->id,
+                        'discipline_short' => $discipline->short,
+                        'discipline_title' => $discipline->title,
+                    ])->each(function (CategoryGroup $group) use ($cm, $discipline, $area) {
+                        factory(Category::class, 4)->create([
+                            'category_group_id' => $group->id,
+                            'category_group_short' => $group->short,
+                            'category_group_title' => $group->title,
+                            'competition_id' => $cm->id,
+                            'discipline_id' => $discipline->id,
+                            'discipline_short' => $discipline->short,
+                            'discipline_title' => $discipline->title,
+                            'area_id' => $area->id
+                        ]);
+                    });
+                })
             );
         });
     }
