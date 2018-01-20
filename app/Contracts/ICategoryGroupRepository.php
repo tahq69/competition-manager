@@ -4,7 +4,7 @@
  * Interface ICategoryGroupRepository
  * @package App\Contracts
  */
-interface ICategoryGroupRepository extends IPaginateRepository
+interface ICategoryGroupRepository extends IRepository
 {
     /**
      * Filter by competition.

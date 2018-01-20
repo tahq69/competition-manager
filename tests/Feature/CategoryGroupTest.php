@@ -1,8 +1,8 @@
 <?php namespace Tests\Feature;
 
 use App\CategoryGroup;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 /**
  * Class CategoryGroupTest
@@ -34,18 +34,21 @@ class CategoryGroupTest extends TestCase
                 'title' => $groups[0]->title,
                 'short' => $groups[0]->short,
                 'order' => $groups[0]->order,
+                'id' => $groups[0]->id,
             ], [
                 'competition_id' => $cmId,
                 'discipline_id' => $disciplineId,
                 'title' => $groups[1]->title,
                 'short' => $groups[1]->short,
                 'order' => $groups[1]->order,
+                'id' => $groups[1]->id,
             ], [
                 'competition_id' => $cmId,
                 'discipline_id' => $disciplineId,
                 'title' => $groups[2]->title,
                 'short' => $groups[2]->short,
                 'order' => $groups[2]->order,
+                'id' => $groups[2]->id,
             ],]);
 
         $this->assertJsonCount($response, 3);
@@ -74,6 +77,7 @@ class CategoryGroupTest extends TestCase
                 'title' => $group->title,
                 'short' => $group->short,
                 'order' => $group->order,
+                'id' => $group->id,
             ]);
     }
 

@@ -31,5 +31,6 @@ class BindingServiceProvider extends ServiceProvider
         $this->app->bind(\App\Contracts\ICompetitionRepository::class, \App\Repositories\CompetitionRepository::class);
         $this->app->bind(\App\Contracts\IDisciplineRepository::class, \App\Repositories\DisciplineRepository::class);
         $this->app->bind(\App\Contracts\ICategoryGroupRepository::class, \App\Repositories\CategoryGroupRepository::class);
+        $this->app->bind(\App\Contracts\ICategoryRepository::class, \App\Repositories\CategoryRepository::class);
     }
 }
