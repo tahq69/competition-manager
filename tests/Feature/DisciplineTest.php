@@ -20,29 +20,34 @@ class DisciplineTest extends TestCase
     public function testCanGetCompetitionDisciplineList()
     {
         $admin = $this->createSuperAdmin();
-        $competitions = factory(Competition::class, 3)->create();
-        $competitionId = $competitions[1]->id;
-        factory(Discipline::class, 3)->create(['competition_id' => $competitions[0]->id]);
-        factory(Discipline::class, 3)->create(['competition_id' => $competitions[2]->id]);
-        $disciplines = factory(Discipline::class, 2)->create(['competition_id' => $competitions[1]->id]);
+        $disciplines = $this->createDisciplines(3);
+        $cmId = $disciplines[0]->competition_id;
 
-        $response = $this->get("/api/competitions/{$competitionId}/disciplines");
+        $response = $this->get("/api/competitions/{$cmId}/disciplines");
 
         $response
             ->assertStatus(200)
             ->assertJson([[
-                'competition_id' => $disciplines[1]->competition_id,
+                'competition_id' => $cmId,
+                'title' => $disciplines[2]->title,
+                'short' => $disciplines[2]->short,
+                'type' => $disciplines[2]->type,
+                'id' => $disciplines[2]->id,
+            ], [
+                'competition_id' => $cmId,
                 'title' => $disciplines[1]->title,
                 'short' => $disciplines[1]->short,
                 'type' => $disciplines[1]->type,
                 'id' => $disciplines[1]->id,
             ], [
-                'competition_id' => $disciplines[0]->competition_id,
+                'competition_id' => $cmId,
                 'title' => $disciplines[0]->title,
                 'short' => $disciplines[0]->short,
                 'type' => $disciplines[0]->type,
                 'id' => $disciplines[0]->id,
             ]]);
+
+        $this->assertJsonCount($response, 3);
     }
 
     /**
@@ -52,20 +57,16 @@ class DisciplineTest extends TestCase
     public function testCanGetCompetitionDiscipline()
     {
         $admin = $this->createSuperAdmin();
-        $competitions = factory(Competition::class, 3)->create();
-        $competitionId = $competitions[1]->id;
-        factory(Discipline::class, 3)->create(['competition_id' => $competitions[0]->id]);
-        factory(Discipline::class, 3)->create(['competition_id' => $competitions[2]->id]);
-        $disciplines = factory(Discipline::class, 3)->create(['competition_id' => $competitions[1]->id]);
+        $disciplines = $this->createDisciplines(3);
+        $cmId = $disciplines[0]->competition_id;
         $discipline = $disciplines[1];
-        $disciplineId = $discipline->id;
 
-        $response = $this->get("/api/competitions/{$competitionId}/disciplines/{$disciplineId}");
+        $response = $this->get("/api/competitions/{$cmId}/disciplines/{$discipline->id}");
 
         $response
             ->assertStatus(200)
             ->assertJson([
-                'competition_id' => $discipline->competition_id,
+                'competition_id' => $cmId,
                 'title' => $discipline->title,
                 'short' => $discipline->short,
                 'type' => $discipline->type,
@@ -79,7 +80,8 @@ class DisciplineTest extends TestCase
      * A basic competition discipline create request.
      * @return void
      */
-    public function testCanCreateCompetitionDiscipline() {
+    public function testCanCreateCompetitionDiscipline()
+    {
         $admin = $this->createSuperAdmin();
         $competitions = factory(Competition::class, 3)->create();
         $competitionId = $competitions[1]->id;
@@ -115,7 +117,8 @@ class DisciplineTest extends TestCase
      * A basic competition discipline update request.
      * @return void
      */
-    public function testCanUpdateCompetitionDiscipline() {
+    public function testCanUpdateCompetitionDiscipline()
+    {
         $admin = $this->createSuperAdmin();
         $competitions = factory(Competition::class, 3)->create();
         $competitionId = $competitions[1]->id;
@@ -143,7 +146,7 @@ class DisciplineTest extends TestCase
             ->assertJson([
                 'id' => $discipline->id,
                 'title' => 'New Discipline Title',
-                'short' => $discipline->short. ' New',
+                'short' => $discipline->short . ' New',
                 'type' => Discipline::KICKBOXING,
                 'game_type' => $discipline->game_type . ' New',
                 'description' => $discipline->description . ' New',

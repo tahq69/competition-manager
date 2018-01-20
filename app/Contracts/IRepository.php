@@ -20,7 +20,7 @@ interface IRepository
      * Get current repository full model class name
      * @return string
      */
-    public function modelClass();
+    public function modelClass(): string;
 
     /**
      * Set repository querable ordering
@@ -83,11 +83,11 @@ interface IRepository
      * @param int $id
      * @return boolean
      */
-    public function delete($id);
+    public function delete($id): bool;
 
     /**
      * Get count of querable records
      * @return integer
      */
-    public function count();
+    public function count(): int;
 }

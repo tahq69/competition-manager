@@ -4,7 +4,9 @@ use App\CategoryGroup;
 use App\Discipline;
 use Faker\Generator as Faker;
 
-$factory->define(CategoryGroup::class, function (Faker $faker) {
+$order = 0;
+
+$factory->define(CategoryGroup::class, function (Faker $faker) use (&$order) {
     return [
         'competition_id' => function () {
             return factory(\App\Competition::class)->create()->id;
@@ -20,5 +22,6 @@ $factory->define(CategoryGroup::class, function (Faker $faker) {
         },
         'title' => $faker->company,
         'short' => $faker->companySuffix,
+        'order' => ++$order,
     ];
 });

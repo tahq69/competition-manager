@@ -29,6 +29,7 @@ class CategoryGroup extends Model
         'discipline_id',    // int(10) UNSIGNED
         'discipline_short', // varchar(255)
         'discipline_title', // varchar(255)
+        'order',            // int(10) UNSIGNED
         'short',            // varchar(15)
         'title',            // varchar(255)
         'updated_by',       // int(10) UNSIGNED

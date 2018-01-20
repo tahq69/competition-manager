@@ -1,6 +1,7 @@
 <?php namespace App\Repositories;
 
 use App\Contracts\IRepository;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -17,7 +18,7 @@ abstract class Repository implements IRepository
     protected $model;
 
     /**
-     * @var  \Illuminate\Database\Eloquent\Builder
+     * @var  Builder
      */
     protected $query;
 
@@ -33,7 +34,7 @@ abstract class Repository implements IRepository
      * Get the table associated with the repository model.
      * @return string
      */
-    public function getTable()
+    public function getTable(): string
     {
         return $this->model->getTable();
     }
@@ -42,7 +43,7 @@ abstract class Repository implements IRepository
      * Get current repository full model class name
      * @return string
      */
-    abstract function modelClass();
+    abstract function modelClass(): string;
 
     /**
      * Set repository queryable ordering
@@ -165,7 +166,7 @@ abstract class Repository implements IRepository
      * @return boolean
      * @throws \Exception
      */
-    public function delete($id)
+    public function delete($id): bool
     {
         return $this->find($id)->delete();
     }
@@ -174,7 +175,7 @@ abstract class Repository implements IRepository
      * Get count of querable records
      * @return integer
      */
-    public function count()
+    public function count(): int
     {
         return $this->getQuery()->count();
     }
@@ -205,9 +206,9 @@ abstract class Repository implements IRepository
 
     /**
      * Get actual query
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
-    protected function getQuery()
+    protected function getQuery(): Builder
     {
         if (!$this->query) {
             $this->query = $this->model->newQuery();
@@ -225,6 +226,24 @@ abstract class Repository implements IRepository
     {
         $this->query = $queryFunction($this->getQuery());
         return $this;
+    }
+
+    /**
+     * Set where statement on current query.
+     * @param  string|array|\Closure $column
+     * @param  string $operator
+     * @param  mixed $value
+     * @param  string $boolean
+     * @return $this
+     */
+    protected function setWhere($column, $operator = null, $value = null,
+                                $boolean = 'and')
+    {
+        return $this->setQuery(function (Builder $q) use (
+            $column, $operator, $value, $boolean
+        ) {
+            return $q->where($column, $operator, $value, $boolean);
+        });
     }
 
     /**

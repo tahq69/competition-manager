@@ -14,7 +14,7 @@ class DisciplineRepository extends Repository implements IDisciplineRepository
      * Get current repository full model class name
      * @return string
      */
-    function modelClass()
+    function modelClass(): string
     {
         return Discipline::class;
     }
@@ -26,10 +26,6 @@ class DisciplineRepository extends Repository implements IDisciplineRepository
      */
     public function whereCompetition(int $competitionId): IDisciplineRepository
     {
-        $this->setQuery(function (Builder $query) use ($competitionId) {
-            return $query->where('competition_id', $competitionId);
-        });
-
-        return $this;
+        return $this->setWhere('competition_id', $competitionId);
     }
 }

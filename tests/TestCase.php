@@ -1,5 +1,8 @@
 <?php namespace Tests;
 
+use App\CategoryGroup;
+use App\Competition;
+use App\Discipline;
 use App\Role;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
@@ -20,6 +23,18 @@ abstract class TestCase extends BaseTestCase
      * @var boolean
      */
     private $rolesSeeded = false;
+
+    /**
+     * @param \Illuminate\Foundation\Testing\TestResponse $response
+     * @param int $count
+     */
+    protected function assertJsonCount($response, int $count)
+    {
+        $this->assertTrue(
+            count($response->json()) == $count,
+            'Response record count is not equal to ' . $count
+        );
+    }
 
     /**
      * @return \App\User
@@ -64,6 +79,21 @@ abstract class TestCase extends BaseTestCase
         return $team;
     }
 
+    protected function createDisciplines($count = 1, $attributes = [])
+    {
+        // Create 3 competitions and get only second one.
+        $cm = $this->makeSurrounded(Competition::class);
+        // Make extra discipline for first cm.
+        factory(Discipline::class)->create(['competition_id' => $cm->id - 1]);
+        $result = factory(Discipline::class, $count)->create(
+            array_merge(['competition_id' => $cm->id], $attributes)
+        );
+        // Make extra discipline for last cm.
+        factory(Discipline::class)->create(['competition_id' => $cm->id + 1]);
+
+        return $result;
+    }
+
     private function syncRole(\App\User $user, string $role)
     {
         $user->roles()->sync([$this->findRoleId($role)]);
@@ -99,5 +129,13 @@ abstract class TestCase extends BaseTestCase
         }
 
         return 0;
+    }
+
+    private function makeSurrounded($className, $count = 1, $attributes = [])
+    {
+        $competitions = factory($className, 2 + $count)->create($attributes);
+        $records = collect($competitions)->slice(1, $count);
+        if ($count == 1) return $records->first();
+        return $records->values()->all();
     }
 }

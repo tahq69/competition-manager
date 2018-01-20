@@ -19,7 +19,7 @@ class UserRepository
      * Get current repository full model class name
      * @return string
      */
-    function modelClass()
+    function modelClass(): string
     {
         return User::class;
     }
@@ -31,13 +31,7 @@ class UserRepository
      */
     public function searchByName(string $name): IUserRepository
     {
-        $this->setQuery(function (Builder $query) use ($name) {
-            return $query->where(
-                'name', 'LIKE', "%$name%"
-            );
-        });
-
-        return $this;
+        return $this->setWhere('name', 'LIKE', "%$name%");
     }
 
     /**

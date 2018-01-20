@@ -16,7 +16,7 @@ class TeamMemberRepository
      * Get current repository full model class name
      * @return string
      */
-    function modelClass()
+    function modelClass(): string
     {
         return TeamMember::class;
     }
@@ -28,11 +28,7 @@ class TeamMemberRepository
      */
     public function filterByTeam(int $id)
     {
-        $this->setQuery(function (Builder $query) use ($id) {
-            return $query->where('team_id', $id);
-        });
-
-        return $this;
+        return $this->setWhere('team_id', $id);
     }
 
     /**
@@ -42,11 +38,7 @@ class TeamMemberRepository
      */
     public function filterByUser(int $id)
     {
-        $this->setQuery(function (Builder $query) use ($id) {
-            return $query->where('user_id', $id);
-        });
-
-        return $this;
+        return $this->setWhere('user_id', $id);
     }
 
     /**
@@ -56,11 +48,7 @@ class TeamMemberRepository
      */
     public function filterByMembership(string $type)
     {
-        $this->setQuery(function (Builder $query) use ($type) {
-            return $query->where('membership_type', $type);
-        });
-
-        return $this;
+        return $this->setWhere('membership_type', $type);
     }
 
     /**

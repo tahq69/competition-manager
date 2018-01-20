@@ -18,7 +18,7 @@ class TeamRepository extends PaginationRepository implements ITeamRepository
      * Get current repository full model class name
      * @return string
      */
-    function modelClass()
+    function modelClass(): string
     {
         return Team::class;
     }
@@ -44,6 +44,7 @@ class TeamRepository extends PaginationRepository implements ITeamRepository
      * @param  \App\User $owner
      * @return \App\Team
      * @throws Exception
+     * @throws \Throwable
      */
     function createAndAttachManager(array $input, \App\User $owner): \App\Team
     {

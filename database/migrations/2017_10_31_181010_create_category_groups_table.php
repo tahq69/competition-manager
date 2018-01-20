@@ -18,6 +18,7 @@ class CreateCategoryGroupsTable extends \App\Helpers\Migration
         Schema::create('category_groups', function (Blueprint $table) {
             $table->increments('id');
 
+            $table->unsignedInteger('order');
             $table->string('title');
             $table->string('short', 15);
 
