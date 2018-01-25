@@ -32,9 +32,12 @@ class Category extends Model
         'discipline_id',        // int(10) UNSIGNED
         'discipline_short',     // varchar(255)
         'discipline_title',     // varchar(255)
+        'max',                  // int(10) UNSIGNED
+        'min',                  // int(10) UNSIGNED
         'order',                // int(10) UNSIGNED
         'short',                // varchar(15)
         'title',                // varchar(255)
+        'type',                 // varchar(255)
         'updated_by',           // int(10) UNSIGNED
         'updated_by_name',      // varchar(255)
     ];

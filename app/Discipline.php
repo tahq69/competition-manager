@@ -13,6 +13,9 @@ class Discipline extends Model
 
     const KICKBOXING = "KICKBOXING";
 
+    const TYPE_WEIGHT = "WEIGHT";
+    const TYPE_AGE = "AGE";
+
     /**
      * The table associated with the model.
      * @var string
@@ -24,16 +27,18 @@ class Discipline extends Model
      * @var array
      */
     protected $fillable = [
-        'competition_id',  // int(10) UNSIGNED
-        'short',           // varchar(15)
-        'title',           // varchar(255)
-        'type',            // varchar(255)
-        'game_type',       // text
-        'description',     // text
-        'created_by',      // int(10) UNSIGNED
-        'created_by_name', // varchar(255)
-        'updated_by',      // int(10) UNSIGNED
-        'updated_by_name', // varchar(255)
+        'category_group_type', // varchar(255)
+        'category_type',       // varchar(255)
+        'competition_id',      // int(10) UNSIGNED
+        'created_by',          // int(10) UNSIGNED
+        'created_by_name',     // varchar(255)
+        'description',         // text
+        'game_type',           // text
+        'short',               // varchar(15)
+        'title',               // varchar(255)
+        'type',                // varchar(255)
+        'updated_by',          // int(10) UNSIGNED
+        'updated_by_name',     // varchar(255)
     ];
 
     /**
