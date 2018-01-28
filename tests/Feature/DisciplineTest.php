@@ -94,6 +94,8 @@ class DisciplineTest extends TestCase
             'type' => Discipline::KICKBOXING,
             'game_type' => 'game_type',
             'description' => 'description',
+            'category_group_type' => Discipline::TYPE_AGE,
+            'category_type' => Discipline::TYPE_WEIGHT,
         ]);
 
         $response
@@ -133,6 +135,7 @@ class DisciplineTest extends TestCase
 
         $url = "/api/competitions/{$competitionId}/disciplines/{$discipline->id}";
         $response = $this->actingAs($admin, 'api')->patchJson($url, [
+            'id' => $discipline->id,
             'competition_id' => $competitionId,
             'title' => 'New Discipline Title',
             'short' => $discipline->short . ' New',

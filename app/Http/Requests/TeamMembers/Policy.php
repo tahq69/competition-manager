@@ -1,6 +1,6 @@
 <?php namespace App\Http\Requests\TeamMembers;
 
-use App\Contracts\ITeamMemberRepository;
+use App\Contracts\ITeamMemberRepository as IMembers;
 use App\Http\Requests\UserRolesPolicy;
 use App\Role;
 use App\TeamMember;
@@ -12,26 +12,40 @@ use App\TeamMember;
 class Policy
 {
     /**
-     * @param ITeamMemberRepository $members
+     * @var IMembers
+     */
+    private $members;
+
+    /**
+     * @var UserRolesPolicy
+     */
+    private $user;
+
+    /**
+     * Policy constructor.
+     * @param IMembers $members
+     * @param UserRolesPolicy $user
+     */
+    public function __construct(IMembers $members, UserRolesPolicy $user)
+    {
+        $this->members = $members;
+        $this->user = $user;
+    }
+
+    /**
      * @param int $teamId
      * @return bool
      */
-    public static function canStore(
-        ITeamMemberRepository $members, int $teamId): bool
+    public function canStore(int $teamId): bool
     {
-        if (!\Auth::check()) {
-            return false;
-        }
-
-        $user = \Auth::user();
-        $roles = UserRolesPolicy::roles($user);
+        if (!$this->user->authorized()) return false;
 
         // Super Admin can create anything and for anyone.
-        if (UserRolesPolicy::hasRole($roles, Role::SUPER_ADMIN)) return true;
+        if ($this->user->hasRole(Role::SUPER_ADMIN)) return true;
 
-        $isManager = $members
+        $isManager = $this->members
             ->filterByTeam($teamId)
-            ->filterByUser($user->id)
+            ->filterByUser($this->user->id)
             ->filterByMembership(TeamMember::MANAGER)
             ->count();
 
@@ -42,13 +56,11 @@ class Policy
     }
 
     /**
-     * @param ITeamMemberRepository $members
      * @param int $teamId
      * @return bool
      */
-    public static function canUpdate(
-        ITeamMemberRepository $members, int $teamId): bool
+    public function canUpdate(int $teamId): bool
     {
-        return Policy::canStore($members, $teamId);
+        return $this->canStore($teamId);
     }
 }

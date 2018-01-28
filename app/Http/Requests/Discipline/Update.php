@@ -1,6 +1,5 @@
 <?php namespace App\Http\Requests\Discipline;
 
-use App\Contracts\ICompetitionRepository as ICompetitions;
 use App\Discipline;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -13,12 +12,12 @@ class Update extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     * @param ICompetitions $competitions
+     * @param  Policy $policy
      * @return bool
      */
-    public function authorize(ICompetitions $competitions)
+    public function authorize(Policy $policy)
     {
-        return Policy::canUpdate($competitions, $this->route('competition'));
+        return $policy->canUpdate($this->route('competition'));
     }
 
     /**
@@ -31,8 +30,13 @@ class Update extends FormRequest
         $disciplineId = $this->route('discipline');
 
         return [
+            'id' => [
+                'required', 'integer',
+                Rule::exists('disciplines', 'id'),
+                Rule::in($disciplineId),
+            ],
             'competition_id' => [
-                'required', 'numeric',
+                'required', 'integer',
                 // Competition id should exists in database.
                 Rule::exists('competitions', 'id'),
                 // Url competition id should be same as body identifier.

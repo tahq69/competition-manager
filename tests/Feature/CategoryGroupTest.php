@@ -1,6 +1,7 @@
 <?php namespace Tests\Feature;
 
 use App\CategoryGroup;
+use App\Discipline;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -79,6 +80,100 @@ class CategoryGroupTest extends TestCase
                 'order' => $group->order,
                 'id' => $group->id,
             ]);
+    }
+
+    /**
+     * A basic competition discipline group create request.
+     * @return void
+     */
+    public function testCanCreateGroup()
+    {
+        $admin = $this->createSuperAdmin();
+        $groups = $this->createGroups();
+        $cmId = $groups[0]->competition_id;
+        $disciplineId = $groups[0]->discipline_id;
+        $disciplineTitle = $groups[0]->discipline_title;
+
+        $url = "/api/competitions/{$cmId}/disciplines/{$disciplineId}/groups";
+        $response = $this->actingAs($admin, 'api')->postJson($url, [
+            'competition_id' => $cmId,
+            'discipline_id' => $disciplineId,
+            'title' => 'title',
+            'short' => 'short',
+            'rounds' => '1',
+            'time' => '2',
+            'min' => '3',
+            'max' => '4',
+        ]);
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'competition_id' => $cmId,
+                'discipline_id' => $disciplineId,
+                'title' => 'title',
+                'short' => 'short',
+                'rounds' => 1,
+                'time' => 2,
+                'min' => 3,
+                'max' => 4,
+                'order' => 2,
+                'discipline_title' => $disciplineTitle,
+                'type' => Discipline::TYPE_AGE,
+            ]);
+
+        $this->assertDatabaseHas('category_groups', [
+            'competition_id' => $cmId,
+            'title' => 'title',
+        ]);
+    }
+
+
+    /**
+     * A basic competition discipline group update request.
+     * @return void
+     */
+    public function testCanUpdateGroup()
+    {
+        $admin = $this->createSuperAdmin();
+        $group = $this->createGroups(3)[1];
+        $groupId = $group->id;
+        $cmId = $group->competition_id;
+        $disciplineId = $group->discipline_id;
+        $disciplineTitle = $group->discipline_title;
+
+        $url = "/api/competitions/{$cmId}/disciplines/{$disciplineId}/groups/{$groupId}";
+        $response = $this->actingAs($admin, 'api')->patchJson($url, [
+            'id' => $groupId,
+            'competition_id' => $cmId,
+            'discipline_id' => $disciplineId,
+            'title' => 'title-edited',
+            'short' => 'short-edited',
+            'rounds' => '1',
+            'time' => '2',
+            'min' => '3',
+            'max' => '4',
+        ]);
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'competition_id' => $cmId,
+                'discipline_id' => $disciplineId,
+                'title' => 'title-edited',
+                'short' => 'short-edited',
+                'rounds' => 1,
+                'time' => 2,
+                'min' => 3,
+                'max' => 4,
+                'discipline_title' => $disciplineTitle,
+                'type' => Discipline::TYPE_AGE,
+            ]);
+
+        $this->assertDatabaseHas('category_groups', [
+            'competition_id' => $cmId,
+            'title' => 'title-edited',
+        ]);
     }
 
     private function createGroups($count = 1)

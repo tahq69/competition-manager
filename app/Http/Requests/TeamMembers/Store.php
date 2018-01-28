@@ -1,6 +1,5 @@
 <?php namespace App\Http\Requests\TeamMembers;
 
-use App\Contracts\ITeamMemberRepository;
 use App\TeamMember;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -13,12 +12,12 @@ class Store extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     * @param ITeamMemberRepository $members
+     * @param  Policy $policy
      * @return bool
      */
-    public function authorize(ITeamMemberRepository $members)
+    public function authorize(Policy $policy)
     {
-        return Policy::canStore($members, $this->route('team'));
+        return $policy->canStore($this->route('team'));
     }
 
     /**
@@ -28,8 +27,8 @@ class Store extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|min:3|max:255',
-            'user_id' => 'required|numeric',
+            'name' => ['required', 'min:3', 'max:255'],
+            'user_id' => ['required', 'integer',],
         ];
     }
 

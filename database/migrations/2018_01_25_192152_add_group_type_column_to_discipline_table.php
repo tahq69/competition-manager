@@ -14,8 +14,8 @@ class AddGroupTypeColumnToDisciplineTable extends Migration
     public function up()
     {
         Schema::table('disciplines', function (Blueprint $table) {
-            $table->string('category_group_type');
-            $table->string('category_type');
+            $table->string('category_group_type')->default('');
+            $table->string('category_type')->default('');
         });
     }
 

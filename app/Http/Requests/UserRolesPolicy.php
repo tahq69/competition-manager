@@ -2,6 +2,7 @@
 
 use App\Role;
 use App\User;
+use Auth;
 
 /**
  * Class UserRolesValidationRequest
@@ -10,26 +11,68 @@ use App\User;
 class UserRolesPolicy
 {
     /**
-     * Get user roles key array.
-     * @param User $user
-     * @return array
+     * @var int
      */
-    public static function roles(User $user)
-    {
-        $roles = $user->roles->map(function ($role) {
-            return $role->key;
-        })->toArray();
+    public $id;
 
-        return $roles;
+    /**
+     * @var User|null
+     */
+    private $user;
+
+    /**
+     * @var array|null
+     */
+    private $roles = null;
+
+    /**
+     * UserRolesPolicy constructor.
+     * @param  User|null $user
+     */
+    public function __construct(User $user = null)
+    {
+        // Laravel injects $user property as new user. In this case we should
+        // treat it as not configured value.
+        if ($user == null || !$user->exists) {
+            $this->user = Auth::user();
+            $this->id = Auth::id();
+        } else {
+            $this->user = $user;
+            $this->id = $user->id;
+        }
     }
 
     /**
-     * @param array $roles
+     * @return bool
+     */
+    public function authorized(): bool
+    {
+        return Auth::check();
+    }
+
+    /**
+     * Get user roles key array.
+     * @return array
+     */
+    public function roles()
+    {
+        if ($this->roles == null) {
+            $this->roles = $this->user->roles->map(function ($role) {
+                return $role->key;
+            })->toArray();
+        }
+
+        return $this->roles;
+    }
+
+    /**
      * @param $role
      * @return bool
      */
-    public static function hasRole($roles = [], $role)
+    public function hasRole($role)
     {
+        $roles = $this->roles();
+
         // Allow super admin do anything
         if (in_array(Role::SUPER_ADMIN, $roles)) return true;
 
@@ -39,15 +82,13 @@ class UserRolesPolicy
     }
 
     /**
-     * @param array $current
      * @param array $searchFor
      * @return bool
      */
-    public static function hasAnyRole($current = [], $searchFor = [])
+    public function hasAnyRole($searchFor = [])
     {
         foreach ($searchFor as $role)
-            if (UserRolesPolicy::hasRole($current, $role))
-                return true;
+            if ($this->hasRole($role)) return true;
 
         return false;
     }

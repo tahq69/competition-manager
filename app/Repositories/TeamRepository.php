@@ -59,6 +59,8 @@ class TeamRepository extends PaginationRepository implements ITeamRepository
                 'name' => $owner->name,
                 'team_id' => $team->id,
             ]);
+
+            DB::commit();
         } catch (Exception $exception) {
             DB::rollBack();
             Log::critical(
@@ -69,8 +71,6 @@ class TeamRepository extends PaginationRepository implements ITeamRepository
                 'Internal database transaction error occurred.', 507, $exception
             );
         }
-
-        DB::commit();
 
         return $team;
     }

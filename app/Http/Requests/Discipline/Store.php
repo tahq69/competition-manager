@@ -1,6 +1,5 @@
 <?php namespace App\Http\Requests\Discipline;
 
-use App\Contracts\ICompetitionRepository as ICompetitions;
 use App\Discipline;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -13,12 +12,12 @@ class Store extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     * @param ICompetitions $competitions
+     * @param  Policy $policy
      * @return bool
      */
-    public function authorize(ICompetitions $competitions)
+    public function authorize(Policy $policy)
     {
-        return Policy::canStore($competitions, $this->route('competition'));
+        return $policy->canStore($this->route('competition'));
     }
 
     /**
@@ -52,6 +51,14 @@ class Store extends FormRequest
             'type' => [
                 'required', 'min:3', 'max:255',
                 Rule::in([Discipline::KICKBOXING]),
+            ],
+            'category_group_type' => [
+                'required', 'min:3', 'max:255',
+                Rule::in([Discipline::TYPE_AGE, Discipline::TYPE_WEIGHT]),
+            ],
+            'category_type' => [
+                'required', 'min:3', 'max:255', 'different:category_group_type',
+                Rule::in([Discipline::TYPE_AGE, Discipline::TYPE_WEIGHT]),
             ],
             'game_type' => ['required', 'min:3',],
             'description' => ['required', 'min:3',],

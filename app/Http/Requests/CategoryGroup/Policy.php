@@ -1,10 +1,10 @@
-<?php namespace App\Http\Requests\Discipline;
+<?php namespace App\Http\Requests\CategoryGroup;
 
 use App\Http\Requests\CompetitionManagePolicy;
 
 /**
  * Class Policy
- * @package App\Http\Requests\Discipline
+ * @package App\Http\Requests\CategoryGroup
  */
 class Policy
 {
@@ -32,7 +32,7 @@ class Policy
     }
 
     /**
-     * @param int $competitionId
+     * @param  int $competitionId
      * @return bool
      */
     public function canUpdate(int $competitionId): bool

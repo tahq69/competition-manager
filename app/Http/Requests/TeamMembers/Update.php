@@ -13,12 +13,12 @@ class Update extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     * @param ITeamMemberRepository $members
+     * @param  Policy $policy
      * @return bool
      */
-    public function authorize(ITeamMemberRepository $members)
+    public function authorize(Policy $policy)
     {
-        return Policy::canUpdate($members, $this->route('team'));
+        return $policy->canUpdate($this->route('team'));
     }
 
     /**
@@ -29,7 +29,7 @@ class Update extends FormRequest
     {
         return [
             'name' => 'required|min:3|max:255',
-            'user_id' => 'required|numeric',
+            'user_id' => 'required|integer',
         ];
     }
 
