@@ -39,4 +39,13 @@ class Policy
     {
         return $this->policy->isManager($competitionId);
     }
+
+    /**
+     * @param  int $competitionId
+     * @return bool
+     */
+    public function canDelete(int $competitionId): bool
+    {
+        return $this->policy->isManager($competitionId);
+    }
 }

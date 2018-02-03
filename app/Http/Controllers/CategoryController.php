@@ -33,8 +33,10 @@ class CategoryController extends Controller
      * @param  int $groupId
      * @return JsonResponse
      */
-    public function index(int $competitionId, int $disciplineId, int $groupId):
-    JsonResponse
+    public function index(
+        int $competitionId,
+        int $disciplineId,
+        int $groupId): JsonResponse
     {
         $categories = $this->categories
             ->whereCompetition($competitionId)
@@ -57,8 +59,11 @@ class CategoryController extends Controller
      * @param  int $id
      * @return JsonResponse
      */
-    public function show(int $competitionId, int $disciplineId, int $groupId,
-                         int $id): JsonResponse
+    public function show(
+        int $competitionId,
+        int $disciplineId,
+        int $groupId,
+        int $id): JsonResponse
     {
         $category = $this->categories
             ->whereCompetition($competitionId)

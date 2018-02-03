@@ -3,6 +3,7 @@
 use App\Contracts\ICategoryGroupRepository as IGroups;
 use App\Contracts\IDisciplineRepository as IDisciplines;
 use App\Discipline;
+use App\Http\Requests\CategoryGroup\Destroy as DestroyGroupRequest;
 use App\Http\Requests\CategoryGroup\Store as StoreGroupRequest;
 use App\Http\Requests\CategoryGroup\Update as UpdateGroupRequest;
 use Illuminate\Http\JsonResponse;
@@ -52,8 +53,8 @@ class CategoryGroupController extends Controller
             ->whereDiscipline($disciplineId)
             ->sortByOrder()
             ->get([], [
-                'competition_id', 'discipline_id', 'order', 'short', 'title',
-                'id',
+                'competition_id', 'discipline_id', 'id', 'max', 'min', 'order',
+                'rounds', 'short', 'time', 'title', 'type',
             ]);
 
         return new JsonResponse($groups->toArray());
@@ -137,5 +138,28 @@ class CategoryGroupController extends Controller
         $this->groups->update($details, $id, $group);
 
         return new JsonResponse($group);
+    }
+
+    /**
+     * @param  int $competitionId
+     * @param  int $disciplineId
+     * @param  int $id
+     * @param  DestroyGroupRequest $request
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function destroy(
+        int $competitionId,
+        int $disciplineId,
+        int $id,
+        DestroyGroupRequest $request): JsonResponse
+    {
+        $this->groups
+            ->whereCompetition($competitionId)
+            ->whereDiscipline($disciplineId)
+            ->find($id)
+            ->delete();
+
+        return new JsonResponse(true);
     }
 }
