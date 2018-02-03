@@ -14,6 +14,7 @@ class AddTypeDimensionsColumnsToCategoriesTable extends Migration
     public function up()
     {
         Schema::table('categories', function (Blueprint $table) {
+            $table->string('display_type')->default('');
             $table->string('type')->default('');
             $table->integer('min')->unsigned()->default(0);
             $table->integer('max')->unsigned()->default(0);

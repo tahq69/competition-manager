@@ -11,6 +11,10 @@ class Category extends Model
 {
     use HasAuditTrait, HasCompetitionTrait;
 
+    const DISPLAY_MIN = 'MIN';
+    const DISPLAY_MAX = 'MAX';
+    const DISPLAY_BOTH = 'BOTH';
+
     /**
      * The table associated with the model.
      * @var string
@@ -32,6 +36,7 @@ class Category extends Model
         'discipline_id',        // int(10) UNSIGNED
         'discipline_short',     // varchar(255)
         'discipline_title',     // varchar(255)
+        'display_type',         // varchar(255)
         'max',                  // int(10) UNSIGNED
         'min',                  // int(10) UNSIGNED
         'order',                // int(10) UNSIGNED

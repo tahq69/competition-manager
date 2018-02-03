@@ -7,9 +7,7 @@ use App\Competition;
 use App\Discipline;
 use Faker\Generator as Faker;
 
-$order = 1;
-
-$factory->define(Category::class, function (Faker $faker) use (&$order) {
+$factory->define(Category::class, function (Faker $faker) {
     return [
         'area_id' => function () {
             return factory(Area::class)->create()->id;
@@ -35,8 +33,15 @@ $factory->define(Category::class, function (Faker $faker) use (&$order) {
         'discipline_title' => function ($category) {
             return Discipline::find($category['discipline_id'])->title;
         },
-        'order' => $order++,
+        'order' => function ($category) {
+            return Category::where('category_group_id', $category['category_group_id'])->count() + 1;
+        },
         'short' => $faker->companySuffix,
         'title' => $faker->company,
+        'min' => $faker->numberBetween(10, 40),
+        'max' => function ($group) {
+            return $group['min'] + 2;
+        },
+        'display_type' => Category::DISPLAY_MAX,
     ];
 });
