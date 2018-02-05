@@ -32,5 +32,5 @@ $this->resource('competitions.disciplines.groups', 'CategoryGroupController', [
 ]);
 
 $this->resource('competitions.disciplines.groups.categories', 'CategoryController', [
-    'only' => ['index', 'show'],
+    'only' => ['index', 'show', 'store', 'update', 'destroy'],
 ]);

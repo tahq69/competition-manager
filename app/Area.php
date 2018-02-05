@@ -17,6 +17,10 @@ class Area extends Model
     const RING = 'RING';
     const TATAMI = 'TATAMI';
 
+    const TYPES = [
+        self::ARENA, self::CAGE, self::RING, self::TATAMI
+    ];
+
     /**
      * The table associated with the model.
      * @var string

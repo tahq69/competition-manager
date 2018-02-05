@@ -21,7 +21,7 @@ $factory->define(CategoryGroup::class, function (Faker $faker) {
         'order' => function ($group) {
             return CategoryGroup::where('discipline_id', $group['discipline_id'])->count() + 1;
         },
-        'type' => Discipline::TYPE_AGE,
+        'type' => Discipline::CAT_TYPE_AGE,
         'title' => $faker->company,
         'short' => $faker->companySuffix,
         'rounds' => $faker->numberBetween(1, 5),

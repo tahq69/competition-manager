@@ -43,5 +43,6 @@ $factory->define(Category::class, function (Faker $faker) {
             return $group['min'] + 2;
         },
         'display_type' => Category::DISPLAY_MAX,
+        'type' => Discipline::CAT_TYPE_WEIGHT,
     ];
 });

@@ -14,11 +14,6 @@ $factory->define(Area::class, function (Faker $faker) use (&$nr) {
         'description' => join('<br><br>', $faker->paragraphs(3)),
         'nr' => $nr++,
         'title' => $faker->company,
-        'type' => $faker->randomElement([
-            Area::ARENA,
-            Area::CAGE,
-            Area::RING,
-            Area::TATAMI,
-        ]),
+        'type' => $faker->randomElement(Area::TYPES),
     ];
 });

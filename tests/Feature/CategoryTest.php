@@ -1,7 +1,9 @@
 <?php namespace Tests\Feature;
 
+use App\Area;
 use App\Category;
 use App\CategoryGroup;
+use App\Discipline;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -91,7 +93,116 @@ class CategoryTest extends TestCase
             ]);
     }
 
-    private function createCategories($count)
+    /**
+     * A basic competition discipline group category create request.
+     * @return void
+     */
+    public function testCanCreateCategory()
+    {
+        $admin = $this->createSuperAdmin();
+        $categories = $this->createCategories();
+        /** @var Category $category */
+        $category = $categories[0];
+
+        $cmId = $category->competition_id;
+        $disciplineId = $category->discipline_id;
+        $groupId = $category->category_group_id;
+
+        $area = factory(Area::class)->create(['competition_id' => $cmId]);
+        $areaId = $area->id;
+
+        $disciplineTitle = $category->discipline_title;
+        $groupTitle = $category->category_group_title;
+
+        $url = "/api/competitions/{$cmId}/disciplines/{$disciplineId}/groups/{$groupId}/categories";
+        $response = $this->actingAs($admin, 'api')->postJson($url, [
+            'competition_id' => $cmId,
+            'discipline_id' => $disciplineId,
+            'category_group_id' => $groupId,
+            'area_id' => $areaId,
+            'title' => 'title',
+            'short' => 'short',
+            'display_type' => Category::DISPLAY_MAX,
+            'min' => '3',
+            'max' => '4',
+        ]);
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'competition_id' => $cmId,
+                'discipline_id' => $disciplineId,
+                'category_group_id' => $groupId,
+                'area_id' => $areaId,
+                'title' => 'title',
+                'short' => 'short',
+                'min' => 3,
+                'max' => 4,
+                'display_type' => Category::DISPLAY_MAX,
+                'type' => Discipline::CAT_TYPE_WEIGHT,
+                'order' => 2,
+                'discipline_title' => $disciplineTitle,
+                'category_group_title' => $groupTitle,
+            ]);
+
+        $this->assertDatabaseHas('categories', [
+            'competition_id' => $cmId,
+            'title' => 'title',
+        ]);
+    }
+
+    /**
+     * A basic competition discipline group category update request.
+     * @return void
+     */
+    public function testCanUpdateGroup()
+    {
+        $admin = $this->createSuperAdmin();
+        /** @var Category $category */
+        $category = $this->createCategories(3)[1];
+
+        $cmId = $category->competition_id;
+        $disciplineId = $category->discipline_id;
+        $groupId = $category->category_group_id;
+        $catId = $category->id;
+
+        $area = factory(Area::class)->create(['competition_id' => $cmId]);
+        $areaId = $area->id;
+
+        $url = "/api/competitions/{$cmId}/disciplines/{$disciplineId}/groups/{$groupId}/categories/{$catId}";
+        $response = $this->actingAs($admin, 'api')->patchJson($url, [
+            'competition_id' => $cmId,
+            'discipline_id' => $disciplineId,
+            'category_group_id' => $groupId,
+            'area_id' => $areaId,
+            'title' => 'title-edited',
+            'short' => 'short-edited',
+            'display_type' => Category::DISPLAY_MIN,
+            'min' => '5',
+            'max' => '6',
+        ]);
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'competition_id' => $cmId,
+                'discipline_id' => $disciplineId,
+                'category_group_id' => $groupId,
+                'area_id' => $areaId,
+                'title' => 'title-edited',
+                'short' => 'short-edited',
+                'display_type' => Category::DISPLAY_MIN,
+                'min' => 5,
+                'max' => 6,
+            ]);
+
+        $this->assertDatabaseHas('categories', [
+            'competition_id' => $cmId,
+            'title' => 'title-edited',
+        ]);
+    }
+
+    private function createCategories($count = 1)
     {
         $discipline = $this->createDisciplines()[0];
         $groups = factory(CategoryGroup::class, 3)->create([

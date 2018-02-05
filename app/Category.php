@@ -15,6 +15,10 @@ class Category extends Model
     const DISPLAY_MAX = 'MAX';
     const DISPLAY_BOTH = 'BOTH';
 
+    const DISPLAY_TYPES = [
+        self::DISPLAY_MIN, self::DISPLAY_MAX, self::DISPLAY_BOTH
+    ];
+
     /**
      * The table associated with the model.
      * @var string

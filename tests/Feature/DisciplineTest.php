@@ -91,11 +91,11 @@ class DisciplineTest extends TestCase
             'competition_id' => $competitionId,
             'title' => 'title',
             'short' => 'short',
-            'type' => Discipline::KICKBOXING,
+            'type' => Discipline::TYPE_KICKBOXING,
             'game_type' => 'game_type',
             'description' => 'description',
-            'category_group_type' => Discipline::TYPE_AGE,
-            'category_type' => Discipline::TYPE_WEIGHT,
+            'category_group_type' => Discipline::CAT_TYPE_AGE,
+            'category_type' => Discipline::CAT_TYPE_WEIGHT,
         ]);
 
         $response
@@ -104,7 +104,7 @@ class DisciplineTest extends TestCase
                 'competition_id' => $competitionId,
                 'title' => 'title',
                 'short' => 'short',
-                'type' => Discipline::KICKBOXING,
+                'type' => Discipline::TYPE_KICKBOXING,
                 'game_type' => 'game_type',
                 'description' => 'description',
             ]);
@@ -139,7 +139,7 @@ class DisciplineTest extends TestCase
             'competition_id' => $competitionId,
             'title' => 'New Discipline Title',
             'short' => $discipline->short . ' New',
-            'type' => Discipline::KICKBOXING,
+            'type' => Discipline::TYPE_KICKBOXING,
             'game_type' => $discipline->game_type . ' New',
             'description' => $discipline->description . ' New',
         ]);
@@ -150,7 +150,7 @@ class DisciplineTest extends TestCase
                 'id' => $discipline->id,
                 'title' => 'New Discipline Title',
                 'short' => $discipline->short . ' New',
-                'type' => Discipline::KICKBOXING,
+                'type' => Discipline::TYPE_KICKBOXING,
                 'game_type' => $discipline->game_type . ' New',
                 'description' => $discipline->description . ' New',
             ]);

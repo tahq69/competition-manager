@@ -113,7 +113,7 @@ class CategoryGroupController extends Controller
     }
 
     /**
-     * Update existing resource instance instance.
+     * Update existing resource instance.
      * @param  int $competitionId
      * @param  int $disciplineId
      * @param  int $id

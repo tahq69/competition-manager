@@ -58,7 +58,7 @@ class Update extends FormRequest
             ],
             'type' => [
                 'required', 'min:3', 'max:255',
-                Rule::in([Discipline::KICKBOXING]),
+                Rule::in([Discipline::TYPE_KICKBOXING]),
             ],
             'game_type' => ['required', 'min:3',],
             'description' => ['required', 'min:3',],

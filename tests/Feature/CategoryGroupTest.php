@@ -119,7 +119,7 @@ class CategoryGroupTest extends TestCase
                 'max' => 4,
                 'order' => 2,
                 'discipline_title' => $disciplineTitle,
-                'type' => Discipline::TYPE_AGE,
+                'type' => Discipline::CAT_TYPE_AGE,
             ]);
 
         $this->assertDatabaseHas('category_groups', [
@@ -167,7 +167,7 @@ class CategoryGroupTest extends TestCase
                 'min' => 3,
                 'max' => 4,
                 'discipline_title' => $disciplineTitle,
-                'type' => Discipline::TYPE_AGE,
+                'type' => Discipline::CAT_TYPE_AGE,
             ]);
 
         $this->assertDatabaseHas('category_groups', [

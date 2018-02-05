@@ -11,10 +11,10 @@ class Discipline extends Model
 {
     use HasCompetitionTrait, HasAuditTrait;
 
-    const KICKBOXING = "KICKBOXING";
+    const TYPE_KICKBOXING = "KICKBOXING";
 
-    const TYPE_WEIGHT = "WEIGHT";
-    const TYPE_AGE = "AGE";
+    const CAT_TYPE_WEIGHT = "WEIGHT";
+    const CAT_TYPE_AGE = "AGE";
 
     /**
      * The table associated with the model.

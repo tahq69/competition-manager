@@ -50,15 +50,15 @@ class Store extends FormRequest
             ],
             'type' => [
                 'required', 'min:3', 'max:255',
-                Rule::in([Discipline::KICKBOXING]),
+                Rule::in([Discipline::TYPE_KICKBOXING]),
             ],
             'category_group_type' => [
                 'required', 'min:3', 'max:255',
-                Rule::in([Discipline::TYPE_AGE, Discipline::TYPE_WEIGHT]),
+                Rule::in([Discipline::CAT_TYPE_AGE, Discipline::CAT_TYPE_WEIGHT]),
             ],
             'category_type' => [
                 'required', 'min:3', 'max:255', 'different:category_group_type',
-                Rule::in([Discipline::TYPE_AGE, Discipline::TYPE_WEIGHT]),
+                Rule::in([Discipline::CAT_TYPE_AGE, Discipline::CAT_TYPE_WEIGHT]),
             ],
             'game_type' => ['required', 'min:3',],
             'description' => ['required', 'min:3',],
