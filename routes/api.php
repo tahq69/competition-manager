@@ -23,6 +23,10 @@ $this->resource('competitions', 'CompetitionController', [
     'only' => ['index', 'show'],
 ]);
 
+$this->resource('competitions.areas', 'AreaController', [
+    'only' => ['index', 'show'],
+]);
+
 $this->resource('competitions.disciplines', 'DisciplineController', [
     'only' => ['index', 'show', 'update', 'store'],
 ]);
