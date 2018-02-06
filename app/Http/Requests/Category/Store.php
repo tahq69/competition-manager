@@ -28,6 +28,7 @@ class Store extends FormRequest
     {
         $cmId = $this->route('competition');
         $disciplineId = $this->route('discipline');
+        $groupId = $this->route('group');
 
         return [
             'competition_id' => [
@@ -49,7 +50,7 @@ class Store extends FormRequest
                 // Group id should exists in database.
                 Rule::exists('category_groups', 'id'),
                 // Url group id should be same as body identifier.
-                Rule::in($disciplineId),
+                Rule::in($groupId),
             ],
             'area_id' => [
                 'required', 'numeric',
