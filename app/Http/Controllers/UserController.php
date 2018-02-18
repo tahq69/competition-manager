@@ -92,7 +92,9 @@ class UserController extends Controller
      */
     public function show($id): JsonResponse
     {
-        //
+        $user = $this->users->withTeams()->find($id);
+
+        return new JsonResponse($user);
     }
 
     /**
