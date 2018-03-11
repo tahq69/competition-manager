@@ -1,10 +1,12 @@
-<?php
-
-namespace App\Http\Requests\Team;
+<?php namespace App\Http\Requests\Team;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ViewList extends FormRequest
+/**
+ * Class ViewList
+ * @package App\Http\Requests\Team
+ */
+class Index extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,6 +29,7 @@ class ViewList extends FormRequest
             'page' => 'integer',
             'sort_by' => 'alpha_dash',
             'sort_direction' => 'alpha_dash',
+            'managed' => 'boolean',
         ];
     }
 }

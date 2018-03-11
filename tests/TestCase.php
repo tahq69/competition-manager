@@ -59,6 +59,31 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
+     * @return \App\User
+     */
+    protected function createTeamOwner()
+    {
+        $user = factory(\App\User::class)->states('team_owner')->create();
+        $this->syncRole($user, \App\Role::MANAGE_TEAMS);
+
+        return $user;
+    }
+
+    /**
+     * @return \App\User
+     */
+    protected function createTeamManager()
+    {
+        $user = factory(\App\User::class)->states('team_owner')->create();
+        $this->syncRoles($user, [
+            \App\Role::MANAGE_TEAMS,
+            \App\Role::CREATE_TEAMS
+        ]);
+
+        return $user;
+    }
+
+    /**
      * @param array $users
      * @return \App\Team
      */
@@ -97,6 +122,15 @@ abstract class TestCase extends BaseTestCase
     private function syncRole(\App\User $user, string $role)
     {
         $user->roles()->sync([$this->findRoleId($role)]);
+    }
+
+    private function syncRoles(\App\User $user, array $roles)
+    {
+        $dbRoles = collect($roles)->map(function ($role) {
+            return $this->findRoleId($role);
+        })->toArray();
+
+        $user->roles()->sync($dbRoles);
     }
 
     private function syncManagerRole(\App\TeamMember $manager, string $role)

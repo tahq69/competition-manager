@@ -1,7 +1,8 @@
 <?php namespace App\Http\Controllers;
 
 use App\Contracts\ITeamRepository;
-use App\Http\Requests;
+use App\Http\Requests\Team\Index as IndexRequest;
+use App\Http\Requests\Team\Store as StoreRequest;
 use App\Role;
 use Illuminate\Http\JsonResponse;
 
@@ -28,27 +29,29 @@ class TeamController extends Controller
 
     /**
      * Get list of teams.
-     * @param  \App\Http\Requests\Team\ViewList $request
+     * @param  IndexRequest $request
      * @return JsonResponse
      */
-    public function index(Requests\Team\ViewList $request): JsonResponse
+    public function index(IndexRequest $request): JsonResponse
     {
-        // If user is not a super admin, allow see only managed teams
-        if (!$request->user()->hasRole(Role::SUPER_ADMIN)) {
+        // If user is not a super admin, allow see only managed teams when
+        // request flag is presented.
+        $isSuperAdmin = $request->user()->hasRole(Role::SUPER_ADMIN);
+        if ($request->managed && !$isSuperAdmin) {
             $this->teams->filterByManager($request->user()->id);
         }
 
         $orderingMapping = [
             'id' => 'teams.id',
-            'name' => 'name',
-            'short' => 'short',
+            'name' => 'teams.name',
+            'short' => 'teams.short',
             'created_at' => 'teams.created_at',
         ];
 
         $teams = $this->teams
-            ->setupOrdering($request, $orderingMapping)
+            ->setupOrdering($request, $orderingMapping, 'teams.id')
             ->paginate($request->per_page ?: 15, [], [
-                'teams.id', 'name', 'short', 'teams.created_at',
+                'teams.id', 'teams.name', 'teams.short', 'teams.created_at',
             ]);
 
         return new JsonResponse($teams);
@@ -56,24 +59,22 @@ class TeamController extends Controller
 
     /**
      * Save new team to database and attach creator as owner of the team.
-     * POST    /api/admin/teams
-     * @param  AdminStoreTeam $request
+     * @param  StoreRequest $request
      * @return JsonResponse
+     */
+    public function store(StoreRequest $request): JsonResponse
+    {
+        $user = $request->user();
+        $details = $request->only(['name', 'short', 'logo',]);
 
-    public function store(AdminStoreTeam $request)
-     * {
-     * $this->authorize('create', Team::class);
-     * $authUserId = $request->user()->id;
-     * $details = $request->only(['name', 'short', 'logo']);
-     *
-     * try {
-     * $team = $this->teams->createAndAttachOwner($details, $authUserId);
-     * } catch (Exception $exception) {
-     * return new JsonResponse($exception->getMessage(), 507);
-     * }
-     *
-     * return new JsonResponse($team);
-     * }*/
+        try {
+            $team = $this->teams->createAndAttachManager($details, $user);
+        } catch (\Exception $exception) {
+            return new JsonResponse($exception->getMessage(), 507);
+        }
+
+        return new JsonResponse($team);
+    }
 
     /**
      * Get single team instance.

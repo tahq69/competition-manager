@@ -1,5 +1,6 @@
 <?php namespace Tests\Feature;
 
+use App\TeamMember;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -75,6 +76,32 @@ class TeamTest extends TestCase
     }
 
     /**
+     * Pagination result of team list request with filtered only managed teams.
+     * @return void
+     */
+    public function testCantGetNonManagedTeamsWhenFiltering()
+    {
+        $owner = $this->createTeamOwner();
+        $admin = $this->createSuperAdmin();
+
+        $team = $this->createTeam([$owner]);
+        $this->createTeam([$admin]);
+
+        $response = $this->actingAs($owner, 'api')->get('/api/teams?managed=1');
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'total' => 1,
+                'data' => [[
+                    'name' => $team->name,
+                    'short' => $team->short,
+                    'id' => $team->id,
+                ],],
+            ]);
+    }
+
+    /**
      * A basic team request test.
      * @return void
      */
@@ -92,6 +119,60 @@ class TeamTest extends TestCase
                 'id' => $team->id,
                 'name' => $team->name,
                 'short' => $team->short,
+            ]);
+    }
+
+    /**
+     * A basic team create request test.
+     * @return void
+     */
+    function testCanCreateNewTeam()
+    {
+        $owner = $this->createTeamManager();
+
+        $response = $this
+            ->actingAs($owner, 'api')
+            ->postJson('/api/teams', [
+                'name' => 'New team',
+                'short' => 'ntm',
+            ]);
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'name' => 'New team',
+                'short' => 'ntm',
+            ]);
+
+        $this->assertDatabaseHas('team_members', [
+            'user_id' => $owner->id,
+            'team_id' => $response->json()['id'],
+            'membership_type' => TeamMember::MANAGER,
+        ]);
+    }
+
+    function testCantCreateNewTeamWithExistingName()
+    {
+        $manager = $this->createTeamManager();
+        factory(\App\Team::class)->create([
+            'name' => 'existing name',
+            'short' => 'en',
+        ]);
+
+        $response = $this
+            ->actingAs($manager, 'api')
+            ->postJson('/api/teams', [
+                'name' => 'existing name',
+                'short' => 'en',
+            ]);
+
+        $response
+            ->assertStatus(422)
+            ->assertJson([
+                'errors' => [
+                    'name' => [],
+                    'short' => [],
+                ]
             ]);
     }
 }
