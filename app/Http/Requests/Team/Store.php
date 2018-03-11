@@ -36,7 +36,7 @@ class Store extends FormRequest
                 // Short title should be unique in a system.
                 Rule::unique('teams', 'short'),
             ],
-            'logo' => ['max:1000', 'url'],
+            'logo' => ['nullable', 'url', 'max:1000'],
         ];
     }
 }

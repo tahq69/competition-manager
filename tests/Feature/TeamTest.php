@@ -135,6 +135,7 @@ class TeamTest extends TestCase
             ->postJson('/api/teams', [
                 'name' => 'New team',
                 'short' => 'ntm',
+                'logo' => '',
             ]);
 
         $response

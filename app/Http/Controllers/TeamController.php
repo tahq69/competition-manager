@@ -67,6 +67,9 @@ class TeamController extends Controller
         $user = $request->user();
         $details = $request->only(['name', 'short', 'logo',]);
 
+        // Logo is nullable field, but db should contain an empty value.
+        if (!$details['logo']) $details['logo'] = '';
+
         try {
             $team = $this->teams->createAndAttachManager($details, $user);
         } catch (\Exception $exception) {
