@@ -29,4 +29,12 @@ interface ITeamRepository extends IPaginateRepository
      * @return \App\TeamMember Member model
      */
     public function createMember(\App\Team $team, array $memberDetails): \App\TeamMember;
+
+    /**
+     * Determine is the provided user manager of the team.
+     * @param  \App\User $user User instance to validate.
+     * @param  int $teamId Validate against this team identifier.
+     * @return bool Is the presented user manager of the team.
+     */
+    public function isManagerOfTeam(\App\User $user, int $teamId): bool;
 }

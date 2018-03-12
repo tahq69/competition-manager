@@ -176,4 +176,36 @@ class TeamTest extends TestCase
                 ]
             ]);
     }
+
+    /**
+     * A basic team update request test.
+     * @return void
+     */
+    function testCanUpdateTeam()
+    {
+        $admin = $this->createSuperAdmin();
+        $team = factory(\App\Team::class)->create();
+
+        $url = "/api/teams/{$team->id}";
+        $response = $this->actingAs($admin, 'api')->putJson($url, [
+            'id' => $team->id,
+            'name' => 'updated name',
+            'short' => 'updated short',
+            'logo' => null,
+        ]);
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'id' => $team->id,
+                'name' => 'updated name',
+                'short' => 'updated short',
+            ]);
+
+        $this->assertDatabaseHas('teams', [
+            'name' => 'updated name',
+            'short' => 'updated short',
+            'id' => $team->id,
+        ]);
+    }
 }

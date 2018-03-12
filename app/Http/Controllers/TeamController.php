@@ -3,6 +3,7 @@
 use App\Contracts\ITeamRepository;
 use App\Http\Requests\Team\Index as IndexRequest;
 use App\Http\Requests\Team\Store as StoreRequest;
+use App\Http\Requests\Team\Update as UpdateRequest;
 use App\Role;
 use Illuminate\Http\JsonResponse;
 
@@ -93,21 +94,21 @@ class TeamController extends Controller
 
     /**
      * Update existing team details.
-     * PUT/PATCH /api/admin/teams/{team}
-     * @param    AdminUpdateTeam $request
-     * @param    int $teamId
-     * @return   JsonResponse
+     * @param  UpdateRequest $request
+     * @param  int $teamId
+     * @return JsonResponse
+     */
+    public function update(UpdateRequest $request, int $teamId): JsonResponse
+    {
+        $team = $this->teams->find($teamId);
 
-    public function update(AdminUpdateTeam $request, $teamId)
-     * {
-     * $team = $this->teams->find($teamId);
-     *
-     * $this->authorize('update', $team);
-     *
-     * $details = $request->only(['name', 'short', 'logo']);
-     *
-     * $this->teams->update($details, $teamId, $team);
-     *
-     * return new JsonResponse($team);
-     * }*/
+        $details = $request->only(['name', 'short', 'logo']);
+
+        // Logo is nullable field, but db should contain an empty value.
+        if (!$details['logo']) $details['logo'] = '';
+
+        $this->teams->update($details, $teamId, $team);
+
+        return new JsonResponse($team);
+    }
 }

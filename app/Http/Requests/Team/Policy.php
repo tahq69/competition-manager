@@ -1,5 +1,6 @@
 <?php namespace App\Http\Requests\Team;
 
+use App\Contracts\ITeamRepository as ITeams;
 use App\Http\Requests\UserRolesPolicy;
 use App\Role;
 
@@ -10,12 +11,24 @@ use App\Role;
 class Policy
 {
     /**
+     * @var UserRolesPolicy
+     */
+    private $user;
+
+    /**
+     * @var ITeams
+     */
+    private $teams;
+
+    /**
      * Policy constructor.
      * @param UserRolesPolicy $user
+     * @param ITeams $teams
      */
-    public function __construct(UserRolesPolicy $user)
+    public function __construct(UserRolesPolicy $user, ITeams $teams)
     {
         $this->user = $user;
+        $this->teams = $teams;
     }
 
     /**
@@ -36,8 +49,17 @@ class Policy
     /**
      * @return bool
      */
-    public function canUpdate(): bool
+    public function canUpdate(int $teamId): bool
     {
-        return $this->canStore();
+        if (!$this->user->authorized()) return false;
+
+        $roles = [Role::SUPER_ADMIN, Role::MANAGE_TEAMS];
+        if ($this->user->hasAnyRole($roles)) return true;
+
+        if ($this->teams->isManagerOfTeam(\Auth::user(), $teamId)) {
+            return true;
+        }
+
+        return false;
     }
 }
