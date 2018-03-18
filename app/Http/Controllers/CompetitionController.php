@@ -2,8 +2,8 @@
 
 use App\Contracts\ICompetitionRepository as Competitions;
 use App\Contracts\IUserRepository as Users;
+use App\Http\Requests\Competition\Index as IndexRequest;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 /**
  * Class CompetitionController
@@ -37,20 +37,25 @@ class CompetitionController extends Controller
 
     /**
      * Display a listing of the resource.
-     * @param  Request $request
+     * @param  IndexRequest $request
      * @return JsonResponse
      */
-    public function index(Request $request): JsonResponse
+    public function index(IndexRequest $request): JsonResponse
     {
         $orderingMapping = [
             'id' => 'id',
             'title' => 'title',
+            'subtitle' => 'subtitle',
             'judge_name' => 'judge_name',
             'organization_date' => 'organization_date',
         ];
 
         if ($request->owned) {
             $this->competitions->filterOwnedOrManaged();
+        }
+
+        if ($request->team_id) {
+            $this->competitions->filterByTeam($request->team_id);
         }
 
         $competitions = $this->competitions

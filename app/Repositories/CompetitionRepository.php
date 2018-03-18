@@ -9,7 +9,9 @@ use Illuminate\Database\Eloquent\Builder;
  * Class CompetitionRepository
  * @package App\Repositories
  */
-class CompetitionRepository extends PaginationRepository implements ICompetitionRepository
+class CompetitionRepository
+    extends PaginationRepository
+    implements ICompetitionRepository
 {
     /**
      * Get current repository full model class name
@@ -42,5 +44,15 @@ class CompetitionRepository extends PaginationRepository implements ICompetition
         });
 
         return $this;
+    }
+
+    /**
+     * Filter competitions created by a team.
+     * @param int $teamId
+     * @return $this
+     */
+    public function filterByTeam(int $teamId)
+    {
+        return $this->setWhere('team_id', $teamId);
     }
 }
