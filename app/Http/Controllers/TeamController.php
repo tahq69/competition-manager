@@ -53,6 +53,7 @@ class TeamController extends Controller
             ->setupOrdering($request, $orderingMapping, 'teams.id')
             ->paginate($request->per_page ?: 15, [], [
                 'teams.id', 'teams.name', 'teams.short', 'teams.created_at',
+                'teams.logo',
             ]);
 
         return new JsonResponse($teams);

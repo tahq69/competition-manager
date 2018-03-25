@@ -85,6 +85,9 @@ class UsersTableSeeder extends Seeder
                 }
             ]);
 
+            // Create competitions for this team
+            factory(\App\Competition::class, 12)->create(['team_id' => $team->id]);
+
             // Assign member roles to manager
             $manager->roles()->sync([
                 $this->roleId(Role::MANAGE_TEAMS),
