@@ -1,5 +1,6 @@
 <?php namespace App;
 
+use Crip\Core\Helpers\Str;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -94,5 +95,25 @@ class User extends Authenticatable
         }
 
         return '';
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSuperAdmin(): bool
+    {
+        if (!\Auth::check()) return false;
+
+        $role = $this->roles()->where('key', Role::SUPER_ADMIN)->first(['roles.id']);
+
+        return !!$role;
+    }
+
+    /**
+     * @return string
+     */
+    public function slug(): string
+    {
+        return Str::slug($this->name . ' ' . $this->id, '_');
     }
 }
