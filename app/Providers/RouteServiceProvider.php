@@ -1,10 +1,12 @@
-<?php
-
-namespace App\Providers;
+<?php namespace App\Providers;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 
+/**
+ * Class RouteServiceProvider
+ * @package App\Providers
+ */
 class RouteServiceProvider extends ServiceProvider
 {
     /**
@@ -23,7 +25,8 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        Route::pattern('crip_file', '[a-zA-Z0-9.\-\/\(\)\_\% ]+');
+        Route::pattern('crip_folder', '[a-zA-Z0-9.\-\/\(\)\_\% ]+');
 
         parent::boot();
     }
@@ -37,9 +40,9 @@ class RouteServiceProvider extends ServiceProvider
     {
         $this->mapApiRoutes();
 
-        $this->mapWebRoutes();
+        $this->mapPackageRoutes();
 
-        //
+        $this->mapWebRoutes();
     }
 
     /**
@@ -69,5 +72,13 @@ class RouteServiceProvider extends ServiceProvider
              ->middleware('api')
              ->namespace($this->namespace)
              ->group(base_path('routes/api.php'));
+    }
+
+    /**
+     * Define the "package" routes for the application.
+     */
+    protected function mapPackageRoutes() {
+        Route::prefix('packages')
+            ->group(base_path('routes/package.php'));
     }
 }

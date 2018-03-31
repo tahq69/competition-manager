@@ -4,26 +4,26 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e325e3c8751c5527a9bcac9613d23b6a",
-    "content-hash": "126d2a9bbb8f299ec7edcd33c0a3dc9c",
+    "hash": "e69e12a9e245b39c94ab861877a64085",
+    "content-hash": "d2fdd3026e5359a7079d301f352eea97",
     "packages": [
         {
             "name": "crip-laravel/filesys",
-            "version": "1.2.13",
+            "version": "1.2.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/crip-laravel/filesys.git",
-                "reference": "66223808629040afeea17dec911443dea743c790"
+                "reference": "bdb859ec6d56aa495f05c8db8daa69a1d5ebd118"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/crip-laravel/filesys/zipball/66223808629040afeea17dec911443dea743c790",
-                "reference": "66223808629040afeea17dec911443dea743c790",
+                "url": "https://api.github.com/repos/crip-laravel/filesys/zipball/bdb859ec6d56aa495f05c8db8daa69a1d5ebd118",
+                "reference": "bdb859ec6d56aa495f05c8db8daa69a1d5ebd118",
                 "shasum": ""
             },
             "require": {
                 "crip/core": "^1.0",
-                "illuminate/support": "~5.3.0|~5.4.0|~5.5.0",
+                "illuminate/support": "~5.3.0|~5.4.0|~5.5.0|~5.6.0",
                 "intervention/image": "^2.3",
                 "php": ">=7.0"
             },
@@ -53,7 +53,7 @@
             ],
             "description": "Laravel - Filemanager extension",
             "homepage": "https://github.com/crip-laravel/filesys",
-            "time": "2017-10-21 10:00:33"
+            "time": "2018-03-31 18:05:17"
         },
         {
             "name": "crip/core",
