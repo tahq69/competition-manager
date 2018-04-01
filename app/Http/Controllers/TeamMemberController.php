@@ -2,6 +2,7 @@
 
 use App\Contracts\ITeamMemberRepository;
 use App\Contracts\ITeamRepository;
+use App\Http\Requests\TeamMembers\Index as IndexRequest;
 use App\Http\Requests;
 use App\Team;
 use App\TeamMember;
@@ -29,7 +30,8 @@ class TeamMemberController extends Controller
      * @param ITeamMemberRepository $members
      */
     public function __construct(
-        ITeamRepository $teams, ITeamMemberRepository $members)
+        ITeamRepository $teams,
+        ITeamMemberRepository $members)
     {
         $this->middleware('auth:api');
         $this->teams = $teams;
@@ -39,11 +41,10 @@ class TeamMemberController extends Controller
     /**
      * Get list of team members.
      * @param  int $teamId
-     * @param  Requests\TeamMembers\Index $request
+     * @param  IndexRequest $request
      * @return JsonResponse
      */
-    public function index(
-        int $teamId, Requests\TeamMembers\Index $request): JsonResponse
+    public function index(int $teamId, IndexRequest $request): JsonResponse
     {
         $orderingMapping = [
             'id' => 'id',

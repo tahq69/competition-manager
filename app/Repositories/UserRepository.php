@@ -81,8 +81,8 @@ class UserRepository
 
         $user['team_roles'] = [];
 
-        collect($user['memberships'])->each(function ($manager) use (&$user) {
-            $user['team_roles'][$manager['team_id']] = $manager['roles'];
+        collect($user['memberships'])->each(function ($membership) use (&$user) {
+            $user['team_roles'][$membership['team_id']] = $membership['roles'];
         });
 
         unset($user['memberships']);
