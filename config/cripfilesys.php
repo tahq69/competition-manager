@@ -74,10 +74,10 @@ return [
     |
     */
     'authorization' => [
-        'web' => 'token',
+        'web' => 'Authorization',
         'api' => [
             'key' => 'Authorization',
-            'value' => 'Bearer {token}'
+            'value' => '{Authorization}'
         ]
     ],
 
