@@ -42,6 +42,7 @@ return [
     | This value makes absolute url for files.
     |
     */
+
     'absolute_url' => false,
 
     /*
@@ -73,6 +74,7 @@ return [
     | value in a first request of UI part of filesys manager.
     |
     */
+
     'authorization' => [
         'web' => 'Authorization',
         'api' => [

@@ -1,5 +1,6 @@
 <?php namespace App\Http\Requests\Team;
 
+use App\Rules\RelativeUrl;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -36,7 +37,7 @@ class Store extends FormRequest
                 // Short title should be unique in a system.
                 Rule::unique('teams', 'short'),
             ],
-            'logo' => ['nullable', 'url', 'max:1000'],
+            'logo' => ['required', new RelativeUrl, 'max:1000'],
         ];
     }
 }
