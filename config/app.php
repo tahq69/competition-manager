@@ -173,6 +173,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\BindingServiceProvider::class,
+        App\Providers\PackageServiceProvider::class,
 
         Crip\Filesys\CripFilesysServiceProvider::class,
     ],

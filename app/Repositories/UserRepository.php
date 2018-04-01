@@ -75,7 +75,7 @@ class UserRepository
         /** @var \App\User $user */
         $user = $this->getQuery()->with(['memberships' => function (HasMany $query) {
             $query->with(['roles' => function (BelongsToMany $q) {
-                $q->select('key');
+                $q->select(['key']);
             }])->select(['id', 'user_id', 'team_id']);
         }])->find($userId)->toArray();
 
