@@ -34,7 +34,9 @@ class TeamMemberController extends Controller
         ITeamRepository $teams,
         ITeamMemberRepository $members)
     {
-        $this->middleware('auth:api');
+        $this->middleware('auth:api')
+            ->except('index');
+
         $this->teams = $teams;
         $this->members = $members;
     }

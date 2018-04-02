@@ -24,7 +24,9 @@ class TeamController extends Controller
      */
     public function __construct(ITeamRepository $teams)
     {
-        $this->middleware('auth:api');
+        $this->middleware('auth:api')
+            ->except('index', 'show');
+
         $this->teams = $teams;
     }
 
@@ -35,11 +37,13 @@ class TeamController extends Controller
      */
     public function index(IndexRequest $request): JsonResponse
     {
-        // If user is not a super admin, allow see only managed teams when
-        // request flag is presented.
-        $isSuperAdmin = $request->user()->hasRole(Role::SUPER_ADMIN);
-        if ($request->managed && !$isSuperAdmin) {
-            $this->teams->filterByManager($request->user()->id);
+        if (\Auth::check()) {
+            // If user is not a super admin, allow see only managed teams when
+            // request flag is presented.
+            $isSuperAdmin = $request->user()->hasRole(Role::SUPER_ADMIN);
+            if ($request->managed && !$isSuperAdmin) {
+                $this->teams->filterByManager($request->user()->id);
+            }
         }
 
         $orderingMapping = [

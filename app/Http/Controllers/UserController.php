@@ -23,7 +23,7 @@ class UserController extends Controller
     public function __construct(IUserRepository $users)
     {
         $this->middleware('auth:api')
-            ->except('search', 'store');
+            ->except('search', 'store', 'show');
 
         $this->middleware('guest')
             ->only('store');
