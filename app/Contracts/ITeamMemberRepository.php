@@ -32,4 +32,10 @@ interface ITeamMemberRepository extends IPaginateRepository
      * @return $this
      */
     public function withUserDetails();
+
+    /**
+     * Join team member roles.
+     * @return $this
+     */
+    public function withTeamMemberRoles();
 }

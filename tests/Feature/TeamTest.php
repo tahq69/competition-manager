@@ -135,7 +135,7 @@ class TeamTest extends TestCase
             ->postJson('/api/teams', [
                 'name' => 'New team',
                 'short' => 'ntm',
-                'logo' => '',
+                'logo' => '/logo.png',
             ]);
 
         $response
@@ -191,7 +191,7 @@ class TeamTest extends TestCase
             'id' => $team->id,
             'name' => 'updated name',
             'short' => 'updated short',
-            'logo' => null,
+            'logo' => 'updated/logo.png',
         ]);
 
         $response
@@ -200,6 +200,7 @@ class TeamTest extends TestCase
                 'id' => $team->id,
                 'name' => 'updated name',
                 'short' => 'updated short',
+                'logo' => 'updated/logo.png',
             ]);
 
         $this->assertDatabaseHas('teams', [

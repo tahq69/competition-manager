@@ -219,12 +219,26 @@ abstract class Repository implements IRepository
 
     /**
      * Update actual query with new operation.
-     * @param callable $queryFunction
+     * @param  callable $queryFunction
      * @return $this
      */
     protected function setQuery(callable $queryFunction)
     {
         $this->query = $queryFunction($this->getQuery());
+        return $this;
+    }
+
+    /**
+     * Set the relationships that should be eager loaded.
+     * @param  mixed $relations
+     * @return $this
+     */
+    protected function with($relations)
+    {
+        $this->setQuery(function (Builder $query) use ($relations) {
+            return $query->with($relations);
+        });
+
         return $this;
     }
 

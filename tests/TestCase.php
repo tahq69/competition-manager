@@ -75,12 +75,23 @@ abstract class TestCase extends BaseTestCase
     protected function createTeamManager()
     {
         $user = factory(\App\User::class)->states('team_owner')->create();
-        $this->syncRoles($user, [
-            \App\Role::MANAGE_TEAMS,
-            \App\Role::CREATE_TEAMS
-        ]);
+        $this->syncRoles($user, [Role::CREATE_TEAMS]);
 
         return $user;
+    }
+
+    protected function createTeamMemberManager(int $teamId, $userId = null)
+    {
+        $member = factory(\App\TeamMember::class)
+            ->create(['team_id' => $teamId, 'user_id' => $userId]);
+
+        $this->syncMemberRoles($member, [
+            Role::MANAGE_TEAMS,
+            Role::MANAGE_MEMBERS,
+            Role::MANAGE_MEMBER_ROLES,
+        ]);
+
+        return $member;
     }
 
     /**
@@ -131,6 +142,15 @@ abstract class TestCase extends BaseTestCase
         })->toArray();
 
         $user->roles()->sync($dbRoles);
+    }
+
+    private function syncMemberRoles(\App\TeamMember $member, array $roles)
+    {
+        $dbRoles = collect($roles)->map(function ($role) {
+            return $this->findRoleId($role);
+        })->toArray();
+
+        $member->roles()->sync($dbRoles);
     }
 
     private function syncManagerRole(\App\TeamMember $manager, string $role)

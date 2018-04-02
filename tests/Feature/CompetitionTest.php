@@ -52,7 +52,6 @@ class CompetitionTest extends TestCase
         $manager = $this->createPostManager();
         $team = $this->createTeam([$manager]);
 
-
         // Create unowned competitions.
         factory(\App\Competition::class, 2)->create();
 
@@ -63,7 +62,7 @@ class CompetitionTest extends TestCase
 
         $response = $this
             ->actingAs($manager, 'api')
-            ->get('/api/competitions?owned=true');
+            ->get('/api/competitions?owned=1');
 
         $response
             ->assertStatus(200)

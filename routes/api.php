@@ -19,6 +19,10 @@ $this->resource('teams.members', 'TeamMemberController', [
     'only' => ['index', 'show', 'store', 'update'],
 ]);
 
+$this->resource('teams.members.roles', 'TeamMemberRoleController', [
+    'only' => ['index'/*, 'show', 'store', 'update'*/],
+]);
+
 $this->resource('competitions', 'CompetitionController', [
     'only' => ['index', 'show'],
 ]);

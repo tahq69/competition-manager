@@ -57,10 +57,15 @@ class TeamMemberRepository
      */
     public function withUserDetails()
     {
-        $this->setQuery(function (Builder $query) {
-            return $query->with('user');
-        });
+        return $this->with('user');
+    }
 
-        return $this;
+    /**
+     * Join team member roles.
+     * @return $this
+     */
+    public function withTeamMemberRoles()
+    {
+        return $this->with('roles');
     }
 }
