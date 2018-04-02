@@ -3,7 +3,8 @@
 use App\Contracts\ITeamMemberRepository;
 use App\Contracts\ITeamRepository;
 use App\Http\Requests\TeamMembers\Index as IndexRequest;
-use App\Http\Requests;
+use App\Http\Requests\TeamMembers\Store as StoreRequest;
+use App\Http\Requests\TeamMembers\Update as UpdateRequest;
 use App\Team;
 use App\TeamMember;
 use Illuminate\Http\JsonResponse;
@@ -81,11 +82,10 @@ class TeamMemberController extends Controller
     /**
      * Store new instance of team member.
      * @param  int $teamId
-     * @param  Requests\TeamMembers\Store $request
+     * @param  \App\Http\Requests\TeamMembers\Store $request
      * @return JsonResponse
      */
-    public function store(
-        int $teamId, Requests\TeamMembers\Store $request): JsonResponse
+    public function store(int $teamId, StoreRequest $request): JsonResponse
     {
         /** @var Team $team */
         $team = $this->teams->find($teamId);
@@ -103,12 +103,13 @@ class TeamMemberController extends Controller
      * Update existing instance of team member.
      * @param  int $teamId
      * @param  int $id
-     * @param  Requests\TeamMembers\Update $request
+     * @param  \App\Http\Requests\TeamMembers\Update $request
      * @return JsonResponse
      */
     public function update(
-        int $teamId, int $id,
-        Requests\TeamMembers\Update $request): JsonResponse
+        int $teamId,
+        int $id,
+        UpdateRequest $request): JsonResponse
     {
         $member = $this->members->find($id);
         $details = $request->only(['user_id', 'name']);

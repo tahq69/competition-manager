@@ -47,7 +47,7 @@ class DisciplineController extends Controller
         $disciplines = $this->disciplines
             ->whereCompetition($competitionId)
             ->orderBy('id', 'desc')
-            ->get([], ['competition_id', 'title', 'short', 'type', 'id']);
+            ->get(['competition_id', 'title', 'short', 'type', 'id']);
 
         return new JsonResponse($disciplines->toArray());
     }

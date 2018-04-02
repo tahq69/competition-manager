@@ -59,7 +59,7 @@ abstract class Repository implements IRepository
     }
 
     /**
-     * Set repository querable ordering from a request and sort column mapping
+     * Set repository queryable ordering from a request and sort column mapping
      * array.
      * @param \Illuminate\Http\Request $request
      * @param array $mapping
@@ -109,12 +109,12 @@ abstract class Repository implements IRepository
 
     /**
      * Get collection of models
-     * @param array $filters
      * @param array $columns
+     * @param array $filters
      * @return Collection
      * @throws \Exception
      */
-    public function get(array $filters = [], $columns = ['*'])
+    public function get(array $columns = ['*'], array $filters = [])
     {
         $this->filter($filters);
 
@@ -257,6 +257,24 @@ abstract class Repository implements IRepository
             $column, $operator, $value, $boolean
         ) {
             return $q->where($column, $operator, $value, $boolean);
+        });
+    }
+
+    /**
+     * Add a "where in" clause to the query.
+     * @param  string $column
+     * @param  mixed $values
+     * @param  string $boolean
+     * @param  bool $not
+     * @return $this
+     */
+    protected function setWhereIn(string $column, $values, $boolean = 'and',
+                                  $not = false)
+    {
+        return $this->setQuery(function (Builder $q) use (
+            $column, $values, $boolean, $not
+        ) {
+            return $q->whereIn($column, $values, $boolean, $not);
         });
     }
 

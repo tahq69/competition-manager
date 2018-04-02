@@ -69,12 +69,10 @@ class TeamController extends Controller
         $user = $request->user();
         $details = $request->only(['name', 'short', 'logo',]);
 
-        // Logo is nullable field, but db should contain an empty value.
-        if (!$details['logo']) $details['logo'] = '';
-
         try {
             $team = $this->teams->createAndAttachManager($details, $user);
         } catch (\Exception $exception) {
+            \Log::error('Could not create and attach manager', [$exception]);
             return new JsonResponse($exception->getMessage(), 507);
         }
 
@@ -104,9 +102,6 @@ class TeamController extends Controller
         $team = $this->teams->find($teamId);
 
         $details = $request->only(['name', 'short', 'logo']);
-
-        // Logo is nullable field, but db should contain an empty value.
-        if (!$details['logo']) $details['logo'] = '';
 
         $this->teams->update($details, $teamId, $team);
 

@@ -1,8 +1,8 @@
 <?php namespace App\Repositories;
 
+use App\Contracts\IRoleRepository as IRoles;
 use App\Contracts\ITeamMemberRepository;
 use App\TeamMember;
-use \Illuminate\Database\Eloquent\Builder;
 
 /**
  * Class TeamMemberRepository
@@ -13,6 +13,22 @@ class TeamMemberRepository
     implements ITeamMemberRepository
 {
     /**
+     * @var \App\Contracts\IRoleRepository
+     */
+    private $roles;
+
+    /**
+     * TeamMemberRepository constructor.
+     * @param \App\Contracts\IRoleRepository $roles
+     */
+    public function __construct(IRoles $roles)
+    {
+        parent::__construct();
+
+        $this->roles = $roles;
+    }
+
+    /**
      * Get current repository full model class name
      * @return string
      */
@@ -22,7 +38,7 @@ class TeamMemberRepository
     }
 
     /**
-     * Set team id filter on querable
+     * Set team id filter on queryable
      * @param int $id
      * @return $this
      */
@@ -32,7 +48,7 @@ class TeamMemberRepository
     }
 
     /**
-     * Set user id filter on querable.
+     * Set user id filter on queryable.
      * @param int $id
      * @return $this
      */
@@ -42,7 +58,7 @@ class TeamMemberRepository
     }
 
     /**
-     * Set membership type filter on querable.
+     * Set membership type filter on queryable.
      * @param string $type
      * @return $this
      */
@@ -67,5 +83,22 @@ class TeamMemberRepository
     public function withTeamMemberRoles()
     {
         return $this->with('roles');
+    }
+
+    /**
+     * Synchronize member roles with provided array role keys.
+     * @param  int $memberId
+     * @param  array $roles
+     * @return $this
+     */
+    public function sycnRoles(int $memberId, array $roles)
+    {
+        /** @var \App\TeamMember $member */
+        $member = $this->find($memberId);
+        $dbRoles = $this->roles->whereKeyIn($roles)->get(['id', 'key']);
+
+        $member->roles()->sync($dbRoles);
+
+        return $this;
     }
 }

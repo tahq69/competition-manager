@@ -7,21 +7,21 @@
 interface ITeamMemberRepository extends IPaginateRepository
 {
     /**
-     * Set team id filter on querable.
+     * Set team id filter on queryable.
      * @param int $id
      * @return $this
      */
     public function filterByTeam(int $id);
 
     /**
-     * Set user id filter on querable.
+     * Set user id filter on queryable.
      * @param int $id
      * @return $this
      */
     public function filterByUser(int $id);
 
     /**
-     * Set membership type filter on querable.
+     * Set membership type filter on queryable.
      * @param string $type
      * @return $this
      */
@@ -38,4 +38,12 @@ interface ITeamMemberRepository extends IPaginateRepository
      * @return $this
      */
     public function withTeamMemberRoles();
+
+    /**
+     * Synchronize member roles with provided array role keys.
+     * @param  int $memberId
+     * @param  array $roles
+     * @return $this
+     */
+    public function sycnRoles(int $memberId, array $roles);
 }

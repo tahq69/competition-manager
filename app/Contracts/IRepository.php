@@ -23,7 +23,7 @@ interface IRepository
     public function modelClass(): string;
 
     /**
-     * Set repository querable ordering
+     * Set repository queryable ordering
      * @param string $by
      * @param string $direction
      * @return $this
@@ -31,7 +31,7 @@ interface IRepository
     public function orderBy($by = 'id', $direction = 'desc');
 
     /**
-     * Set repository querable ordering from a request and sort column mapping
+     * Set repository queryable ordering from a request and sort column mapping
      * array.
      * @param \Illuminate\Http\Request $request
      * @param array $mapping
@@ -56,11 +56,11 @@ interface IRepository
 
     /**
      * Get collection of models
-     * @param array $filters
      * @param array $columns
+     * @param array $filters
      * @return Collection
      */
-    public function get(array $filters = [], $columns = ['*']);
+    public function get(array $columns = ['*'], array $filters = []);
 
     /**
      * Create new instance in of model in database

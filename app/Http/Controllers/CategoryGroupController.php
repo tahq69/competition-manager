@@ -52,7 +52,7 @@ class CategoryGroupController extends Controller
             ->whereCompetition($competitionId)
             ->whereDiscipline($disciplineId)
             ->sortByOrder()
-            ->get([], [
+            ->get([
                 'competition_id', 'discipline_id', 'id', 'max', 'min', 'order',
                 'rounds', 'short', 'time', 'title', 'type',
             ]);

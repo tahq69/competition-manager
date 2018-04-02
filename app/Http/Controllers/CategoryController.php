@@ -68,7 +68,7 @@ class CategoryController extends Controller
         $categories = $this->categories
             ->whereGroup($groupId)
             ->sortByOrder()
-            ->get([], [
+            ->get([
                 'area_id', 'category_group_id', 'competition_id',
                 'discipline_id', 'display_type', 'id', 'max', 'min', 'order',
                 'short', 'title', 'type',

@@ -41,7 +41,9 @@ class Policy
     {
         if (!$this->user->authorized()) return false;
 
-        if ($this->user->hasRole(Role::SUPER_ADMIN)) return true;
+        // Super admin or team creator can edit any team details/members/roles.
+        $globalRoles = [Role::SUPER_ADMIN, Role::CREATE_TEAMS];
+        if ($this->user->hasAnyRole($globalRoles)) return true;
 
         /** @var \App\TeamMember $member */
         $member = $this->members->find($memberId, ['id', 'team_id']);
@@ -56,6 +58,8 @@ class Policy
 
         $canList = false;
 
+        // Determine is at least one membership with required role. If yes,
+        // allow to proceed with current request.
         $authUserMembers->each(function ($member) use (&$canList) {
             $roles = collect($member->roles);
 
@@ -64,5 +68,17 @@ class Policy
         });
 
         return $canList;
+    }
+
+    /**
+     * Determine is the authenticated user has access to update team member
+     * roles.
+     * @param  int $teamId
+     * @param  int $memberId
+     * @return bool
+     */
+    public function canUpdate(int $teamId, int $memberId): bool
+    {
+        return $this->canList($teamId, $memberId);
     }
 }

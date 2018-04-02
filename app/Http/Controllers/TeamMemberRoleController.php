@@ -2,6 +2,7 @@
 
 use App\Contracts\ITeamMemberRepository as IMembers;
 use App\Http\Requests\TeamMemberRoles\Index as IndexRequest;
+use App\Http\Requests\TeamMemberRoles\Store as StoreRequest;
 use Illuminate\Http\JsonResponse;
 
 /**
@@ -46,5 +47,21 @@ class TeamMemberRoleController extends Controller
         });
 
         return new JsonResponse($roles);
+    }
+
+    /**
+     * @param  int $teamId
+     * @param  int $memberId
+     * @param  \App\Http\Requests\TeamMemberRoles\Store $request
+     * @return JsonResponse
+     */
+    public function store(
+        int $teamId,
+        int $memberId,
+        StoreRequest $request): JsonResponse
+    {
+        $this->members->sycnRoles($memberId, $request->roles);
+
+        return new JsonResponse(true);
     }
 }
