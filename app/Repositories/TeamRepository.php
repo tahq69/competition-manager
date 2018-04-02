@@ -88,22 +88,4 @@ class TeamRepository extends PaginationRepository implements ITeamRepository
 
         return $member;
     }
-
-    /**
-     * Determine is the provided user manager of the team.
-     * @param  \App\User $user User instance to validate.
-     * @param  int $teamId Validate against this team identifier.
-     * @return bool Is the presented user manager of the team.
-     */
-    public function isManagerOfTeam(\App\User $user, int $teamId): bool
-    {
-        $count = $this->getQuery()
-            ->join('team_members', 'team_members.team_id', '=', 'teams.id')
-            ->where('team_members.membership_type', TeamMember::MANAGER)
-            ->where('team_members.user_id', $user->id)
-            ->where('teams.id', $teamId)
-            ->count();
-
-        return $count > 0;
-    }
 }

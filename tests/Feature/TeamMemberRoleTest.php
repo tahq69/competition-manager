@@ -14,17 +14,12 @@ class TeamMemberRoleTest extends TestCase
     public function testCanGetTeamMemberRolesList()
     {
         $user = factory(\App\User::class)->create();
+        $teamId = factory(\App\Team::class)->create()->id;
+        $memberId = $this->createTeamMemberManager($teamId)->id;
 
-        $teams = factory(\App\Team::class, 2)->create();
-        $teamId = $teams[1]->id;
-
-        // Members for other team, to make sure that we get only required ones.
-        factory(\App\TeamMember::class, 2)
-            ->create(['team_id' => $teams[0]->id]);
-
+        // Add required roles to user what will make role list method
+        // accessible for him.
         $this->createTeamMemberManager($teamId, $user->id);
-        $member = $this->createTeamMemberManager($teamId);
-        $memberId = $member->id;
 
         $response = $this
             ->actingAs($user, 'api')
@@ -42,12 +37,8 @@ class TeamMemberRoleTest extends TestCase
     public function testSimpleUserCantGetTeamMemberRolesList()
     {
         $user = factory(\App\User::class)->create();
-
-        $team = factory(\App\Team::class)->create();
-        $teamId = $team->id;
-
-        $member = $this->createTeamMemberManager($teamId);
-        $memberId = $member->id;
+        $teamId = factory(\App\Team::class)->create()->id;
+        $memberId = $this->createTeamMemberManager($teamId)->id;
 
         $response = $this
             ->actingAs($user, 'api')

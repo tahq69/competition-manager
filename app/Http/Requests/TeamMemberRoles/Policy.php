@@ -1,6 +1,6 @@
 <?php namespace App\Http\Requests\TeamMemberRoles;
 
-use App\Contracts\ITeamMemberRepository as IMembers;
+use App\Http\Requests\MemberRolesPolicy;
 use App\Http\Requests\UserRolesPolicy;
 use App\Role;
 
@@ -16,19 +16,19 @@ class Policy
     private $user;
 
     /**
-     * @var \App\Contracts\ITeamMemberRepository
+     * @var \App\Http\Requests\MemberRolesPolicy
      */
-    private $members;
+    private $member;
 
     /**
      * Policy constructor.
      * @param \App\Http\Requests\UserRolesPolicy $user
-     * @param \App\Contracts\ITeamMemberRepository $members
+     * @param \App\Http\Requests\MemberRolesPolicy $member
      */
-    public function __construct(UserRolesPolicy $user, IMembers $members)
+    public function __construct(UserRolesPolicy $user, MemberRolesPolicy $member)
     {
         $this->user = $user;
-        $this->members = $members;
+        $this->member = $member;
     }
 
     /**
@@ -40,34 +40,20 @@ class Policy
     public function canList(int $teamId, int $memberId): bool
     {
         if (!$this->user->authorized()) return false;
+        $user = $this->user->id;
 
         // Super admin or team creator can edit any team details/members/roles.
         $globalRoles = [Role::SUPER_ADMIN, Role::CREATE_TEAMS];
         if ($this->user->hasAnyRole($globalRoles)) return true;
 
-        /** @var \App\TeamMember $member */
-        $member = $this->members->find($memberId, ['id', 'team_id']);
-        // If member is not from provided team, deny any other action.
-        if ($member->team_id != $teamId) return false;
+        // If member is not from provided team, deny any action on it.
+        if (!$this->member->isMember($teamId, $memberId)) return false;
 
-        $authUserMembers = $this->members
-            ->filterByTeam($teamId)
-            ->filterByUser($this->user->id)
-            ->withTeamMemberRoles()
-            ->get();
+        // If authenticated user is manager of the member team, allow any action.
+        if ($this->member->isManager($teamId, $user)) return true;
 
-        $canList = false;
-
-        // Determine is at least one membership with required role. If yes,
-        // allow to proceed with current request.
-        $authUserMembers->each(function ($member) use (&$canList) {
-            $roles = collect($member->roles);
-
-            if ($roles->contains('key', Role::MANAGE_MEMBER_ROLES))
-                $canList = true;
-        });
-
-        return $canList;
+        // Only simple members requires roles to access team member data.
+        return $this->member->hasRole($teamId, $user, Role::MANAGE_MEMBER_ROLES);
     }
 
     /**

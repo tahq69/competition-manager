@@ -1,6 +1,6 @@
 <?php namespace App\Http\Requests\Team;
 
-use App\Contracts\ITeamRepository as ITeams;
+use App\Http\Requests\MemberRolesPolicy;
 use App\Http\Requests\UserRolesPolicy;
 use App\Role;
 
@@ -11,24 +11,23 @@ use App\Role;
 class Policy
 {
     /**
-     * @var UserRolesPolicy
+     * @var \App\Http\Requests\UserRolesPolicy
      */
     private $user;
-
     /**
-     * @var ITeams
+     * @var \App\Http\Requests\MemberRolesPolicy
      */
-    private $teams;
+    private $member;
 
     /**
      * Policy constructor.
-     * @param UserRolesPolicy $user
-     * @param ITeams $teams
+     * @param \App\Http\Requests\UserRolesPolicy $user
+     * @param \App\Http\Requests\MemberRolesPolicy $member
      */
-    public function __construct(UserRolesPolicy $user, ITeams $teams)
+    public function __construct(UserRolesPolicy $user, MemberRolesPolicy $member)
     {
         $this->user = $user;
-        $this->teams = $teams;
+        $this->member = $member;
     }
 
     /**
@@ -47,19 +46,22 @@ class Policy
     }
 
     /**
+     * @param  int $teamId
      * @return bool
      */
     public function canUpdate(int $teamId): bool
     {
         if (!$this->user->authorized()) return false;
+        $user = $this->user->id;
 
-        $roles = [Role::SUPER_ADMIN, Role::MANAGE_TEAMS];
+        // Super admin or team creator can edit any team details/members/roles.
+        $roles = [Role::SUPER_ADMIN, Role::CREATE_TEAMS];
         if ($this->user->hasAnyRole($roles)) return true;
 
-        if ($this->teams->isManagerOfTeam(\Auth::user(), $teamId)) {
-            return true;
-        }
+        // If authenticated user is manager of the team, allow this action.
+        if ($this->member->isManager($teamId, $user)) return true;
 
-        return false;
+        // Only simple members requires roles to access team member data.
+        return $this->member->hasRole($teamId, $user, Role::MANAGE_TEAMS);
     }
 }

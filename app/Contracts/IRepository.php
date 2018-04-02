@@ -86,8 +86,9 @@ interface IRepository
     public function delete($id): bool;
 
     /**
-     * Get count of querable records
+     * Get count of queryable records
+     * @param  bool $reset
      * @return integer
      */
-    public function count(): int;
+    public function count(bool $reset = true): int;
 }

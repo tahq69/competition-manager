@@ -172,12 +172,17 @@ abstract class Repository implements IRepository
     }
 
     /**
-     * Get count of querable records
+     * Get count of queryable records
+     * @param  bool $reset
      * @return integer
      */
-    public function count(): int
+    public function count(bool $reset = true): int
     {
-        return $this->getQuery()->count();
+        $result = $this->getQuery()->count();
+
+        if ($reset) $this->resetQuery();
+
+        return $result;
     }
 
     /**
@@ -235,11 +240,9 @@ abstract class Repository implements IRepository
      */
     protected function with($relations)
     {
-        $this->setQuery(function (Builder $query) use ($relations) {
+        return $this->setQuery(function (Builder $query) use ($relations) {
             return $query->with($relations);
         });
-
-        return $this;
     }
 
     /**

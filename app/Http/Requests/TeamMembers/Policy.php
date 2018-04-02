@@ -1,9 +1,8 @@
 <?php namespace App\Http\Requests\TeamMembers;
 
-use App\Contracts\ITeamMemberRepository as IMembers;
+use App\Http\Requests\MemberRolesPolicy;
 use App\Http\Requests\UserRolesPolicy;
 use App\Role;
-use App\TeamMember;
 
 /**
  * Class Policy
@@ -11,25 +10,26 @@ use App\TeamMember;
  */
 class Policy
 {
-    /**
-     * @var IMembers
-     */
-    private $members;
 
     /**
-     * @var UserRolesPolicy
+     * @var \App\Http\Requests\UserRolesPolicy
      */
     private $user;
 
     /**
-     * Policy constructor.
-     * @param IMembers $members
-     * @param UserRolesPolicy $user
+     * @var \App\Http\Requests\MemberRolesPolicy
      */
-    public function __construct(IMembers $members, UserRolesPolicy $user)
+    private $member;
+
+    /**
+     * Policy constructor.
+     * @param UserRolesPolicy $user
+     * @param MemberRolesPolicy $member
+     */
+    public function __construct(UserRolesPolicy $user, MemberRolesPolicy $member)
     {
-        $this->members = $members;
         $this->user = $user;
+        $this->member = $member;
     }
 
     /**
@@ -39,20 +39,17 @@ class Policy
     public function canStore(int $teamId): bool
     {
         if (!$this->user->authorized()) return false;
+        $user = $this->user->id;
 
-        // Super Admin can create anything and for anyone.
-        if ($this->user->hasRole(Role::SUPER_ADMIN)) return true;
+        // Super admin or team creator can edit any team details/members/roles.
+        $globalRoles = [Role::SUPER_ADMIN, Role::CREATE_TEAMS];
+        if ($this->user->hasAnyRole($globalRoles)) return true;
 
-        $isManager = $this->members
-            ->filterByTeam($teamId)
-            ->filterByUser($this->user->id)
-            ->filterByMembership(TeamMember::MANAGER)
-            ->count();
+        // If authenticated user is manager of the member team, allow any action.
+        if ($this->member->isManager($teamId, $user)) return true;
 
-        // If current user is team manager - he can edit team members.
-        if ($isManager > 0) return true;
-
-        return false;
+        // Only simple members requires roles to access team member data.
+        return $this->member->hasRole($teamId, $user, Role::MANAGE_MEMBERS);
     }
 
     /**
