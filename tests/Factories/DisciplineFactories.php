@@ -10,7 +10,7 @@ use App\Team;
  */
 trait DisciplineFactories
 {
-    public function createDiscipline(
+    protected function createDiscipline(
         int $cmId = 0,
         int $teamId = 0,
         array $attributes = []
