@@ -16,10 +16,10 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication,
-        UserFactories,
-        TeamFactories,
-        TeamMemberFactories,
-        DisciplineFactories;
+        Factories\UserFactories,
+        Factories\TeamFactories,
+        Factories\TeamMemberFactories,
+        Factories\DisciplineFactories;
 
     /**
      * Setup the test environment.

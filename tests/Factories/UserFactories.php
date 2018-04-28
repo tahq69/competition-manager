@@ -1,9 +1,8 @@
-<?php namespace Tests;
+<?php namespace Tests\Factories;
 
-use App\Contracts\MemberRole;
 use App\Contracts\UserRole;
-use App\TeamMember;
 use App\User;
+use Tests\RoleHelper;
 
 /**
  * Trait UserFactories

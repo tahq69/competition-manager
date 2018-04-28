@@ -1,4 +1,4 @@
-<?php namespace Tests;
+<?php namespace Tests\Factories;
 
 use App\Competition;
 use App\Discipline;

@@ -1,7 +1,8 @@
-<?php namespace Tests;
+<?php namespace Tests\Factories;
 
 use App\Contracts\MemberRole;
 use App\TeamMember;
+use Tests\RoleHelper;
 
 /**
  * Class TeamFactories
