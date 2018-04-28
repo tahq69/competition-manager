@@ -1,5 +1,6 @@
 <?php namespace App;
 
+use App\Contracts\UserRole;
 use Crip\Core\Helpers\Str;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -104,7 +105,7 @@ class User extends Authenticatable
     {
         if (!\Auth::check()) return false;
 
-        $role = $this->roles()->where('key', Role::SUPER_ADMIN)->first(['roles.id']);
+        $role = $this->roles()->where('key', UserRole::SUPER_ADMIN)->first(['roles.id']);
 
         return !!$role;
     }

@@ -1,5 +1,6 @@
 <?php namespace Tests\Feature;
 
+use App\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -57,15 +58,17 @@ class TeamMemberRoleTest extends TestCase
         $this->createTeamMemberManager($teamId, $user->id);
 
         // Clear member instance in same team as user updating it.
-        $memberId = factory(\App\TeamMember::class)->create(['team_id' => $teamId])->id;
+        $memberId = factory(\App\TeamMember::class)
+            ->create(['team_id' => $teamId])
+            ->id;
 
         $response = $this
             ->actingAs($user, 'api')
             ->postJson("/api/teams/{$teamId}/members/{$memberId}/roles", [
-                "roles" => [
-                    "MANAGE_TEAMS",
-                    "MANAGE_MEMBERS",
-                    "DUMMY_ONE",
+                'roles' => [
+                    'MANAGE_TEAMS',
+                    'MANAGE_MEMBERS',
+                    'DUMMY_ONE',
                 ]
             ]);
 
@@ -73,13 +76,15 @@ class TeamMemberRoleTest extends TestCase
             ->assertStatus(200)
             ->assertSee("true");
 
+        $manageTeamsId = Role::where('key', 'MANAGE_TEAMS')->first()->id;
         $this->assertDatabaseHas('team_member_role', [
-            'role_id' => 5,
+            'role_id' => $manageTeamsId,
             'team_member_id' => $memberId
         ]);
 
+        $manageMembersId = Role::where('key', 'MANAGE_MEMBERS')->first()->id;
         $this->assertDatabaseHas('team_member_role', [
-            'role_id' => 6,
+            'role_id' => $manageMembersId,
             'team_member_id' => $memberId
         ]);
     }

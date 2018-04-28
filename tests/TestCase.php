@@ -1,9 +1,12 @@
 <?php namespace Tests;
 
-use App\CategoryGroup;
 use App\Competition;
+use App\Contracts\MemberRole;
+use App\Contracts\UserRole;
 use App\Discipline;
 use App\Role;
+use App\TeamMember;
+use App\User;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 /**
@@ -37,58 +40,58 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * @return \App\User
+     * @return User
      */
     protected function createSuperAdmin()
     {
-        $user = factory(\App\User::class)->states('super_admin')->create();
-        $this->syncRole($user, \App\Role::SUPER_ADMIN);
+        $user = factory(User::class)->states('super_admin')->create();
+        $this->syncRole($user, UserRole::SUPER_ADMIN);
 
         return $user;
     }
 
     /**
-     * @return \App\User
+     * @return User
      */
     protected function createPostManager()
     {
-        $user = factory(\App\User::class)->states('post_manager')->create();
-        $this->syncRole($user, \App\Role::MANAGE_POSTS);
+        $user = factory(User::class)->states('post_manager')->create();
+        $this->syncRole($user, UserRole::MANAGE_POSTS);
 
         return $user;
     }
 
     /**
-     * @return \App\User
+     * @return User
      */
     protected function createTeamOwner()
     {
-        $user = factory(\App\User::class)->states('team_owner')->create();
-        $this->syncRole($user, \App\Role::MANAGE_TEAMS);
+        $user = factory(User::class)->states('team_owner')->create();
+        $this->syncRole($user, MemberRole::MANAGE_TEAMS);
 
         return $user;
     }
 
     /**
-     * @return \App\User
+     * @return User
      */
     protected function createTeamManager()
     {
-        $user = factory(\App\User::class)->states('team_owner')->create();
-        $this->syncRoles($user, [Role::CREATE_TEAMS]);
+        $user = factory(User::class)->states('team_owner')->create();
+        $this->syncRoles($user, [UserRole::CREATE_TEAMS]);
 
         return $user;
     }
 
     protected function createTeamMemberManager(int $teamId, $userId = null)
     {
-        $member = factory(\App\TeamMember::class)
+        $member = factory(TeamMember::class)
             ->create(['team_id' => $teamId, 'user_id' => $userId]);
 
         $this->syncMemberRoles($member, [
-            Role::MANAGE_TEAMS,
-            Role::MANAGE_MEMBERS,
-            Role::MANAGE_MEMBER_ROLES,
+            MemberRole::MANAGE_TEAMS,
+            MemberRole::MANAGE_MEMBERS,
+            MemberRole::MANAGE_MEMBER_ROLES,
         ]);
 
         return $member;
@@ -103,13 +106,13 @@ abstract class TestCase extends BaseTestCase
         $team = factory(\App\Team::class)->create();
 
         foreach ($users as $user) {
-            $manager = factory(\App\TeamMember::class)->create([
+            $manager = factory(TeamMember::class)->create([
                 'team_id' => $team->id,
-                'membership_type' => \App\TeamMember::MANAGER,
+                'membership_type' => TeamMember::MANAGER,
                 'user_id' => $user->id,
             ]);
 
-            $this->syncManagerRole($manager, Role::MANAGE_COMPETITIONS);
+            $this->syncManagerRole($manager, MemberRole::MANAGE_COMPETITIONS);
         }
 
         return $team;
@@ -130,12 +133,12 @@ abstract class TestCase extends BaseTestCase
         return $result;
     }
 
-    private function syncRole(\App\User $user, string $role)
+    private function syncRole(User $user, string $role)
     {
         $user->roles()->sync([$this->findRoleId($role)]);
     }
 
-    private function syncRoles(\App\User $user, array $roles)
+    private function syncRoles(User $user, array $roles)
     {
         $dbRoles = collect($roles)->map(function ($role) {
             return $this->findRoleId($role);
@@ -144,7 +147,7 @@ abstract class TestCase extends BaseTestCase
         $user->roles()->sync($dbRoles);
     }
 
-    private function syncMemberRoles(\App\TeamMember $member, array $roles)
+    private function syncMemberRoles(TeamMember $member, array $roles)
     {
         $dbRoles = collect($roles)->map(function ($role) {
             return $this->findRoleId($role);
@@ -153,7 +156,7 @@ abstract class TestCase extends BaseTestCase
         $member->roles()->sync($dbRoles);
     }
 
-    private function syncManagerRole(\App\TeamMember $manager, string $role)
+    private function syncManagerRole(TeamMember $manager, string $role)
     {
         $manager->roles()->sync([$this->findRoleId($role)]);
     }
@@ -162,9 +165,7 @@ abstract class TestCase extends BaseTestCase
     {
         if ($this->rolesSeeded) return;
 
-        foreach (Role::ALL_ROLES as $role) {
-            (new Role(['key' => $role]))->save();
-        }
+        $this->seed('RolesTableSeeder');
 
         $this->rolesSeeded = true;
     }

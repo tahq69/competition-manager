@@ -1,8 +1,9 @@
 <?php namespace App\Http\Requests\Team;
 
+use App\Contracts\MemberRole;
+use App\Contracts\UserRole;
 use App\Http\Requests\MemberRolesPolicy;
 use App\Http\Requests\UserRolesPolicy;
-use App\Role;
 
 /**
  * Class Policy
@@ -14,6 +15,7 @@ class Policy
      * @var \App\Http\Requests\UserRolesPolicy
      */
     private $user;
+
     /**
      * @var \App\Http\Requests\MemberRolesPolicy
      */
@@ -39,8 +41,7 @@ class Policy
 
         // Allow to create team only if user is super admin or has role allowing
         // create new teams.
-        $roles = [Role::SUPER_ADMIN, Role::CREATE_TEAMS];
-        if ($this->user->hasAnyRole($roles)) return true;
+        if ($this->user->hasRole(UserRole::CREATE_TEAMS)) return true;
 
         return false;
     }
@@ -55,13 +56,12 @@ class Policy
         $user = $this->user->id;
 
         // Super admin or team creator can edit any team details/members/roles.
-        $roles = [Role::SUPER_ADMIN, Role::CREATE_TEAMS];
-        if ($this->user->hasAnyRole($roles)) return true;
+        if ($this->user->hasRole(UserRole::CREATE_TEAMS)) return true;
 
         // If authenticated user is manager of the team, allow this action.
         if ($this->member->isManager($teamId, $user)) return true;
 
         // Only simple members requires roles to access team member data.
-        return $this->member->hasRole($teamId, $user, Role::MANAGE_TEAMS);
+        return $this->member->hasRole($teamId, $user, MemberRole::MANAGE_TEAMS);
     }
 }

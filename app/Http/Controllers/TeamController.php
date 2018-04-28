@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Contracts\ITeamRepository;
+use App\Contracts\UserRole;
 use App\Http\Requests\Team\Index as IndexRequest;
 use App\Http\Requests\Team\Store as StoreRequest;
 use App\Http\Requests\Team\Update as UpdateRequest;
@@ -40,7 +41,7 @@ class TeamController extends Controller
         if (\Auth::check()) {
             // If user is not a super admin, allow see only managed teams when
             // request flag is presented.
-            $isSuperAdmin = $request->user()->hasRole(Role::SUPER_ADMIN);
+            $isSuperAdmin = $request->user()->hasRole(UserRole::SUPER_ADMIN);
             if ($request->managed && !$isSuperAdmin) {
                 $this->teams->filterByManager($request->user()->id);
             }

@@ -1,12 +1,6 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: user
- * Date: 31.10.2017
- * Time: 21:37
- */
+<?php namespace App;
 
-namespace App;
+use App\Contracts\UserRole;
 
 /**
  * Trait UserRoles
@@ -25,7 +19,7 @@ trait UserRoles
         })->toArray();
 
         // Allow super admin do anything
-        if (in_array(Role::SUPER_ADMIN, $roles)) return true;
+        if (in_array(UserRole::SUPER_ADMIN, $roles)) return true;
 
         return in_array($role, $roles);
     }

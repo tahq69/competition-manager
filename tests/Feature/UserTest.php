@@ -1,5 +1,7 @@
 <?php namespace Tests\Feature;
 
+use App\Contracts\MemberRole;
+use App\Contracts\UserRole;
 use App\Role;
 use App\User;
 use Tests\TestCase;
@@ -58,8 +60,8 @@ class UserTest extends TestCase
                 'id' => $user->id,
                 'md5' => $user->md5,
                 'name' => $user->name,
-                'roles' => [['key' => Role::MANAGE_POSTS]],
-                'team_roles' => [$team->id => [['key' => Role::MANAGE_COMPETITIONS]]],
+                'roles' => [['key' => UserRole::MANAGE_POSTS]],
+                'team_roles' => [$team->id => [['key' => MemberRole::MANAGE_COMPETITIONS]]],
                 'updated_at' => $user->updated_at . "",
             ]);
     }

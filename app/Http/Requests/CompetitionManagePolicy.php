@@ -1,7 +1,7 @@
 <?php namespace App\Http\Requests;
 
 use App\Contracts\ICompetitionRepository as ICompetitions;
-use App\Role;
+use App\Contracts\UserRole;
 use Carbon\Carbon;
 
 /**
@@ -40,7 +40,7 @@ class CompetitionManagePolicy
         if (!$this->user->authorized()) return false;
 
         // Super Admin can create anything and for anyone.
-        if ($this->user->hasRole(Role::SUPER_ADMIN)) return true;
+        if ($this->user->hasRole(UserRole::SUPER_ADMIN)) return true;
 
         $competition = $this->competitions
             ->filterOwnedOrManaged()

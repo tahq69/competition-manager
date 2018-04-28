@@ -1,8 +1,9 @@
 <?php namespace App\Http\Requests\TeamMembers;
 
+use App\Contracts\MemberRole;
+use App\Contracts\UserRole;
 use App\Http\Requests\MemberRolesPolicy;
 use App\Http\Requests\UserRolesPolicy;
-use App\Role;
 
 /**
  * Class Policy
@@ -33,7 +34,7 @@ class Policy
     }
 
     /**
-     * @param int $teamId
+     * @param  int $teamId
      * @return bool
      */
     public function canStore(int $teamId): bool
@@ -42,18 +43,17 @@ class Policy
         $user = $this->user->id;
 
         // Super admin or team creator can edit any team details/members/roles.
-        $globalRoles = [Role::SUPER_ADMIN, Role::CREATE_TEAMS];
-        if ($this->user->hasAnyRole($globalRoles)) return true;
+        if ($this->user->hasRole(UserRole::CREATE_TEAMS)) return true;
 
         // If authenticated user is manager of the member team, allow any action.
         if ($this->member->isManager($teamId, $user)) return true;
 
         // Only simple members requires roles to access team member data.
-        return $this->member->hasRole($teamId, $user, Role::MANAGE_MEMBERS);
+        return $this->member->hasRole($teamId, $user, MemberRole::MANAGE_MEMBERS);
     }
 
     /**
-     * @param int $teamId
+     * @param  int $teamId
      * @return bool
      */
     public function canUpdate(int $teamId): bool

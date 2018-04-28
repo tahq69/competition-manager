@@ -1,5 +1,7 @@
 <?php namespace App\Http\Requests\TeamMemberRoles;
 
+use App\Contracts\MemberRole;
+use App\Contracts\UserRole;
 use App\Http\Requests\MemberRolesPolicy;
 use App\Http\Requests\UserRolesPolicy;
 use App\Role;
@@ -43,8 +45,7 @@ class Policy
         $user = $this->user->id;
 
         // Super admin or team creator can edit any team details/members/roles.
-        $globalRoles = [Role::SUPER_ADMIN, Role::CREATE_TEAMS];
-        if ($this->user->hasAnyRole($globalRoles)) return true;
+        if ($this->user->hasRole(UserRole::CREATE_TEAMS)) return true;
 
         // If member is not from provided team, deny any action on it.
         if (!$this->member->isMember($teamId, $memberId)) return false;
@@ -53,7 +54,7 @@ class Policy
         if ($this->member->isManager($teamId, $user)) return true;
 
         // Only simple members requires roles to access team member data.
-        return $this->member->hasRole($teamId, $user, Role::MANAGE_MEMBER_ROLES);
+        return $this->member->hasRole($teamId, $user, MemberRole::MANAGE_MEMBER_ROLES);
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php namespace App\Http\Requests;
 
-use App\Role;
+use App\Contracts\UserRole;
 use App\User;
 use Auth;
 
@@ -74,7 +74,7 @@ class UserRolesPolicy
         $roles = $this->roles();
 
         // Allow super admin do anything
-        if (in_array(Role::SUPER_ADMIN, $roles)) return true;
+        if (in_array(UserRole::SUPER_ADMIN, $roles)) return true;
 
         if (in_array($role, $roles)) return true;
 

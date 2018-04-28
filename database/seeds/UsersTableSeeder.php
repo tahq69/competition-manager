@@ -1,5 +1,6 @@
 <?php
 
+use App\Contracts\UserRole;
 use App\Role;
 use Illuminate\Database\Seeder;
 
@@ -33,7 +34,7 @@ class UsersTableSeeder extends Seeder
         $admin = factory(\App\User::class)->states('super_admin')->create();
 
         // add super admin role for admin user
-        $admin->roles()->sync([$this->roleId(Role::SUPER_ADMIN)]);
+        $admin->roles()->sync([$this->roleId(UserRole::SUPER_ADMIN)]);
 
         factory(App\Post::class, 5)->create(['author_id' => $admin->id]);
     }
@@ -43,7 +44,7 @@ class UsersTableSeeder extends Seeder
         $user = factory(\App\User::class)->states('post_creator')->create();
 
         // add create post role for user
-        $user->roles()->sync([$this->roleId(Role::CREATE_POST)]);
+        $user->roles()->sync([$this->roleId(UserRole::CREATE_POST)]);
 
         factory(App\Post::class, 10)->create(['author_id' => $user->id]);
     }
@@ -53,14 +54,14 @@ class UsersTableSeeder extends Seeder
         $user = factory(\App\User::class)->states('post_manager')->create();
 
         // add manage posts role for user
-        $user->roles()->sync([$this->roleId(Role::MANAGE_POSTS)]);
+        $user->roles()->sync([$this->roleId(UserRole::MANAGE_POSTS)]);
     }
 
     private function createTeamManager()
     {
         $user = factory(\App\User::class)->states('team_owner')->create();
 
-        $user->roles()->sync([$this->roleId(Role::CREATE_TEAMS)]);
+        $user->roles()->sync([$this->roleId(UserRole::CREATE_TEAMS)]);
 
         // add teams for manager
         factory(\App\Team::class, 5)->create([
@@ -90,15 +91,15 @@ class UsersTableSeeder extends Seeder
 
             // Assign member roles to manager
             $manager->roles()->sync([
-                $this->roleId(Role::MANAGE_TEAMS),
-                $this->roleId(Role::MANAGE_MEMBERS),
-                $this->roleId(Role::MANAGE_MEMBER_ROLES),
-                $this->roleId(Role::CREATE_COMPETITIONS),
-                $this->roleId(Role::MANAGE_COMPETITIONS),
-                $this->roleId(Role::MANAGE_COMPETITION_AREAS),
-                $this->roleId(Role::MANAGE_COMPETITION_DISCIPLINES),
-                $this->roleId(Role::MANAGE_COMPETITION_MEMBERS),
-                $this->roleId(Role::MANAGE_COMPETITION_JUDGES),
+                $this->roleId(\App\Contracts\MemberRole::MANAGE_TEAMS),
+                $this->roleId(\App\Contracts\MemberRole::MANAGE_MEMBERS),
+                $this->roleId(\App\Contracts\MemberRole::MANAGE_MEMBER_ROLES),
+                $this->roleId(\App\Contracts\MemberRole::CREATE_COMPETITIONS),
+                $this->roleId(\App\Contracts\MemberRole::MANAGE_COMPETITIONS),
+                $this->roleId(\App\Contracts\MemberRole::MANAGE_COMPETITION_AREAS),
+                $this->roleId(\App\Contracts\MemberRole::MANAGE_COMPETITION_DISCIPLINES),
+                $this->roleId(\App\Contracts\MemberRole::MANAGE_COMPETITION_MEMBERS),
+                $this->roleId(\App\Contracts\MemberRole::MANAGE_COMPETITION_JUDGES),
             ]);
         });
     }
