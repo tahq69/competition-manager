@@ -128,7 +128,7 @@ class TeamTest extends TestCase
      */
     function testCanCreateNewTeam()
     {
-        $owner = $this->createTeamManager();
+        $owner = $this->createTeamOwner();
 
         $response = $this
             ->actingAs($owner, 'api')
@@ -154,7 +154,8 @@ class TeamTest extends TestCase
 
     function testCantCreateNewTeamWithExistingName()
     {
-        $manager = $this->createTeamManager();
+        $manager = $this->createTeamOwner();
+
         factory(\App\Team::class)->create([
             'name' => 'existing name',
             'short' => 'en',

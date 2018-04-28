@@ -178,34 +178,25 @@ class CategoryGroupTest extends TestCase
 
     private function createGroups($count = 1)
     {
-        $disciplines = $this->createDisciplines(3);
-        // Create group for extra discipline at the beginning.
+        $discipline1 = $this->createDiscipline();
+        $discipline2 = $this->createDiscipline($discipline1->competition_id);
+        $discipline3 = $this->createDiscipline($discipline1->competition_id);
+
         factory(CategoryGroup::class)->create([
-            'competition_id' => $disciplines[0]->competition_id - 1,
-            'discipline_id' => $disciplines[0]->id - 1,
+            'competition_id' => $discipline1->competition_id,
+            'discipline_id' => $discipline1->id,
         ]);
 
-        $result = [];
-
-        collect($disciplines)->each(function ($discipline, $key) use (&$result, $count) {
-            // Crate groups for all 3 disciplines.
-            $groups = factory(CategoryGroup::class, $count)->create([
-                'competition_id' => $discipline->competition_id,
-                'discipline_id' => $discipline->id,
-            ]);
-
-            // But return only second discipline groups.
-            if ($key == 1) {
-                $result = $groups;
-            }
-        });
-
-        // Create group for extra discipline at the end.
-        factory(CategoryGroup::class)->create([
-            'competition_id' => $disciplines[2]->competition_id + 1,
-            'discipline_id' => $disciplines[2]->id + 1,
+        $groups = factory(CategoryGroup::class)->times($count)->create([
+            'competition_id' => $discipline2->competition_id,
+            'discipline_id' => $discipline2->id,
         ]);
 
-        return $result;
+        factory(CategoryGroup::class)->create([
+            'competition_id' => $discipline3->competition_id,
+            'discipline_id' => $discipline3->id,
+        ]);
+
+        return $groups;
     }
 }

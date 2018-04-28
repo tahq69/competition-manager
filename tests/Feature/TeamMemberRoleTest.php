@@ -14,13 +14,9 @@ class TeamMemberRoleTest extends TestCase
 
     public function testCanGetTeamMemberRolesList()
     {
-        $user = factory(\App\User::class)->create();
-        $teamId = factory(\App\Team::class)->create()->id;
-        $memberId = $this->createTeamMemberManager($teamId)->id;
-
-        // Add required roles to user what will make role list method
-        // accessible for him.
-        $this->createTeamMemberManager($teamId, $user->id);
+        $user = $this->createUser();
+        $teamId = $this->createTeam()->id;
+        $memberId = $this->createTeamManager($teamId, $user->id)->id;
 
         $response = $this
             ->actingAs($user, 'api')
@@ -29,17 +25,17 @@ class TeamMemberRoleTest extends TestCase
         $response
             ->assertStatus(200)
             ->assertJson([
-                "MANAGE_TEAMS",
-                "MANAGE_MEMBERS",
-                "MANAGE_MEMBER_ROLES",
+                'MANAGE_TEAMS',
+                'MANAGE_MEMBERS',
+                'MANAGE_MEMBER_ROLES',
             ]);
     }
 
     public function testSimpleUserCantGetTeamMemberRolesList()
     {
-        $user = factory(\App\User::class)->create();
-        $teamId = factory(\App\Team::class)->create()->id;
-        $memberId = $this->createTeamMemberManager($teamId)->id;
+        $user = $this->createUser();
+        $teamId = $this->createTeam()->id;
+        $memberId = $this->createTeamManager($teamId)->id;
 
         $response = $this
             ->actingAs($user, 'api')
@@ -50,17 +46,9 @@ class TeamMemberRoleTest extends TestCase
 
     public function testCanAssignTeamMemberRoles()
     {
-        $user = factory(\App\User::class)->create();
-        $teamId = factory(\App\Team::class)->create()->id;
-
-        // Add required roles to user what will make role update method
-        // accessible for him.
-        $this->createTeamMemberManager($teamId, $user->id);
-
-        // Clear member instance in same team as user updating it.
-        $memberId = factory(\App\TeamMember::class)
-            ->create(['team_id' => $teamId])
-            ->id;
+        $user = $this->createUser();
+        $teamId = $this->createTeam()->id;
+        $memberId = $this->createTeamManager($teamId, $user->id)->id;
 
         $response = $this
             ->actingAs($user, 'api')
@@ -74,7 +62,7 @@ class TeamMemberRoleTest extends TestCase
 
         $response
             ->assertStatus(200)
-            ->assertSee("true");
+            ->assertSee('true');
 
         $manageTeamsId = Role::where('key', 'MANAGE_TEAMS')->first()->id;
         $this->assertDatabaseHas('team_member_role', [

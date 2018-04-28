@@ -19,9 +19,10 @@ class DisciplineTest extends TestCase
      */
     public function testCanGetCompetitionDisciplineList()
     {
-        $admin = $this->createSuperAdmin();
-        $disciplines = $this->createDisciplines(3);
-        $cmId = $disciplines[0]->competition_id;
+        $discipline1 = $this->createDiscipline();
+        $discipline2 = $this->createDiscipline($discipline1->competition_id);
+        $discipline3 = $this->createDiscipline($discipline1->competition_id);
+        $cmId = $discipline1->competition_id;
 
         $response = $this->get("/api/competitions/{$cmId}/disciplines");
 
@@ -29,22 +30,22 @@ class DisciplineTest extends TestCase
             ->assertStatus(200)
             ->assertJson([[
                 'competition_id' => $cmId,
-                'title' => $disciplines[2]->title,
-                'short' => $disciplines[2]->short,
-                'type' => $disciplines[2]->type,
-                'id' => $disciplines[2]->id,
+                'title' => $discipline3->title,
+                'short' => $discipline3->short,
+                'type' => $discipline3->type,
+                'id' => $discipline3->id,
             ], [
                 'competition_id' => $cmId,
-                'title' => $disciplines[1]->title,
-                'short' => $disciplines[1]->short,
-                'type' => $disciplines[1]->type,
-                'id' => $disciplines[1]->id,
+                'title' => $discipline2->title,
+                'short' => $discipline2->short,
+                'type' => $discipline2->type,
+                'id' => $discipline2->id,
             ], [
                 'competition_id' => $cmId,
-                'title' => $disciplines[0]->title,
-                'short' => $disciplines[0]->short,
-                'type' => $disciplines[0]->type,
-                'id' => $disciplines[0]->id,
+                'title' => $discipline1->title,
+                'short' => $discipline1->short,
+                'type' => $discipline1->type,
+                'id' => $discipline1->id,
             ]]);
 
         $this->assertJsonCount($response, 3);
@@ -56,10 +57,9 @@ class DisciplineTest extends TestCase
      */
     public function testCanGetCompetitionDiscipline()
     {
-        $admin = $this->createSuperAdmin();
-        $disciplines = $this->createDisciplines(3);
-        $cmId = $disciplines[0]->competition_id;
-        $discipline = $disciplines[1];
+        $this->createDiscipline();
+        $discipline = $this->createDiscipline();
+        $cmId = $discipline->competition_id;
 
         $response = $this->get("/api/competitions/{$cmId}/disciplines/{$discipline->id}");
 

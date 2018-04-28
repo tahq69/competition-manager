@@ -204,7 +204,7 @@ class CategoryTest extends TestCase
 
     private function createCategories($count = 1)
     {
-        $discipline = $this->createDisciplines()[0];
+        $discipline = $this->createDiscipline();
         $groups = factory(CategoryGroup::class, 3)->create([
             'competition_id' => $discipline->competition_id,
             'discipline_id' => $discipline->id,
