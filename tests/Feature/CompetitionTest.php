@@ -142,6 +142,36 @@ class CompetitionTest extends TestCase
     }
 
     /**
+     * Validate that ISO 8601 date formats are accepted by API on competition
+     * create request.
+     *
+     * @return void
+     */
+    public function testCanCreateCompetitionWithISO8601Date(): void
+    {
+        $user = $this->createUser();
+        $team = $this->createTeam([$user], [MemberRole::CREATE_COMPETITIONS], 1);
+
+        $response = $this->actingAs($user, 'api')
+            ->postJson('/api/competitions', [
+                'title' => 'competition title',
+                'subtitle' => 'competition subtitle',
+                'registration_till' => '2118-04-10T00:00:00.000Z',
+                'organization_date' => '2118-05-10T00:00:00.000Z',
+                'team_id' => $team->id,
+            ]);
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'title' => 'competition title',
+                'subtitle' => 'competition subtitle',
+                'registration_till' => '2118-04-10 00:00:00',
+                'organization_date' => '2118-05-10 00:00:00',
+            ]);;
+    }
+
+    /**
      * A basic competition list request.
      *
      * @return void
@@ -204,6 +234,41 @@ class CompetitionTest extends TestCase
                 'subtitle' => 'competition subtitle',
                 'registration_till' => $regTill,
                 'organization_date' => $orgDate,
+            ]);
+
+        $this->assertDatabaseHas('competitions', [
+            'created_by' => $user->id,
+            'title' => 'competition title',
+        ]);
+    }
+
+    /**
+     * Validate that ISO 8601 date formats are accepted by API on competition
+     * update request.
+     *
+     * @return void
+     */
+    public function testCanUpdateCompetitionWithISO8601Date(): void
+    {
+        $user = $this->createUser();
+        $team = $this->createTeam([$user]);
+        $competition = $this->createCompetition($team->id);
+
+        $response = $this->actingAs($user, 'api')
+            ->patchJson("/api/competitions/{$competition->id}", [
+                'title' => 'competition title',
+                'subtitle' => 'competition subtitle',
+                'registration_till' => '2118-04-10T00:00:00.000Z',
+                'organization_date' => '2118-05-10T00:00:00.000Z',
+            ]);
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'title' => 'competition title',
+                'subtitle' => 'competition subtitle',
+                'registration_till' => '2118-04-10 00:00:00',
+                'organization_date' => '2118-05-10 00:00:00',
             ]);
 
         $this->assertDatabaseHas('competitions', [

@@ -3,6 +3,7 @@
 use App\Http\Requests\Competition\Index as IndexRequest;
 use App\Http\Requests\Competition\Store as StoreRequest;
 use App\Http\Requests\Competition\Update as UpdateRequest;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 
 /**
@@ -100,6 +101,8 @@ class CompetitionController extends Controller
 
         $details['team_name'] = $team->name;
         $details['team_short'] = $team->short;
+        $details['registration_till'] = new Carbon($details['registration_till']);
+        $details['organization_date'] = new Carbon($details['organization_date']);
 
         $competition = $this->competitions->create($details);
 
@@ -135,6 +138,8 @@ class CompetitionController extends Controller
     {
         $validatedInput = array_keys($request->rules());
         $details = $request->only($validatedInput);
+        $details['registration_till'] = new Carbon($details['registration_till']);
+        $details['organization_date'] = new Carbon($details['organization_date']);
 
         $competition = $this->competitions->find($competitionId);
 
