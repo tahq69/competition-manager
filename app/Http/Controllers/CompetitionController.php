@@ -3,6 +3,7 @@
 use App\Contracts\ICompetitionRepository as Competitions;
 use App\Contracts\IUserRepository as Users;
 use App\Http\Requests\Competition\Index as IndexRequest;
+use App\Http\Requests\Competition\Store as StoreRequest;
 use Illuminate\Http\JsonResponse;
 
 /**
@@ -66,6 +67,11 @@ class CompetitionController extends Controller
             ]);
 
         return new JsonResponse($competitions);
+    }
+
+    public function store(StoreRequest $request): JsonResponse
+    {
+
     }
 
     /**

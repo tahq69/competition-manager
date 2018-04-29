@@ -10,12 +10,14 @@ use Log;
 
 /**
  * Class TeamRepository
+ *
  * @package App\Repositories
  */
 class TeamRepository extends PaginationRepository implements ITeamRepository
 {
     /**
-     * Get current repository full model class name
+     * Get current repository full model class name.
+     *
      * @return string
      */
     function modelClass(): string
@@ -25,7 +27,9 @@ class TeamRepository extends PaginationRepository implements ITeamRepository
 
     /**
      * Filter teams by manager id
-     * @param  int $ownerId
+     *
+     * @param int $ownerId
+     *
      * @return ITeamRepository
      */
     function filterByManager(int $ownerId): ITeamRepository
@@ -40,8 +44,10 @@ class TeamRepository extends PaginationRepository implements ITeamRepository
 
     /**
      * Create new team and attach manager in single transaction
-     * @param  array $input
-     * @param  \App\User $owner
+     *
+     * @param array     $input
+     * @param \App\User $owner
+     *
      * @return \App\Team
      * @throws Exception
      * @throws \Throwable
@@ -77,15 +83,32 @@ class TeamRepository extends PaginationRepository implements ITeamRepository
 
     /**
      * Crate team member for team.
-     * @param Team $team
-     * @param array $memberDetails
-     * @return TeamMember
+     *
+     * @param \App\Team $team
+     * @param array     $memberDetails
+     *
+     * @return \App\TeamMember
      */
     public function createMember(Team $team, array $memberDetails): TeamMember
     {
-        /** @var TeamMember $member */
+        /** @var \App\TeamMember $member */
         $member = $team->members()->create($memberDetails);
 
         return $member;
+    }
+
+    /**
+     * Determine is the team credits amount greater than a zero.
+     *
+     * @param int $teamId Team identifier.
+     *
+     * @return bool Flag indicating whenever team has credits.
+     */
+    public function hasCredits(int $teamId): bool
+    {
+        $team = $this->find($teamId, ['id', '_credits']);
+        $hasCredits = $team->_credits > 0;
+
+        return $hasCredits;
     }
 }
