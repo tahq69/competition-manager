@@ -12,7 +12,7 @@ $this->post('password/email', 'Auth\\ForgotPasswordController@sendResetLinkEmail
 $this->post('password/reset', 'Auth\\ResetPasswordController@reset')->name('password.reset');
 
 $this->resource('teams', 'TeamController', [
-    'only' => ['index', 'show', 'store', 'update']
+    'only' => ['index', 'show', 'store', 'update'],
 ]);
 
 $this->resource('teams.members', 'TeamMemberController', [
@@ -24,7 +24,7 @@ $this->resource('teams.members.roles', 'TeamMemberRoleController', [
 ]);
 
 $this->resource('competitions', 'CompetitionController', [
-    'only' => ['index', 'show'],
+    'only' => ['index', 'show', 'store', 'update'],
 ]);
 
 $this->resource('competitions.areas', 'AreaController', [

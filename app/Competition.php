@@ -44,6 +44,9 @@ class Competition extends Model
         'title',             // varchar(255)
         'updated_by',        // int(10) UNSIGNED
         'updated_by_name',   // varchar(255)
+        'team_id',           // int(10) UNSIGNED NULL
+        'team_name',         // varchar(255)
+        'team_short',        // varchar(15)
     ];
 
     /**
@@ -84,9 +87,7 @@ class Competition extends Model
      */
     public function ensureIsEditable()
     {
-        $tomorrow = Carbon::now()->addDay();
-
-        if (!$this->registration_till->lt($tomorrow)) {
+        if (!$this->registration_till->gt(Carbon::yesterday())) {
             throw new CompetitionCompletedException($this);
         }
     }

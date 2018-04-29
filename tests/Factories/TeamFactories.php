@@ -1,18 +1,25 @@
 <?php namespace Tests\Factories;
 
 use App\Contracts\MemberRole;
+use App\Team;
 use App\TeamMember;
 use Tests\RoleHelper;
 
 /**
  * Class TeamFactories
+ *
  * @package Tests
  */
 trait TeamFactories
 {
-    protected function createTeam(array $managers = [])
+    protected function createTeam(
+        array $managers = [],
+        array $roles = [MemberRole::MANAGE_COMPETITIONS],
+        int $credits = 0
+    ): Team
     {
-        $team = factory(\App\Team::class)->times(3)->create()[1];
+        $attributes = ['_credits' => $credits];
+        $team = factory(Team::class)->times(3)->create($attributes)[1];
 
         foreach ($managers as $user) {
             $manager = factory(TeamMember::class)->create([
@@ -21,7 +28,10 @@ trait TeamFactories
                 'user_id' => $user->id,
             ]);
 
-            RoleHelper::memberSync($manager, MemberRole::MANAGE_COMPETITIONS);
+            forward_static_call_array(
+                [RoleHelper::class, 'memberSync'],
+                array_merge([$manager], $roles)
+            );
         }
 
         return $team;

@@ -1,5 +1,6 @@
 <?php namespace App\Http\Requests\Competition;
 
+use App\Rules\AlphaDashSpace;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -16,10 +17,11 @@ class Store extends FormRequest
      * @param  Policy $policy
      *
      * @return bool
+     * @throws \App\Exceptions\TeamOutOfCreditsException
      */
     public function authorize(Policy $policy)
     {
-        $teamId = $this->route('team');
+        $teamId = $this->team_id;
 
         return $policy->canStore($teamId);
     }
@@ -33,12 +35,12 @@ class Store extends FormRequest
     {
         return [
             'title' => [
-                'required', 'min:3', 'max:255',
+                'required', 'min:3', 'max:255', new AlphaDashSpace,
                 // Competition title should be unique in a system.
                 Rule::unique('competitions', 'title'),
             ],
             'subtitle' => [
-                'required', 'min:3', 'max:255',
+                'required', 'min:3', 'max:255', new AlphaDashSpace,
             ],
             'registration_till' => [
                 'required', 'date', 'after:tomorrow',

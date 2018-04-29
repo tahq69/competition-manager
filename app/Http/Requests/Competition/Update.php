@@ -1,5 +1,7 @@
 <?php namespace App\Http\Requests\Competition;
 
+use App\Contracts\ICompetitionRepository;
+use App\Rules\AlphaDashSpace;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -18,12 +20,14 @@ class Update extends FormRequest
      * @return bool
      * @throws \App\Exceptions\CompetitionCompletedException
      */
-    public function authorize(Policy $policy)
+    public function authorize(Policy $policy, ICompetitionRepository $competitions)
     {
-        $teamId = $this->route('team');
         $cmId = $this->route('competition');
 
-        return $policy->canUpdate($cmId, $teamId);
+        /** @var \App\Competition $cm */
+        $cm = $competitions->find($cmId);
+
+        return $policy->canUpdate($cm);
     }
 
     /**
@@ -37,12 +41,12 @@ class Update extends FormRequest
 
         return [
             'title' => [
-                'required', 'min:3', 'max:255', 'alpha_dash',
+                'required', 'min:3', 'max:255', new AlphaDashSpace,
                 // Competition title should be unique in a system.
                 Rule::unique('competitions', 'title')->ignore($cmId),
             ],
             'subtitle' => [
-                'required', 'min:3', 'max:255', 'alpha_dash',
+                'required', 'min:3', 'max:255', new AlphaDashSpace,
             ],
             'registration_till' => [
                 'required', 'date', 'after:tomorrow',
@@ -54,7 +58,7 @@ class Update extends FormRequest
                 Rule::exists('users', 'id'),
             ],
             'judge_name' => [
-                'nullable', 'min:3', 'max:255', 'alpha_dash'
+                'nullable', 'min:3', 'max:255', new AlphaDashSpace,
             ],
             'cooperation' => [],
             'invitation' => [],

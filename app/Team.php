@@ -1,11 +1,13 @@
 <?php namespace App;
 
+use App\Exceptions\TeamOutOfCreditsException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class Team
+ *
  * @package App
  */
 class Team extends Model
@@ -14,12 +16,14 @@ class Team extends Model
 
     /**
      * The table associated with the model.
+     *
      * @var string
      */
     protected $table = 'teams';
 
     /**
      * The attributes that are mass assignable.
+     *
      * @var array
      */
     protected $fillable = [
@@ -34,6 +38,7 @@ class Team extends Model
 
     /**
      * The attributes that should be mutated to dates.
+     *
      * @var array
      */
     protected $dates = [
@@ -42,14 +47,16 @@ class Team extends Model
 
     /**
      * The attributes that should be hidden for arrays.
+     *
      * @var array
      */
     protected $hidden = [
-        '_credits'
+        '_credits',
     ];
 
     /**
      * Members relation.
+     *
      * @return HasMany
      */
     public function members()
@@ -60,6 +67,7 @@ class Team extends Model
 
     /**
      * Members relation.
+     *
      * @return HasMany
      */
     public function managers()
@@ -74,5 +82,15 @@ class Team extends Model
     public function competitions()
     {
         return $this->hasMany(Competition::class, 'competition_id', 'id');
+    }
+
+    /**
+     * @throws \App\Exceptions\TeamOutOfCreditsException
+     */
+    public function ensureHasCredits()
+    {
+        if (!($this->attributes['_credits'] > 0)) {
+            throw new TeamOutOfCreditsException($this);
+        }
     }
 }

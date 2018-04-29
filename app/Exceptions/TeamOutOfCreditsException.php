@@ -1,35 +1,37 @@
 <?php namespace App\Exceptions;
 
-use App\Competition;
-use Exception;
+use App\Team;
 use Throwable;
 
 /**
- * Class CompetitionCompletedException
+ * Class TeamOutOfCreditsException
  *
  * @package App\Exceptions
  */
-class CompetitionCompletedException extends Exception
+class TeamOutOfCreditsException extends \Exception
 {
     /**
-     * @var \App\Competition
+     * @var \App\Team
      */
-    private $cm;
+    private $team;
 
     /**
-     * CompetitionCompletedException constructor.
+     * TeamOutOfCreditsException constructor.
      *
-     * @param \App\Competition $cm
-     * @param string           $message
-     * @param int              $code
-     * @param \Throwable|null  $previous
+     * @param \App\Team       $team
+     * @param string          $message
+     * @param int             $code
+     * @param \Throwable|null $previous
      */
     public function __construct(
-        Competition $cm, $message = "", $code = 0, Throwable $previous = null
+        Team $team,
+        string $message = "",
+        int $code = 0,
+        Throwable $previous = null
     )
     {
         parent::__construct($message, $code, $previous);
-        $this->cm = $cm;
+        $this->team = $team;
     }
 
     /**
@@ -52,8 +54,8 @@ class CompetitionCompletedException extends Exception
     public function render($request)
     {
         return response()->json(
-            'Competition already completed registration and can`t be modified' .
-            ' anymore.', 422
+            'Team insufficient credit amount does not allow proceed with' .
+            ' current action.', 422
         );
     }
 }

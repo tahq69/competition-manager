@@ -1,5 +1,6 @@
 <?php namespace App\Http\Requests\Competition;
 
+use App\Competition;
 use App\Contracts\ICompetitionRepository;
 use App\Contracts\ITeamRepository;
 use App\Contracts\MemberRole;
@@ -58,6 +59,7 @@ class Policy
      * @param int $teamId Owner team identifier.
      *
      * @return bool
+     * @throws \App\Exceptions\TeamOutOfCreditsException
      */
     public function canStore(int $teamId): bool
     {
@@ -73,35 +75,33 @@ class Policy
 
         if (!$canCreate) return false;
 
-        $hasCredits = $this->teams->hasCredits($teamId);
-
-        if (!$hasCredits) return false;
+        /** @var \App\Team $team */
+        $team = $this->teams->find($teamId);
+        $team->ensureHasCredits();
 
         return true;
     }
 
     /**
-     * @param int $cmId
-     * @param int $teamId
+     * @param \App\Competition $cm
      *
      * @return bool
      * @throws \App\Exceptions\CompetitionCompletedException
      */
-    public function canUpdate(int $cmId, int $teamId)
+    public function canUpdate(Competition $cm)
     {
         if (!$this->user->authorized()) return false;
         $userId = $this->user->id;
-        $isManager = $this->member->isManager($teamId, $userId);
+        $isManager = $this->member->isManager($cm->id, $userId);
 
         if (!$isManager) return false;
 
         $canManage = $this->member->hasRole(
-            $teamId, $userId, MemberRole::MANAGE_COMPETITIONS
+            $cm->team_id, $userId, MemberRole::MANAGE_COMPETITIONS
         );
+
         if (!$canManage) return false;
 
-        /** @var \App\Competition $cm */
-        $cm = $this->competitions->find($cmId);
         $cm->ensureIsEditable();
 
         return true;

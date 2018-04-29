@@ -11,6 +11,7 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 /**
  * Class TestCase
+ *
  * @package Tests
  */
 abstract class TestCase extends BaseTestCase
@@ -19,12 +20,14 @@ abstract class TestCase extends BaseTestCase
         Factories\UserFactories,
         Factories\TeamFactories,
         Factories\TeamMemberFactories,
+        Factories\CompetitionFactories,
         Factories\DisciplineFactories,
         Factories\CategoryFactories,
         Factories\CategoryGroupFactories;
 
     /**
      * Setup the test environment.
+     *
      * @return void
      */
     public function setUp(): void
@@ -35,7 +38,8 @@ abstract class TestCase extends BaseTestCase
 
     /**
      * @param  \Illuminate\Foundation\Testing\TestResponse $response
-     * @param  int $count
+     * @param  int                                         $count
+     *
      * @return void
      */
     protected function assertJsonCount($response, int $count): void

@@ -1,10 +1,13 @@
 <?php namespace Tests\Feature;
 
+use App\Contracts\MemberRole;
+use Carbon\Carbon;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 /**
  * Class CompetitionTest
+ *
  * @package Tests\Feature
  */
 class CompetitionTest extends TestCase
@@ -13,11 +16,11 @@ class CompetitionTest extends TestCase
 
     /**
      * A basic competition list request.
+     *
      * @return void
      */
-    public function testCanGetCompetitionList()
+    public function testCanGetCompetitionList(): void
     {
-        factory(\App\User::class)->create();
         $competitions = factory(\App\Competition::class, 2)->create();
 
         $response = $this->get('/api/competitions');
@@ -44,9 +47,10 @@ class CompetitionTest extends TestCase
 
     /**
      * Competition list request with ownership filtering.
+     *
      * @return void
      */
-    public function testCanGetCompetitionListFilteredByOwnership()
+    public function testCanGetCompetitionListFilteredByOwnership(): void
     {
         factory(\App\User::class)->create();
         $manager = $this->createPostManager();
@@ -79,10 +83,70 @@ class CompetitionTest extends TestCase
     }
 
     /**
-     * A basic competition list request.
+     * A basic test of create competition request.
+     *
      * @return void
      */
-    public function testCanGetCompetition()
+    public function testCanCreateCompetition(): void
+    {
+        $user = $this->createUser();
+        $team = $this->createTeam([$user], [MemberRole::CREATE_COMPETITIONS], 1);
+
+        $response = $this->actingAs($user, 'api')
+            ->postJson('/api/competitions', [
+                'title' => 'competition title',
+                'subtitle' => 'competition subtitle',
+                'registration_till' => Carbon::now()->addDays(2)->toDateTimeString(),
+                'organization_date' => Carbon::now()->addDays(3)->toDateTimeString(),
+                'team_id' => $team->id,
+            ]);
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'title' => 'competition title',
+                'subtitle' => 'competition subtitle',
+                'team_id' => $team->id,
+                'team_name' => $team->name,
+                'team_short' => $team->short,
+            ]);
+
+        $this->assertDatabaseHas('competitions', [
+            'created_by' => $user->id,
+            'title' => 'competition title',
+        ]);
+    }
+
+    /**
+     * Validate that team without credits cant create competition.
+     *
+     * @return void
+     */
+    public function testCantCreateCompetitionWithoutCredits(): void
+    {
+        $user = $this->createUser();
+        $team = $this->createTeam([$user], [MemberRole::CREATE_COMPETITIONS], 0);
+
+        $response = $this->actingAs($user, 'api')
+            ->postJson('/api/competitions', [
+                'title' => 'competition title',
+                'subtitle' => 'competition subtitle',
+                'registration_till' => Carbon::now()->addDays(2)->toDateTimeString(),
+                'organization_date' => Carbon::now()->addDays(3)->toDateTimeString(),
+                'team_id' => $team->id,
+            ]);
+
+        $response
+            ->assertStatus(422)
+            ->assertSeeText('insufficient credit amount');
+    }
+
+    /**
+     * A basic competition list request.
+     *
+     * @return void
+     */
+    public function testCanGetCompetition(): void
     {
         factory(\App\User::class)->create();
         $competitions = factory(\App\Competition::class, 3)->create();
@@ -109,5 +173,68 @@ class CompetitionTest extends TestCase
                 'title' => $comp->title,
                 'id' => $comp->id,
             ]);
+    }
+
+    /**
+     * A basic competition update request.
+     *
+     * @return void
+     */
+    public function testCanUpdateCompetition(): void
+    {
+        $user = $this->createUser();
+        $team = $this->createTeam([$user]);
+        $competition = $this->createCompetition($team->id);
+
+        $regTill = Carbon::now()->addDays(2)->toDateTimeString();
+        $orgDate = Carbon::now()->addDays(3)->toDateTimeString();
+
+        $response = $this->actingAs($user, 'api')
+            ->patchJson("/api/competitions/{$competition->id}", [
+                'title' => 'competition title',
+                'subtitle' => 'competition subtitle',
+                'registration_till' => $regTill,
+                'organization_date' => $orgDate,
+            ]);
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'title' => 'competition title',
+                'subtitle' => 'competition subtitle',
+                'registration_till' => $regTill,
+                'organization_date' => $orgDate,
+            ]);
+
+        $this->assertDatabaseHas('competitions', [
+            'created_by' => $user->id,
+            'title' => 'competition title',
+        ]);
+    }
+
+    /**
+     * Validate that user without required role can`t update competition
+     * details.
+     *
+     * @return void
+     */
+    public function simpleMemberCantUpdateCompetition(): void
+    {
+        $user = $this->createUser();
+        $team = $this->createTeam([$user], [MemberRole::MANAGE_COMPETITION_AREAS]);
+        $competition = $this->createCompetition($team->id);
+
+        $regTill = Carbon::now()->addDays(2)->toDateTimeString();
+        $orgDate = Carbon::now()->addDays(3)->toDateTimeString();
+
+        $response = $this->actingAs($user, 'api')
+            ->patchJson("/api/competitions/{$competition->id}", [
+                'title' => 'competition title',
+                'subtitle' => 'competition subtitle',
+                'registration_till' => $regTill,
+                'organization_date' => $orgDate,
+            ]);
+
+        $response->assertStatus(503);
     }
 }

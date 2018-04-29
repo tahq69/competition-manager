@@ -1,7 +1,5 @@
 <?php namespace App\Http\Controllers;
 
-use App\Contracts\ICompetitionRepository as Competitions;
-use App\Contracts\IUserRepository as Users;
 use App\Http\Requests\Competition\Index as IndexRequest;
 use App\Http\Requests\Competition\Store as StoreRequest;
 use App\Http\Requests\Competition\Update as UpdateRequest;
@@ -25,18 +23,29 @@ class CompetitionController extends Controller
     private $users;
 
     /**
+     * @var \App\Contracts\ITeamRepository
+     */
+    private $teams;
+
+    /**
      * CompetitionController constructor.
      *
      * @param \App\Contracts\ICompetitionRepository $competitions
      * @param \App\Contracts\IUserRepository        $users
+     * @param \App\Contracts\ITeamRepository        $teams
      */
-    public function __construct(Competitions $competitions, Users $users)
+    public function __construct(
+        \App\Contracts\ICompetitionRepository $competitions,
+        \App\Contracts\IUserRepository $users,
+        \App\Contracts\ITeamRepository $teams
+    )
     {
         $this->middleware('auth:api')
             ->except('index', 'show');
 
         $this->competitions = $competitions;
         $this->users = $users;
+        $this->teams = $teams;
     }
 
     /**
@@ -83,7 +92,18 @@ class CompetitionController extends Controller
      */
     public function store(StoreRequest $request): JsonResponse
     {
-        //
+        $validatedInput = array_keys($request->rules());
+        $details = $request->only($validatedInput);
+
+        /** @var \App\Team $team */
+        $team = $this->teams->find($request->team_id, ['id', 'name', 'short']);
+
+        $details['team_name'] = $team->name;
+        $details['team_short'] = $team->short;
+
+        $competition = $this->competitions->create($details);
+
+        return new JsonResponse($competition);
     }
 
     /**
@@ -104,12 +124,22 @@ class CompetitionController extends Controller
      * Update the specified competition in storage.
      *
      * @param \App\Http\Requests\Competition\Update $request
-     * @param int                                   $id
+     * @param int                                   $competitionId
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(UpdateRequest $request, int $id): JsonResponse
+    public function update(
+        UpdateRequest $request,
+        int $competitionId
+    ): JsonResponse
     {
-        //
+        $validatedInput = array_keys($request->rules());
+        $details = $request->only($validatedInput);
+
+        $competition = $this->competitions->find($competitionId);
+
+        $this->competitions->update($details, $competitionId, $competition);
+
+        return new JsonResponse($competition);
     }
 }

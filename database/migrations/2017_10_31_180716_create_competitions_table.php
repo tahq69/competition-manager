@@ -16,16 +16,16 @@ class CreateCompetitionsTable extends \App\Helpers\Migration
 
             $table->string('title');
             $table->string('subtitle');
-            $table->longText('cooperation');
-            $table->longText('invitation');
-            $table->longText('program');
-            $table->longText('rules');
-            $table->longText('ambulance');
-            $table->longText('prizes');
-            $table->longText('equipment');
-            $table->longText('price');
-            $table->timestamp('organization_date')->nullable();
-            $table->timestamp('registration_till')->nullable();
+            $table->longText('cooperation')->nullable();
+            $table->longText('invitation')->nullable();
+            $table->longText('program')->nullable();
+            $table->longText('rules')->nullable();
+            $table->longText('ambulance')->nullable();
+            $table->longText('prizes')->nullable();
+            $table->longText('equipment')->nullable();
+            $table->longText('price')->nullable();
+            $table->timestamp('organization_date');
+            $table->timestamp('registration_till');
 
             $table->unsignedInteger('judge_id')->nullable();
             $table->foreign('judge_id')
@@ -33,7 +33,7 @@ class CreateCompetitionsTable extends \App\Helpers\Migration
                 ->on('users')
                 ->onDelete('no action');
 
-            $table->string('judge_name');
+            $table->string('judge_name')->nullable();
 
             $this->audit($table);
             $table->timestamps();
