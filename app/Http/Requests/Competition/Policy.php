@@ -1,6 +1,7 @@
 <?php namespace App\Http\Requests\Competition;
 
-use App\Contracts\ITeamRepository as ITeams;
+use App\Contracts\ICompetitionRepository;
+use App\Contracts\ITeamRepository;
 use App\Contracts\MemberRole;
 use App\Http\Requests\MemberRolesPolicy;
 use App\Http\Requests\UserRolesPolicy;
@@ -25,28 +26,36 @@ class Policy
     /**
      * @var \App\Contracts\ITeamRepository
      */
-    private $team;
+    private $teams;
+
+    /**
+     * @var \App\Contracts\ICompetitionRepository
+     */
+    private $competitions;
 
     /**
      * Competition policy constructor.
      *
-     * @param \App\Http\Requests\UserRolesPolicy   $user
-     * @param \App\Http\Requests\MemberRolesPolicy $member
-     * @param \App\Contracts\ITeamRepository       $team
+     * @param \App\Http\Requests\UserRolesPolicy    $userRoles
+     * @param \App\Http\Requests\MemberRolesPolicy  $memberRoles
+     * @param \App\Contracts\ITeamRepository        $teams
+     * @param \App\Contracts\ICompetitionRepository $competitions
      */
     public function __construct(
-        UserRolesPolicy $user,
-        MemberRolesPolicy $member,
-        ITeams $team
+        UserRolesPolicy $userRoles,
+        MemberRolesPolicy $memberRoles,
+        ITeamRepository $teams,
+        ICompetitionRepository $competitions
     )
     {
-        $this->user = $user;
-        $this->member = $member;
-        $this->team = $team;
+        $this->user = $userRoles;
+        $this->member = $memberRoles;
+        $this->teams = $teams;
+        $this->competitions = $competitions;
     }
 
     /**
-     * @param  int $teamId Owner team identifier.
+     * @param int $teamId Owner team identifier.
      *
      * @return bool
      */
@@ -64,9 +73,36 @@ class Policy
 
         if (!$canCreate) return false;
 
-        $hasCredits = $this->team->hasCredits($teamId);
+        $hasCredits = $this->teams->hasCredits($teamId);
 
         if (!$hasCredits) return false;
+
+        return true;
+    }
+
+    /**
+     * @param int $cmId
+     * @param int $teamId
+     *
+     * @return bool
+     * @throws \App\Exceptions\CompetitionCompletedException
+     */
+    public function canUpdate(int $cmId, int $teamId)
+    {
+        if (!$this->user->authorized()) return false;
+        $userId = $this->user->id;
+        $isManager = $this->member->isManager($teamId, $userId);
+
+        if (!$isManager) return false;
+
+        $canManage = $this->member->hasRole(
+            $teamId, $userId, MemberRole::MANAGE_COMPETITIONS
+        );
+        if (!$canManage) return false;
+
+        /** @var \App\Competition $cm */
+        $cm = $this->competitions->find($cmId);
+        $cm->ensureIsEditable();
 
         return true;
     }

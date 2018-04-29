@@ -4,28 +4,31 @@ use App\Contracts\ICompetitionRepository as Competitions;
 use App\Contracts\IUserRepository as Users;
 use App\Http\Requests\Competition\Index as IndexRequest;
 use App\Http\Requests\Competition\Store as StoreRequest;
+use App\Http\Requests\Competition\Update as UpdateRequest;
 use Illuminate\Http\JsonResponse;
 
 /**
  * Class CompetitionController
+ *
  * @package App\Http\Controllers
  */
 class CompetitionController extends Controller
 {
     /**
-     * @var Competitions
+     * @var \App\Contracts\ICompetitionRepository
      */
     private $competitions;
 
     /**
-     * @var Users
+     * @var \App\Contracts\IUserRepository
      */
     private $users;
 
     /**
      * CompetitionController constructor.
-     * @param Competitions $competitions
-     * @param Users $users
+     *
+     * @param \App\Contracts\ICompetitionRepository $competitions
+     * @param \App\Contracts\IUserRepository        $users
      */
     public function __construct(Competitions $competitions, Users $users)
     {
@@ -37,9 +40,11 @@ class CompetitionController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
-     * @param  IndexRequest $request
-     * @return JsonResponse
+     * Display a listing of the competitions.
+     *
+     * @param \App\Http\Requests\Competition\Index $request
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index(IndexRequest $request): JsonResponse
     {
@@ -69,20 +74,42 @@ class CompetitionController extends Controller
         return new JsonResponse($competitions);
     }
 
+    /**
+     * Store a newly created competition in storage.
+     *
+     * @param \App\Http\Requests\Competition\Store $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function store(StoreRequest $request): JsonResponse
     {
-
+        //
     }
 
     /**
-     * Get single competition instance.
-     * @param  int $id
-     * @return JsonResponse
+     * Display the specified competition.
+     *
+     * @param int $id Competition identifier.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function show(int $id): JsonResponse
     {
         $competition = $this->competitions->find($id);
 
         return new JsonResponse($competition);
+    }
+
+    /**
+     * Update the specified competition in storage.
+     *
+     * @param \App\Http\Requests\Competition\Update $request
+     * @param int                                   $id
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(UpdateRequest $request, int $id): JsonResponse
+    {
+        //
     }
 }

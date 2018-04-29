@@ -1,12 +1,12 @@
 <?php namespace App;
 
+use App\Exceptions\CompetitionCompletedException;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class Competition
+ *
  * @package App
  */
 class Competition extends Model
@@ -15,12 +15,14 @@ class Competition extends Model
 
     /**
      * The table associated with the model.
+     *
      * @var string
      */
     protected $table = 'competitions';
 
     /**
      * The attributes that are mass assignable.
+     *
      * @var array
      */
     protected $fillable = [
@@ -46,6 +48,7 @@ class Competition extends Model
 
     /**
      * The attributes that should be mutated to dates.
+     *
      * @var array
      */
     protected $dates = [
@@ -53,7 +56,7 @@ class Competition extends Model
     ];
 
     /**
-     * @return BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function judge()
     {
@@ -61,7 +64,7 @@ class Competition extends Model
     }
 
     /**
-     * @return HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function disciplines()
     {
@@ -69,10 +72,22 @@ class Competition extends Model
     }
 
     /**
-     * @return BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function team()
     {
         return $this->belongsTo(Team::class, 'team_id', 'id');
+    }
+
+    /**
+     * @throws \App\Exceptions\CompetitionCompletedException
+     */
+    public function ensureIsEditable()
+    {
+        $tomorrow = Carbon::now()->addDay();
+
+        if (!$this->registration_till->lt($tomorrow)) {
+            throw new CompetitionCompletedException($this);
+        }
     }
 }
