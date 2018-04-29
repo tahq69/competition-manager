@@ -4,6 +4,7 @@ use App\Competition;
 use App\Contracts\ICompetitionRepository;
 use App\Contracts\ITeamRepository;
 use App\Contracts\MemberRole;
+use App\Contracts\UserRole;
 use App\Http\Requests\MemberRolesPolicy;
 use App\Http\Requests\UserRolesPolicy;
 
@@ -64,6 +65,7 @@ class Policy
     public function canStore(int $teamId): bool
     {
         if (!$this->user->authorized()) return false;
+        if ($this->user->hasRole(UserRole::SUPER_ADMIN)) return true;
 
         $userId = $this->user->id;
 
@@ -91,6 +93,8 @@ class Policy
     public function canUpdate(Competition $cm)
     {
         if (!$this->user->authorized()) return false;
+        if ($this->user->hasRole(UserRole::SUPER_ADMIN)) return true;
+
         $userId = $this->user->id;
         $isManager = $this->member->isManager($cm->id, $userId);
 
