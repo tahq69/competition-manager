@@ -15,12 +15,16 @@ class Update extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      *
-     * @param  Policy $policy
+     * @param  Policy                               $policy
+     * @param \App\Contracts\ICompetitionRepository $competitions
      *
      * @return bool
      * @throws \App\Exceptions\CompetitionCompletedException
      */
-    public function authorize(Policy $policy, ICompetitionRepository $competitions)
+    public function authorize(
+        Policy $policy,
+        ICompetitionRepository $competitions
+    )
     {
         $cmId = $this->route('competition');
 
@@ -53,12 +57,6 @@ class Update extends FormRequest
             ],
             'organization_date' => [
                 'required', 'date', 'after:registration_till',
-            ],
-            'judge_id' => [
-                Rule::exists('users', 'id'),
-            ],
-            'judge_name' => [
-                'nullable', 'min:3', 'max:255', new AlphaDashSpace,
             ],
             'cooperation' => [],
             'invitation' => [],
