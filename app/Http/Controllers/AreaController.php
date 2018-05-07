@@ -5,6 +5,7 @@ use Illuminate\Http\JsonResponse;
 
 /**
  * Class AreaController
+ *
  * @package App\Http\Controllers\Auth
  */
 class AreaController extends Controller
@@ -16,6 +17,7 @@ class AreaController extends Controller
 
     /**
      * AreaController constructor.
+     *
      * @param IAreas $areas
      */
     public function __construct(IAreas $areas)
@@ -28,7 +30,9 @@ class AreaController extends Controller
 
     /**
      * Get single resource instance.
-     * @param  int $competitionId
+     *
+     * @param int $competitionId
+     *
      * @return JsonResponse
      */
     public function index(int $competitionId): JsonResponse
@@ -43,8 +47,10 @@ class AreaController extends Controller
 
     /**
      * Display a listing of the resource.
-     * @param  int $competitionId
-     * @param  int $areaId
+     *
+     * @param int $competitionId
+     * @param int $areaId
+     *
      * @return JsonResponse
      */
     public function show(int $competitionId, int $areaId): JsonResponse
