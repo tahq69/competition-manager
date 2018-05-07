@@ -49,6 +49,7 @@ class Category extends Model
         'type',                 // varchar(255)
         'updated_by',           // int(10) UNSIGNED
         'updated_by_name',      // varchar(255)
+        'team_id',              // int(10) UNSIGNED
     ];
 
     /**

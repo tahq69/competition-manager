@@ -4,7 +4,10 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddTypeDimensionsColumnsToCategoriesTable extends Migration
+/**
+ * Class AddTeamIdToCategoriesTable
+ */
+class AddTeamIdToCategoriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,15 +17,15 @@ class AddTypeDimensionsColumnsToCategoriesTable extends Migration
     public function up()
     {
         Schema::table('categories', function (Blueprint $table) {
-            $table->string('display_type')->nullable();
-            $table->string('type')->nullable();
-            $table->integer('min')->unsigned()->default(0);
-            $table->integer('max')->unsigned()->default(0);
+            $table->unsignedInteger('team_id')->nullable();
+            $table->foreign('team_id')
+                ->references('id')
+                ->on('teams')
+                ->onDelete('no action');
         });
 
         Schema::table('categories', function (Blueprint $table) {
-            $table->string('display_type')->nullable(false)->change();
-            $table->string('type')->nullable(false)->change();
+            $table->unsignedInteger('team_id')->nullable(false)->change();
         });
     }
 
@@ -34,10 +37,8 @@ class AddTypeDimensionsColumnsToCategoriesTable extends Migration
     public function down()
     {
         Schema::table('categories', function (Blueprint $table) {
-            $table->dropColumn('display_type');
-            $table->dropColumn('type');
-            $table->dropColumn('min');
-            $table->dropColumn('max');
+            $table->dropForeign(['team_id']);
+            $table->dropColumn('team_id');
         });
     }
 }

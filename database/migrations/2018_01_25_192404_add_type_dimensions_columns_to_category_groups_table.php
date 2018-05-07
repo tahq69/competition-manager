@@ -16,9 +16,13 @@ class AddTypeDimensionsColumnsToCategoryGroupsTable extends Migration
         Schema::table('category_groups', function (Blueprint $table) {
             $table->integer('rounds')->unsigned()->default(0);
             $table->integer('time')->unsigned()->default(0);
-            $table->string('type')->default('');
+            $table->string('type')->nullable();
             $table->integer('min')->unsigned()->default(0);
             $table->integer('max')->unsigned()->default(0);
+        });
+
+        Schema::table('category_groups', function (Blueprint $table) {
+            $table->string('type')->nullable(false)->change();
         });
     }
 

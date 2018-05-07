@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddTeamIdToAreasTable extends Migration
+class AddTeamIdToCategoryGroupsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class AddTeamIdToAreasTable extends Migration
      */
     public function up()
     {
-        Schema::table('areas', function (Blueprint $table) {
+        Schema::table('category_groups', function (Blueprint $table) {
             $table->unsignedInteger('team_id')->nullable();
             $table->foreign('team_id')
                 ->references('id')
@@ -21,7 +21,7 @@ class AddTeamIdToAreasTable extends Migration
                 ->onDelete('no action');
         });
 
-        Schema::table('areas', function (Blueprint $table) {
+        Schema::table('category_groups', function (Blueprint $table) {
             $table->unsignedInteger('team_id')->nullable(false)->change();
         });
     }
@@ -33,7 +33,7 @@ class AddTeamIdToAreasTable extends Migration
      */
     public function down()
     {
-        Schema::table('areas', function (Blueprint $table) {
+        Schema::table('category_groups', function (Blueprint $table) {
             $table->dropForeign(['team_id']);
             $table->dropColumn('team_id');
         });

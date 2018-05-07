@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddGroupTypeColumnToDisciplineTable extends Migration
+class AddTeamIdToDisciplinesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,13 +14,15 @@ class AddGroupTypeColumnToDisciplineTable extends Migration
     public function up()
     {
         Schema::table('disciplines', function (Blueprint $table) {
-            $table->string('category_group_type')->nullable();
-            $table->string('category_type')->nullable();
+            $table->unsignedInteger('team_id')->nullable();
+            $table->foreign('team_id')
+                ->references('id')
+                ->on('teams')
+                ->onDelete('no action');
         });
 
-        Schema::table('disciplines', function (Blueprint $table) {
-            $table->string('category_group_type')->nullable(false)->change();
-            $table->string('category_type')->nullable(false)->change();
+        Schema::table('category_groups', function (Blueprint $table) {
+            $table->unsignedInteger('team_id')->nullable(false)->change();
         });
     }
 
@@ -32,8 +34,8 @@ class AddGroupTypeColumnToDisciplineTable extends Migration
     public function down()
     {
         Schema::table('disciplines', function (Blueprint $table) {
-            $table->dropColumn('category_group_type');
-            $table->dropColumn('category_type');
+            $table->dropForeign(['team_id']);
+            $table->dropColumn('team_id');
         });
     }
 }
