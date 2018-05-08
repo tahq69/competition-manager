@@ -41,7 +41,7 @@ class Store extends FormRequest
 
         return [
             'competition_id' => [
-                'required', 'numeric',
+                'required', 'integer',
                 // Competition id should exists in database.
                 Rule::exists('competitions', 'id'),
                 // Url competition id should be same as body identifier.

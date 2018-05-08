@@ -10,24 +10,26 @@ use Illuminate\Http\JsonResponse;
 
 /**
  * Class CategoryGroupController
+ *
  * @package App\Http\Controllers
  */
 class CategoryGroupController extends Controller
 {
     /**
-     * @var IGroups
+     * @var \App\Contracts\ICategoryGroupRepository
      */
     private $groups;
 
     /**
-     * @var IDisciplines
+     * @var \App\Contracts\IDisciplineRepository
      */
     private $disciplines;
 
     /**
      * CompetitionController constructor.
-     * @param IGroups $groups
-     * @param IDisciplines $disciplines
+     *
+     * @param \App\Contracts\ICategoryGroupRepository $groups
+     * @param \App\Contracts\IDisciplineRepository    $disciplines
      */
     public function __construct(IGroups $groups, IDisciplines $disciplines)
     {
@@ -40,13 +42,13 @@ class CategoryGroupController extends Controller
 
     /**
      * Display a listing of the resource.
-     * @param  int $competitionId
-     * @param  int $disciplineId
-     * @return JsonResponse
+     *
+     * @param int $competitionId
+     * @param int $disciplineId
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function index(
-        int $competitionId,
-        int $disciplineId): JsonResponse
+    public function index(int $competitionId, int $disciplineId): JsonResponse
     {
         $groups = $this->groups
             ->whereCompetition($competitionId)
@@ -62,22 +64,25 @@ class CategoryGroupController extends Controller
 
     /**
      * Store new instance of resource instance.
-     * @param  int $competitionId
-     * @param  int $disciplineId
-     * @param  StoreGroupRequest $request
-     * @return JsonResponse
+     *
+     * @param int                                    $competitionId
+     * @param int                                    $disciplineId
+     * @param \App\Http\Requests\CategoryGroup\Store $request
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(
         int $competitionId,
         int $disciplineId,
-        StoreGroupRequest $request): JsonResponse
+        StoreGroupRequest $request
+    ): JsonResponse
     {
         $details = $request->only([
             'title', 'short', 'rounds', 'time', 'min', 'max', 'competition_id',
             'discipline_id',
         ]);
 
-        /** @var Discipline $discipline */
+        /** @var \App\Discipline $discipline */
         $discipline = $this->disciplines->find($disciplineId);
         $groupCount = $this->groups->whereDiscipline($disciplineId)->count();
 
@@ -94,15 +99,18 @@ class CategoryGroupController extends Controller
 
     /**
      * Get single resource instance.
-     * @param  int $competitionId
-     * @param  int $disciplineId
-     * @param  int $id
-     * @return JsonResponse
+     *
+     * @param int $competitionId
+     * @param int $disciplineId
+     * @param int $id
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function show(
         int $competitionId,
         int $disciplineId,
-        int $id): JsonResponse
+        int $id
+    ): JsonResponse
     {
         $group = $this->groups
             ->whereCompetition($competitionId)
@@ -114,17 +122,20 @@ class CategoryGroupController extends Controller
 
     /**
      * Update existing resource instance.
-     * @param  int $competitionId
-     * @param  int $disciplineId
-     * @param  int $id
-     * @param  UpdateGroupRequest $request
-     * @return JsonResponse
+     *
+     * @param int                                     $competitionId
+     * @param int                                     $disciplineId
+     * @param int                                     $id
+     * @param \App\Http\Requests\CategoryGroup\Update $request
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function update(
         int $competitionId,
         int $disciplineId,
         int $id,
-        UpdateGroupRequest $request): JsonResponse
+        UpdateGroupRequest $request
+    ): JsonResponse
     {
         $group = $this->groups
             ->whereCompetition($competitionId)
@@ -141,18 +152,20 @@ class CategoryGroupController extends Controller
     }
 
     /**
-     * @param  int $competitionId
-     * @param  int $disciplineId
-     * @param  int $id
-     * @param  DestroyGroupRequest $request
-     * @return JsonResponse
+     * @param  int                                     $competitionId
+     * @param  int                                     $disciplineId
+     * @param  int                                     $id
+     * @param \App\Http\Requests\CategoryGroup\Destroy $request
+     *
+     * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
      */
     public function destroy(
         int $competitionId,
         int $disciplineId,
         int $id,
-        DestroyGroupRequest $request): JsonResponse
+        DestroyGroupRequest $request
+    ): JsonResponse
     {
         $this->groups
             ->whereCompetition($competitionId)

@@ -45,28 +45,28 @@ class Store extends FormRequest
 
         return [
             'competition_id' => [
-                'required', 'numeric',
+                'required', 'integer',
                 // Competition id should exists in database.
                 Rule::exists('competitions', 'id'),
                 // Url competition id should be same as body identifier.
                 Rule::in($cmId),
             ],
             'discipline_id' => [
-                'required', 'numeric',
+                'required', 'integer',
                 // Discipline id should exists in database.
                 Rule::exists('disciplines', 'id'),
                 // Url discipline id should be same as body identifier.
                 Rule::in($disciplineId),
             ],
             'category_group_id' => [
-                'required', 'numeric',
+                'required', 'integer',
                 // Group id should exists in database.
                 Rule::exists('category_groups', 'id'),
                 // Url group id should be same as body identifier.
                 Rule::in($groupId),
             ],
             'area_id' => [
-                'required', 'numeric',
+                'required', 'integer',
                 // Area id should exists in database for current competition.
                 Rule::exists('areas', 'id')
                     ->where('competition_id', $cmId),

@@ -44,6 +44,20 @@ class Update extends FormRequest
         $cmId = $this->route('competition');
 
         return [
+            'id' => [
+                'required', 'integer',
+                // Identifier should exist in system.
+                Rule::exists('areas', 'id'),
+                // Request identifier should be same as URL value.
+                Rule::in($areaId),
+            ],
+            'competition_id' => [
+                'required', 'integer',
+                // Competition identifier should exist in system.
+                Rule::exists('competitions', 'id'),
+                // Request identifier should be same as URL value.
+                Rule::in($cmId),
+            ],
             'title' => [
                 'required', 'min:3', 'max:255', new AlphaDashSpace,
                 // Title should be unique for current competition scope.
