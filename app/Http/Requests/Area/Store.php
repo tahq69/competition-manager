@@ -1,7 +1,7 @@
 <?php namespace App\Http\Requests\Area;
 
 use App\Area;
-use App\Contracts\ICompetitionRepository as Competitions;
+use App\Contracts\ICompetitionRepository as ICompetitions;
 use App\Rules\AlphaDashSpace;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -19,9 +19,9 @@ class Store extends FormRequest
      * @param \App\Http\Requests\Area\Policy        $policy
      * @param \App\Contracts\ICompetitionRepository $competitions
      *
-     * @return bool Is user authorized to make this request.
+     * @return bool
      */
-    public function authorize(Policy $policy, Competitions $competitions): bool
+    public function authorize(Policy $policy, ICompetitions $competitions): bool
     {
         $competitionId = $this->route('competition');
 
@@ -34,7 +34,7 @@ class Store extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array Rules to validate request.
+     * @return array
      */
     public function rules(): array
     {

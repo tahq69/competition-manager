@@ -1,6 +1,5 @@
 <?php namespace App\Http\Requests\Area;
 
-use App\Area;
 use App\Contracts\MemberRole;
 use App\Contracts\UserRole;
 use App\Http\Requests\MemberRolesPolicy;
@@ -14,6 +13,16 @@ use App\Http\Requests\UserRolesPolicy;
 class Policy
 {
     /**
+     * @var \App\Http\Requests\UserRolesPolicy
+     */
+    private $user;
+
+    /**
+     * @var \App\Http\Requests\MemberRolesPolicy
+     */
+    private $member;
+
+    /**
      * Area policy constructor.
      *
      * @param \App\Http\Requests\UserRolesPolicy   $userRoles
@@ -21,22 +30,40 @@ class Policy
      */
     public function __construct(
         UserRolesPolicy $userRoles,
-        MemberRolesPolicy $memberRoles
-    )
+        MemberRolesPolicy $memberRoles)
     {
         $this->user = $userRoles;
         $this->member = $memberRoles;
     }
 
     /**
-     * Determines is the authenticated user able create area record.
+     * Determines is the authenticated user able create record.
      *
-     * @param int $teamId        Competition owner team identifier.
-     * @param int $competitionId Competition identifier.
+     * @param int $teamId Team identifier.
+     * @param int $cmId   Competition identifier.
      *
-     * @return bool Is the authenticated user able create area record.
+     * @return bool
      */
-    public function canStore(int $teamId, int $competitionId): bool
+    public function canStore(int $teamId, int $cmId): bool
+    {
+        return $this->canManage($teamId, $cmId);
+    }
+
+    /**
+     * Determines is the authenticated user able update provided area record.
+     *
+     * @param int $teamId Team identifier.
+     * @param int $cmId   Competition identifier.
+     * @param int $areaId Area identifier.
+     *
+     * @return bool
+     */
+    public function canUpdate(int $teamId, int $cmId, int $areaId): bool
+    {
+        return $this->canManage($teamId, $cmId);
+    }
+
+    private function canManage(int $teamId, int $cmId): bool
     {
         $admin = UserRole::SUPER_ADMIN;
         $manageAreas = MemberRole::MANAGE_COMPETITION_AREAS;
@@ -44,26 +71,9 @@ class Policy
         if (!$this->user->authorized()) return false;
         if ($this->user->hasRole($admin)) return true;
 
-        $userId = $this->user->id;
-
-        if (!$this->member->isManager($teamId, $userId)) return false;
-        if (!$this->member->hasRole($teamId, $userId, $manageAreas)) return false;
+        if (!$this->member->isManager($teamId)) return false;
+        if (!$this->member->hasRole($teamId, $manageAreas)) return false;
 
         return true;
-    }
-
-    /**
-     * Determines is the authenticated user able update provided area record.
-     *
-     * @param \App\Area $area Record to be update by the authenticated user.
-     *
-     * @return bool Is the authenticated user able update provided area record.
-     */
-    public function canUpdate(Area $area): bool
-    {
-        $teamId = $area->competition->team_id;
-        $competitionId = $area->competition_id;
-
-        return $this->canStore($teamId, $competitionId);
     }
 }

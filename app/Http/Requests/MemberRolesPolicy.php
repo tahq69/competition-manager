@@ -1,10 +1,13 @@
 <?php namespace App\Http\Requests;
 
 use App\Contracts\ITeamMemberRepository as IMembers;
+use App\Http\Requests\CompetitionManagePolicy as ICompetition;
 use App\TeamMember;
+use Auth;
 
 /**
  * Class MemberRolesPolicy
+ *
  * @package App\Http\Requests
  */
 class MemberRolesPolicy
@@ -15,18 +18,29 @@ class MemberRolesPolicy
     private $members;
 
     /**
-     * MemberRolesPolicy constructor.
-     * @param IMembers $members
+     * @var \App\Http\Requests\CompetitionManagePolicy
      */
-    public function __construct(IMembers $members)
+    private $competition;
+
+    /**
+     * MemberRolesPolicy constructor.
+     *
+     * @param \App\Contracts\ITeamMemberRepository       $members
+     * @param \App\Http\Requests\CompetitionManagePolicy $competition
+     */
+    public function __construct(IMembers $members, ICompetition $competition)
     {
         $this->members = $members;
+        $this->competition = $competition;
     }
 
     /**
-     * @param  int $teamId
-     * @param  int $memberId
-     * @return bool
+     * Determines is the provided member identifier part of the team.
+     *
+     * @param int $teamId   Team identifier.
+     * @param int $memberId Member identifier.
+     *
+     * @return bool Is the member part of the team.
      */
     public function isMember(int $teamId, int $memberId)
     {
@@ -38,14 +52,14 @@ class MemberRolesPolicy
 
     /**
      * @param  int $teamId
-     * @param  int $userId
+     *
      * @return bool
      */
-    public function isManager(int $teamId, int $userId)
+    public function isManager(int $teamId)
     {
         $isManager = $this->members
             ->filterByTeam($teamId)
-            ->filterByUser($userId)
+            ->filterByUser(Auth::id())
             ->filterByMembership(TeamMember::MANAGER)
             ->count(true);
 
@@ -53,16 +67,18 @@ class MemberRolesPolicy
     }
 
     /**
-     * @param  int $teamId
-     * @param  int $userId
-     * @param  string $role
+     * Has the authenticated user role in the provided team.
+     *
+     * @param int    $teamId Team identifier.
+     * @param string $role   Required role.
+     *
      * @return bool
      */
-    public function hasRole(int $teamId, int $userId, string $role)
+    public function hasRole(int $teamId, string $role)
     {
         $authUserMembers = $this->members
             ->filterByTeam($teamId)
-            ->filterByUser($userId)
+            ->filterByUser(Auth::id())
             ->withTeamMemberRoles()
             ->get();
 

@@ -1,30 +1,43 @@
 <?php namespace App\Http\Requests\Category;
 
 use App\Category;
+use App\Contracts\ICategoryRepository as ICategories;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
  * Class Update
+ *
  * @package App\Http\Requests\Category
  */
 class Update extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     * @param  Policy $policy
+     *
+     * @param \App\Http\Requests\Category\Policy $policy
+     * @param \App\Contracts\ICategoryRepository $categories
+     *
      * @return bool
      */
-    public function authorize(Policy $policy)
+    public function authorize(Policy $policy, ICategories $categories): bool
     {
-        return $policy->canUpdate($this->route('competition'));
+        $catId = $this->route('category');
+
+        /** @var \App\Category $cat */
+        $cat = $categories->find($catId, ['id', 'competition_id', 'team_id']);
+        $teamId = $cat->team_id;
+        $cmId = $cat->competition_id;
+
+        return $policy->canUpdate($teamId, $cmId, $catId);
     }
 
     /**
      * Get the validation rules that apply to the request.
+     *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         $cmId = $this->route('competition');
         $disciplineId = $this->route('discipline');
@@ -75,7 +88,7 @@ class Update extends FormRequest
             ],
             'display_type' => [
                 'required',
-                Rule::in(Category::DISPLAY_TYPES)
+                Rule::in(Category::DISPLAY_TYPES),
             ],
             'min' => ['required', 'integer', 'min:0'],
             'max' => ['required', 'integer', 'min:0'],

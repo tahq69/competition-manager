@@ -64,18 +64,15 @@ class Policy
      */
     public function canStore(int $teamId): bool
     {
-        if (!$this->user->authorized()) return false;
-        if ($this->user->hasRole(UserRole::SUPER_ADMIN)) return true;
+        $admin = UserRole::SUPER_ADMIN;
+        $createCompetitions = MemberRole::CREATE_COMPETITIONS;
 
-        $userId = $this->user->id;
+        if (!$this->user->authorized()) return false;
+        if ($this->user->hasRole($admin)) return true;
 
         // Allow to create team competition only if user has required role for
         // it and team has credits.
-        $canCreate = $this->member->hasRole(
-            $teamId, $userId, MemberRole::CREATE_COMPETITIONS
-        );
-
-        if (!$canCreate) return false;
+        if (!$this->member->hasRole($teamId, $createCompetitions)) return false;
 
         /** @var \App\Team $team */
         $team = $this->teams->find($teamId);
@@ -92,19 +89,15 @@ class Policy
      */
     public function canUpdate(Competition $cm)
     {
+        $admin = UserRole::SUPER_ADMIN;
+        $manageCompetitions = MemberRole::MANAGE_COMPETITIONS;
+        $teamId = $cm->team_id;
+
         if (!$this->user->authorized()) return false;
-        if ($this->user->hasRole(UserRole::SUPER_ADMIN)) return true;
+        if ($this->user->hasRole($admin)) return true;
 
-        $userId = $this->user->id;
-        $isManager = $this->member->isManager($cm->id, $userId);
-
-        if (!$isManager) return false;
-
-        $canManage = $this->member->hasRole(
-            $cm->team_id, $userId, MemberRole::MANAGE_COMPETITIONS
-        );
-
-        if (!$canManage) return false;
+        if (!$this->member->isManager($teamId)) return false;
+        if (!$this->member->hasRole($teamId, $manageCompetitions)) return false;
 
         $cm->ensureIsEditable();
 

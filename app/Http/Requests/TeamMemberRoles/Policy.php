@@ -42,7 +42,6 @@ class Policy
     public function canList(int $teamId, int $memberId): bool
     {
         if (!$this->user->authorized()) return false;
-        $user = $this->user->id;
 
         // Super admin or team creator can edit any team details/members/roles.
         if ($this->user->hasRole(UserRole::CREATE_TEAMS)) return true;
@@ -51,10 +50,10 @@ class Policy
         if (!$this->member->isMember($teamId, $memberId)) return false;
 
         // If authenticated user is manager of the member team, allow any action.
-        if ($this->member->isManager($teamId, $user)) return true;
+        if ($this->member->isManager($teamId)) return true;
 
         // Only simple members requires roles to access team member data.
-        return $this->member->hasRole($teamId, $user, MemberRole::MANAGE_MEMBER_ROLES);
+        return $this->member->hasRole($teamId, MemberRole::MANAGE_MEMBER_ROLES);
     }
 
     /**

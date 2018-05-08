@@ -15,16 +15,16 @@ class Update extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      *
-     * @param  Policy                               $policy
+     * @param \App\Http\Requests\Competition\Policy $policy
      * @param \App\Contracts\ICompetitionRepository $competitions
      *
-     * @return bool
+     * @return bool Is user authorized to make this request.
      * @throws \App\Exceptions\CompetitionCompletedException
      */
     public function authorize(
         Policy $policy,
         ICompetitionRepository $competitions
-    )
+    ): bool
     {
         $cmId = $this->route('competition');
 
@@ -37,9 +37,9 @@ class Update extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array
+     * @return array Rules to validate request.
      */
-    public function rules()
+    public function rules(): array
     {
         $cmId = $this->route('competition');
 

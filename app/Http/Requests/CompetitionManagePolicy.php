@@ -6,6 +6,7 @@ use Carbon\Carbon;
 
 /**
  * Class CompetitionManagePolicy
+ *
  * @package App\Http\Requests
  */
 class CompetitionManagePolicy
@@ -22,8 +23,9 @@ class CompetitionManagePolicy
 
     /**
      * CompetitionManagePolicy constructor.
-     * @param ICompetitions $competitions
-     * @param UserRolesPolicy $user
+     *
+     * @param \App\Contracts\ICompetitionRepository $competitions
+     * @param \App\Http\Requests\UserRolesPolicy    $user
      */
     public function __construct(ICompetitions $competitions, UserRolesPolicy $user)
     {
@@ -32,8 +34,11 @@ class CompetitionManagePolicy
     }
 
     /**
-     * @param  int $competitionId
-     * @return bool
+     * Determines is the authenticated user manager of the team.
+     *
+     * @param int $competitionId Competition identifier.
+     *
+     * @return bool Is the authenticated user manager of the team.
      */
     public function isManager(int $competitionId): bool
     {

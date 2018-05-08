@@ -1,7 +1,7 @@
 <?php namespace App\Http\Requests\Area;
 
 use App\Area;
-use App\Contracts\IAreaRepository;
+use App\Contracts\IAreaRepository as IAreas;
 use App\Rules\AlphaDashSpace;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -19,18 +19,19 @@ class Update extends FormRequest
      * @param \App\Http\Requests\Area\Policy $policy
      * @param \App\Contracts\IAreaRepository $areas
      *
-     * @return bool Is user authorized to make this request.
+     * @return bool
      */
-    public function authorize(Policy $policy, IAreaRepository $areas): bool
+    public function authorize(Policy $policy, IAreas $areas): bool
     {
         $areaId = $this->route('area');
 
         /** @var \App\Area $area */
-        $area = $areas->find($areaId);
+        $area = $areas->find($areaId, ['id', 'team_id', 'competition_id']);
 
-        return $policy->canUpdate($area);
+        return $policy->canUpdate(
+            $area->team_id, $areaId->competition_id, $area->id
+        );
     }
-
 
     /**
      * Get the validation rules that apply to the request.

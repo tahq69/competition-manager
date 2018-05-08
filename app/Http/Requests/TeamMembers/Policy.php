@@ -40,16 +40,15 @@ class Policy
     public function canStore(int $teamId): bool
     {
         if (!$this->user->authorized()) return false;
-        $user = $this->user->id;
 
         // Super admin or team creator can edit any team details/members/roles.
         if ($this->user->hasRole(UserRole::CREATE_TEAMS)) return true;
 
         // If authenticated user is manager of the member team, allow any action.
-        if ($this->member->isManager($teamId, $user)) return true;
+        if ($this->member->isManager($teamId)) return true;
 
         // Only simple members requires roles to access team member data.
-        return $this->member->hasRole($teamId, $user, MemberRole::MANAGE_MEMBERS);
+        return $this->member->hasRole($teamId, MemberRole::MANAGE_MEMBERS);
     }
 
     /**

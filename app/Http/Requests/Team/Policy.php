@@ -53,15 +53,14 @@ class Policy
     public function canUpdate(int $teamId): bool
     {
         if (!$this->user->authorized()) return false;
-        $user = $this->user->id;
 
         // Super admin or team creator can edit any team details/members/roles.
         if ($this->user->hasRole(UserRole::CREATE_TEAMS)) return true;
 
         // If authenticated user is manager of the team, allow this action.
-        if ($this->member->isManager($teamId, $user)) return true;
+        if ($this->member->isManager($teamId)) return true;
 
         // Only simple members requires roles to access team member data.
-        return $this->member->hasRole($teamId, $user, MemberRole::MANAGE_TEAMS);
+        return $this->member->hasRole($teamId, MemberRole::MANAGE_TEAMS);
     }
 }

@@ -14,16 +14,14 @@ class Store extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      *
-     * @param  Policy $policy
+     * @param \App\Http\Requests\Competition\Policy $policy
      *
      * @return bool
      * @throws \App\Exceptions\TeamOutOfCreditsException
      */
-    public function authorize(Policy $policy)
+    public function authorize(Policy $policy): bool
     {
-        $teamId = $this->team_id;
-
-        return $policy->canStore($teamId);
+        return $policy->canStore($this->team_id);
     }
 
     /**
@@ -31,7 +29,7 @@ class Store extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'title' => [
