@@ -4,12 +4,14 @@ use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * Class ViewList
+ *
  * @package App\Http\Requests\Team
  */
 class Index extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     *
      * @return bool
      */
     public function authorize()
@@ -20,6 +22,7 @@ class Index extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
+     *
      * @return array
      */
     public function rules()

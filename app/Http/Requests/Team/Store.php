@@ -6,25 +6,29 @@ use Illuminate\Validation\Rule;
 
 /**
  * Class Store
+ *
  * @package App\Http\Requests\Team
  */
 class Store extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     * @param  Policy $policy
+     *
+     * @param \App\Http\Requests\Team\Policy $policy
+     *
      * @return bool
      */
-    public function authorize(Policy $policy)
+    public function authorize(Policy $policy): bool
     {
         return $policy->canStore();
     }
 
     /**
      * Get the validation rules that apply to the request.
+     *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'name' => [

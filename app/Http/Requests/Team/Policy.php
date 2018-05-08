@@ -7,6 +7,7 @@ use App\Http\Requests\UserRolesPolicy;
 
 /**
  * Class Policy
+ *
  * @package App\Http\Requests\Team
  */
 class Policy
@@ -23,7 +24,8 @@ class Policy
 
     /**
      * Policy constructor.
-     * @param \App\Http\Requests\UserRolesPolicy $user
+     *
+     * @param \App\Http\Requests\UserRolesPolicy   $user
      * @param \App\Http\Requests\MemberRolesPolicy $member
      */
     public function __construct(UserRolesPolicy $user, MemberRolesPolicy $member)
@@ -48,6 +50,7 @@ class Policy
 
     /**
      * @param  int $teamId
+     *
      * @return bool
      */
     public function canUpdate(int $teamId): bool
