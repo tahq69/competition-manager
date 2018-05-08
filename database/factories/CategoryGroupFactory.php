@@ -9,8 +9,11 @@ $factory->define(CategoryGroup::class, function (Faker $faker) {
         'competition_id' => function () {
             return factory(\App\Competition::class)->create()->id;
         },
+        'team_id' => function () {
+            return factory(\App\Team::class)->create()->id;
+        },
         'discipline_id' => function () {
-            return factory(Discipline::class)->create()->id;
+            return factory(\App\Discipline::class)->create()->id;
         },
         'discipline_short' => function ($group) {
             return Discipline::find($group['discipline_id'])->short;

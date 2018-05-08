@@ -9,6 +9,7 @@ use Tests\TestCase;
 
 /**
  * Class CategoryTests
+ *
  * @package Tests\Feature
  */
 class CategoryTest extends TestCase
@@ -17,6 +18,7 @@ class CategoryTest extends TestCase
 
     /**
      * A basic competition discipline group categories list request.
+     *
      * @return void
      */
     public function testCanGetCategoryList()
@@ -63,6 +65,7 @@ class CategoryTest extends TestCase
 
     /**
      * A basic competition discipline group category request.
+     *
      * @return void
      */
     public function testCanGetCategory()
@@ -95,6 +98,7 @@ class CategoryTest extends TestCase
 
     /**
      * A basic competition discipline group category create request.
+     *
      * @return void
      */
     public function testCanCreateCategory()
@@ -153,9 +157,10 @@ class CategoryTest extends TestCase
 
     /**
      * A basic competition discipline group category update request.
+     *
      * @return void
      */
-    public function testCanUpdateGroup()
+    public function testCanUpdateGroupCategory()
     {
         $admin = $this->createSuperAdmin();
         /** @var Category $category */
@@ -171,6 +176,7 @@ class CategoryTest extends TestCase
 
         $url = "/api/competitions/{$cmId}/disciplines/{$disciplineId}/groups/{$groupId}/categories/{$catId}";
         $response = $this->actingAs($admin, 'api')->patchJson($url, [
+            'id' => $catId,
             'competition_id' => $cmId,
             'discipline_id' => $disciplineId,
             'category_group_id' => $groupId,

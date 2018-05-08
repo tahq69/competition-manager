@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 /**
  * Class DisciplineTest
+ *
  * @package Tests\Feature
  */
 class DisciplineTest extends TestCase
@@ -15,6 +16,7 @@ class DisciplineTest extends TestCase
 
     /**
      * A basic competition disciplines list request.
+     *
      * @return void
      */
     public function testCanGetCompetitionDisciplineList()
@@ -53,6 +55,7 @@ class DisciplineTest extends TestCase
 
     /**
      * A basic competition discipline request.
+     *
      * @return void
      */
     public function testCanGetCompetitionDiscipline()
@@ -78,6 +81,7 @@ class DisciplineTest extends TestCase
 
     /**
      * A basic competition discipline create request.
+     *
      * @return void
      */
     public function testCanCreateCompetitionDiscipline()
@@ -117,6 +121,7 @@ class DisciplineTest extends TestCase
 
     /**
      * A basic competition discipline update request.
+     *
      * @return void
      */
     public function testCanUpdateCompetitionDiscipline()
@@ -124,13 +129,16 @@ class DisciplineTest extends TestCase
         $admin = $this->createSuperAdmin();
         $competitions = factory(Competition::class, 3)->create();
         $competitionId = $competitions[1]->id;
+        $teamId = $competitions[1]->team_id;
 
         factory(Discipline::class)->create([
             'competition_id' => $competitionId,
+            'team_id' => $teamId,
         ]);
 
         $discipline = factory(Discipline::class)->create([
             'competition_id' => $competitionId,
+            'team_id' => $teamId,
         ]);
 
         $url = "/api/competitions/{$competitionId}/disciplines/{$discipline->id}";

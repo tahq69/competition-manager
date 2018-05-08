@@ -18,5 +18,8 @@ $factory->define(Discipline::class, function (Faker $faker) {
         'competition_id' => function () {
             return factory(Competition::class)->create()->id;
         },
+        'team_id' => function () {
+            return factory(\App\Team::class)->create()->id;
+        },
     ];
 });

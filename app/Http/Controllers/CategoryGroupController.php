@@ -2,7 +2,6 @@
 
 use App\Contracts\ICategoryGroupRepository as IGroups;
 use App\Contracts\IDisciplineRepository as IDisciplines;
-use App\Discipline;
 use App\Http\Requests\CategoryGroup\Destroy as DestroyGroupRequest;
 use App\Http\Requests\CategoryGroup\Store as StoreGroupRequest;
 use App\Http\Requests\CategoryGroup\Update as UpdateGroupRequest;
@@ -91,6 +90,7 @@ class CategoryGroupController extends Controller
         $details['type'] = $discipline->category_group_type;
         $details['discipline_title'] = $discipline->title;
         $details['discipline_short'] = $discipline->short;
+        $details['team_id'] = $discipline->team_id;
 
         $group = $this->groups->create($details);
 

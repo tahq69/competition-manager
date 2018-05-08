@@ -11,6 +11,9 @@ $factory->define(Area::class, function (Faker $faker) use (&$nr) {
         'competition_id' => function () {
             return factory(Competition::class)->create()->id;
         },
+        'team_id' => function () {
+            return factory(\App\Team::class)->create()->id;
+        },
         'description' => join('<br><br>', $faker->paragraphs(3)),
         'nr' => $nr++,
         'title' => $faker->company,

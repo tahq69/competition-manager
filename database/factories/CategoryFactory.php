@@ -24,6 +24,9 @@ $factory->define(Category::class, function (Faker $faker) {
         'competition_id' => function () {
             return factory(Competition::class)->create()->id;
         },
+        'team_id' => function () {
+            return factory(\App\Team::class)->create()->id;
+        },
         'discipline_id' => function () {
             return factory(Discipline::class)->create()->id;
         },

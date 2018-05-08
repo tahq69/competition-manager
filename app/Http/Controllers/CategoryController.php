@@ -108,6 +108,7 @@ class CategoryController extends Controller
         $details['discipline_short'] = $discipline->short;
         $details['category_group_title'] = $group->title;
         $details['category_group_short'] = $group->short;
+        $details['team_id'] = $group->team_id;
 
         $category = $this->categories->create($details);
 
