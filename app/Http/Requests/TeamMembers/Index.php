@@ -4,15 +4,17 @@ use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * Class Index
+ *
  * @package App\Http\Requests\TeamMembers
  */
 class Index extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         // Anyone can access team members list.
         return true;
@@ -20,9 +22,10 @@ class Index extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
+     *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'per_page' => 'integer',

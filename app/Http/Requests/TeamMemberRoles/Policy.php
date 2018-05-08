@@ -8,6 +8,7 @@ use App\Role;
 
 /**
  * Class Policy
+ *
  * @package App\Http\Requests\TeamMemberRoles
  */
 class Policy
@@ -24,7 +25,8 @@ class Policy
 
     /**
      * Policy constructor.
-     * @param \App\Http\Requests\UserRolesPolicy $user
+     *
+     * @param \App\Http\Requests\UserRolesPolicy   $user
      * @param \App\Http\Requests\MemberRolesPolicy $member
      */
     public function __construct(UserRolesPolicy $user, MemberRolesPolicy $member)
@@ -35,8 +37,10 @@ class Policy
 
     /**
      * Determine is the authenticated user has access to list team member roles.
-     * @param  int $teamId
-     * @param  int $memberId
+     *
+     * @param int $teamId
+     * @param int $memberId
+     *
      * @return bool
      */
     public function canList(int $teamId, int $memberId): bool
@@ -59,8 +63,10 @@ class Policy
     /**
      * Determine is the authenticated user has access to update team member
      * roles.
-     * @param  int $teamId
-     * @param  int $memberId
+     *
+     * @param int $teamId
+     * @param int $memberId
+     *
      * @return bool
      */
     public function canUpdate(int $teamId, int $memberId): bool

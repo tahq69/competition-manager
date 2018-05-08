@@ -7,25 +7,29 @@ use Illuminate\Validation\Rule;
 
 /**
  * Class Update
+ *
  * @package App\Http\Requests\TeamMembers
  */
 class Update extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     * @param  Policy $policy
+     *
+     * @param \App\Http\Requests\TeamMembers\Policy $policy
+     *
      * @return bool
      */
-    public function authorize(Policy $policy)
+    public function authorize(Policy $policy): bool
     {
         return $policy->canUpdate($this->route('team'));
     }
 
     /**
      * Get the validation rules that apply to the request.
+     *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'name' => 'required|min:3|max:255',
@@ -35,6 +39,7 @@ class Update extends FormRequest
 
     /**
      * Get the validator instance for the request.
+     *
      * @return \Illuminate\Contracts\Validation\Validator
      */
     protected function getValidatorInstance()
