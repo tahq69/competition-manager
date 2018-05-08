@@ -1,30 +1,41 @@
 <?php namespace App\Http\Requests\Discipline;
 
+use App\Contracts\ICompetitionRepository as ICompetitions;
 use App\Discipline;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
  * Class Store
+ *
  * @package App\Http\Requests\Discipline
  */
 class Store extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     * @param  Policy $policy
+     *
+     * @param \App\Http\Requests\Discipline\Policy  $policy
+     * @param \App\Contracts\ICompetitionRepository $competitions
+     *
      * @return bool
      */
-    public function authorize(Policy $policy)
+    public function authorize(Policy $policy, ICompetitions $competitions): bool
     {
-        return $policy->canStore($this->route('competition'));
+        $competitionId = $this->route('competition');
+        /** @var \App\Competition $competition */
+        $competition = $competitions->find($competitionId, ['id', 'team_id']);
+        $teamId = $competition->team_id;
+
+        return $policy->canStore($teamId, $competitionId);
     }
 
     /**
      * Get the validation rules that apply to the request.
+     *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         $cmId = $this->route('competition');
 
