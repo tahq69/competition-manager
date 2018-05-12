@@ -134,7 +134,7 @@ class AreaController extends Controller
      */
     public function destroy(Destroy $request, int $cmId, int $id): JsonResponse
     {
-        $request->getArea()->delete();
+        $request->resolve('area')->delete();
 
         return new JsonResponse(true);
     }
