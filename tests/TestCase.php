@@ -23,7 +23,8 @@ abstract class TestCase extends BaseTestCase
         Factories\CompetitionFactories,
         Factories\DisciplineFactories,
         Factories\CategoryFactories,
-        Factories\CategoryGroupFactories;
+        Factories\CategoryGroupFactories,
+        Factories\AreaFactories;
 
     /**
      * Setup the test environment.

@@ -26,7 +26,7 @@ class AlphaDashSpace implements Rule
      */
     public function passes($attribute, $value): bool
     {
-        return preg_match('/^[\pL\pM\pN\s]+$/u', $value) > 0;
+        return preg_match('/^[\pL\pM\pN\s-_\']+$/u', $value) > 0;
     }
 
     /**

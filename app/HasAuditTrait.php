@@ -35,7 +35,7 @@ trait HasAuditTrait
 
         // Register a creating model event with the dispatcher.
         static::creating(function ($table) {
-            if (App::runningInConsole()) {
+            if (App::runningInConsole() && !Auth::check()) {
                 $table->created_by = 1;
                 $table->created_by_name = 'cli';
                 return;
@@ -47,7 +47,7 @@ trait HasAuditTrait
 
         // Register an updating model event with the dispatcher.
         static::updating(function ($table) {
-            if (App::runningInConsole()) {
+            if (App::runningInConsole() && !Auth::check()) {
                 $table->updated_by = 1;
                 $table->updated_by_name = 'cli';
                 return;

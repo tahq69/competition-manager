@@ -51,7 +51,7 @@ class MemberRolesPolicy
     }
 
     /**
-     * @param  int $teamId
+     * @param int $teamId
      *
      * @return bool
      */

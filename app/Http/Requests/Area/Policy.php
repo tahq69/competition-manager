@@ -63,6 +63,20 @@ class Policy
         return $this->canManage($teamId, $cmId);
     }
 
+    /**
+     * Determines is the authenticated user able destroy provided area record.
+     *
+     * @param int $teamId Team identifier.
+     * @param int $cmId   Competition identifier.
+     * @param int $areaId Area identifier.
+     *
+     * @return bool
+     */
+    public function canDestroy(int $teamId, int $cmId, int $areaId): bool
+    {
+        return $this->canManage($teamId, $cmId);
+    }
+
     private function canManage(int $teamId, int $cmId): bool
     {
         $admin = UserRole::SUPER_ADMIN;

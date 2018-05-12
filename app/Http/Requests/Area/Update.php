@@ -14,22 +14,38 @@ use Illuminate\Validation\Rule;
 class Update extends FormRequest
 {
     /**
+     * @var null|\App\Area
+     */
+    private $area = null;
+
+    /**
+     * Get request area model.
+     *
+     * @return \App\Area
+     */
+    public function getArea(): Area
+    {
+        if (is_null($this->area)) {
+            $areaId = $this->route('area');
+            $this->area = app(IAreas::class)->find($areaId);
+        }
+
+        return $this->area;
+    }
+
+    /**
      * Determine if the user is authorized to make this request.
      *
      * @param \App\Http\Requests\Area\Policy $policy
-     * @param \App\Contracts\IAreaRepository $areas
      *
      * @return bool
      */
-    public function authorize(Policy $policy, IAreas $areas): bool
+    public function authorize(Policy $policy): bool
     {
-        $areaId = $this->route('area');
-
-        /** @var \App\Area $area */
-        $area = $areas->find($areaId, ['id', 'team_id', 'competition_id']);
+        $area = $this->getArea();
 
         return $policy->canUpdate(
-            $area->team_id, $areaId->competition_id, $area->id
+            $area->team_id, $area->competition_id, $area->id
         );
     }
 

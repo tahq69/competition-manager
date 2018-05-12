@@ -237,7 +237,7 @@ class CompetitionTest extends TestCase
             ]);
 
         $this->assertDatabaseHas('competitions', [
-            'created_by' => $user->id,
+            'updated_by' => $user->id,
             'title' => 'competition title',
         ]);
     }
@@ -272,7 +272,7 @@ class CompetitionTest extends TestCase
             ]);
 
         $this->assertDatabaseHas('competitions', [
-            'created_by' => $user->id,
+            'updated_by' => $user->id,
             'title' => 'competition title',
         ]);
     }
