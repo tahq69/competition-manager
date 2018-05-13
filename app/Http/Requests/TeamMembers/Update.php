@@ -1,8 +1,7 @@
 <?php namespace App\Http\Requests\TeamMembers;
 
-use App\Contracts\ITeamMemberRepository;
+use App\Http\Requests\FormRequest;
 use App\TeamMember;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
@@ -18,10 +17,14 @@ class Update extends FormRequest
      * @param \App\Http\Requests\TeamMembers\Policy $policy
      *
      * @return bool
+     * @throws \App\Exceptions\RouteBindingOverlapException
      */
     public function authorize(Policy $policy): bool
     {
-        return $policy->canUpdate($this->route('team'));
+        /** @var \App\TeamMember $member */
+        $member = $this->find('member');
+
+        return $policy->canUpdate($member->team_id);
     }
 
     /**

@@ -1,10 +1,9 @@
 <?php namespace App\Http\Controllers;
 
-use App\Contracts\ICategoryGroupRepository as IGroups;
-use App\Contracts\IDisciplineRepository as IDisciplines;
-use App\Http\Requests\CategoryGroup\Destroy as DestroyGroupRequest;
-use App\Http\Requests\CategoryGroup\Store as StoreGroupRequest;
-use App\Http\Requests\CategoryGroup\Update as UpdateGroupRequest;
+use App\Contracts\ICategoryGroupRepository;
+use App\Http\Requests\CategoryGroup\Destroy;
+use App\Http\Requests\CategoryGroup\Store;
+use App\Http\Requests\CategoryGroup\Update;
 use Illuminate\Http\JsonResponse;
 
 /**
@@ -20,23 +19,16 @@ class CategoryGroupController extends Controller
     private $groups;
 
     /**
-     * @var \App\Contracts\IDisciplineRepository
-     */
-    private $disciplines;
-
-    /**
      * CompetitionController constructor.
      *
      * @param \App\Contracts\ICategoryGroupRepository $groups
-     * @param \App\Contracts\IDisciplineRepository    $disciplines
      */
-    public function __construct(IGroups $groups, IDisciplines $disciplines)
+    public function __construct(ICategoryGroupRepository $groups)
     {
         $this->middleware('auth:api')
             ->except('index', 'show');
 
         $this->groups = $groups;
-        $this->disciplines = $disciplines;
     }
 
     /**
@@ -64,16 +56,17 @@ class CategoryGroupController extends Controller
     /**
      * Store new instance of resource instance.
      *
+     * @param \App\Http\Requests\CategoryGroup\Store $request
      * @param int                                    $competitionId
      * @param int                                    $disciplineId
-     * @param \App\Http\Requests\CategoryGroup\Store $request
      *
      * @return \Illuminate\Http\JsonResponse
+     * @throws \App\Exceptions\RouteBindingOverlapException
      */
     public function store(
+        Store $request,
         int $competitionId,
-        int $disciplineId,
-        StoreGroupRequest $request
+        int $disciplineId
     ): JsonResponse
     {
         $details = $request->only([
@@ -82,7 +75,7 @@ class CategoryGroupController extends Controller
         ]);
 
         /** @var \App\Discipline $discipline */
-        $discipline = $this->disciplines->find($disciplineId);
+        $discipline = $request->find('discipline');
         $groupCount = $this->groups->whereDiscipline($disciplineId)->count();
 
         // Filling information from parent records.
@@ -123,24 +116,22 @@ class CategoryGroupController extends Controller
     /**
      * Update existing resource instance.
      *
+     * @param \App\Http\Requests\CategoryGroup\Update $request
      * @param int                                     $competitionId
      * @param int                                     $disciplineId
      * @param int                                     $id
-     * @param \App\Http\Requests\CategoryGroup\Update $request
      *
      * @return \Illuminate\Http\JsonResponse
+     * @throws \App\Exceptions\RouteBindingOverlapException
      */
     public function update(
+        Update $request,
         int $competitionId,
         int $disciplineId,
-        int $id,
-        UpdateGroupRequest $request
+        int $id
     ): JsonResponse
     {
-        $group = $this->groups
-            ->whereCompetition($competitionId)
-            ->whereDiscipline($disciplineId)
-            ->find($id);
+        $group = $request->find('group');
 
         $details = $request->only([
             'title', 'short', 'rounds', 'time', 'min', 'max',
@@ -152,26 +143,31 @@ class CategoryGroupController extends Controller
     }
 
     /**
-     * @param  int                                     $competitionId
-     * @param  int                                     $disciplineId
-     * @param  int                                     $id
+     * Delete existing resource instance.
+     *
      * @param \App\Http\Requests\CategoryGroup\Destroy $request
+     * @param int                                      $competitionId
+     * @param int                                      $disciplineId
+     * @param int                                      $id
      *
      * @return \Illuminate\Http\JsonResponse
-     * @throws \Exception
+     * @throws \App\Exceptions\RouteBindingOverlapException
      */
     public function destroy(
+        Destroy $request,
         int $competitionId,
         int $disciplineId,
-        int $id,
-        DestroyGroupRequest $request
+        int $id
     ): JsonResponse
     {
-        $this->groups
-            ->whereCompetition($competitionId)
-            ->whereDiscipline($disciplineId)
-            ->find($id)
-            ->delete();
+        $group = $request->find('group');
+
+        try {
+            $group->delete();
+        } catch (\Exception $e) {
+            report($e);
+            return new JsonResponse(false);
+        }
 
         return new JsonResponse(true);
     }

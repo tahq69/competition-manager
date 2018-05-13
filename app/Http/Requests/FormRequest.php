@@ -22,8 +22,7 @@ class FormRequest extends LaravelFormRequest
     {
         if (!array_key_exists($routeParam, $this->models)) {
             $id = $this->route($routeParam);
-            $plural = str_plural($routeParam);
-            $repository = BindingServiceProvider::resolveRepository($plural);
+            $repository = BindingServiceProvider::resolveRepository($routeParam);
 
             $this->models[$routeParam] = $repository->find($id);
         }

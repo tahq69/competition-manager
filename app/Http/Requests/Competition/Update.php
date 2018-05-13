@@ -1,8 +1,7 @@
 <?php namespace App\Http\Requests\Competition;
 
-use App\Contracts\ICompetitionRepository;
+use App\Http\Requests\FormRequest;
 use App\Rules\AlphaDashSpace;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
@@ -16,20 +15,15 @@ class Update extends FormRequest
      * Determine if the user is authorized to make this request.
      *
      * @param \App\Http\Requests\Competition\Policy $policy
-     * @param \App\Contracts\ICompetitionRepository $competitions
      *
-     * @return bool Is user authorized to make this request.
+     * @return bool
      * @throws \App\Exceptions\CompetitionCompletedException
+     * @throws \App\Exceptions\RouteBindingOverlapException
      */
-    public function authorize(
-        Policy $policy,
-        ICompetitionRepository $competitions
-    ): bool
+    public function authorize(Policy $policy): bool
     {
-        $cmId = $this->route('competition');
-
         /** @var \App\Competition $cm */
-        $cm = $competitions->find($cmId);
+        $cm = $this->find('competition');
 
         return $policy->canUpdate($cm);
     }
@@ -37,7 +31,7 @@ class Update extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array Rules to validate request.
+     * @return array
      */
     public function rules(): array
     {

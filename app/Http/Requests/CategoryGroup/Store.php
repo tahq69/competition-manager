@@ -1,7 +1,6 @@
 <?php namespace App\Http\Requests\CategoryGroup;
 
-use App\Contracts\IDisciplineRepository as IDisciplines;
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
@@ -15,20 +14,18 @@ class Store extends FormRequest
      * Determine if the user is authorized to make this request.
      *
      * @param \App\Http\Requests\CategoryGroup\Policy $policy
-     * @param \App\Contracts\IDisciplineRepository    $disciplines
      *
      * @return bool
+     * @throws \App\Exceptions\RouteBindingOverlapException
      */
-    public function authorize(Policy $policy, IDisciplines $disciplines): bool
+    public function authorize(Policy $policy): bool
     {
-        $disciplineId = $this->route('discipline');
-        $discipline = $disciplines->find(
-            $disciplineId, ['id', 'competition_id', 'team_id']
-        );
-        $competitionId = $discipline->competition_id;
-        $teamId = $discipline->team_id;
+        /** @var \App\Discipline $discipline */
+        $discipline = $this->find('discipline');
 
-        return $policy->canStore($teamId, $competitionId, $disciplineId);
+        return $policy->canStore(
+            $discipline->team_id, $discipline->competition_id, $discipline->id
+        );
     }
 
     /**

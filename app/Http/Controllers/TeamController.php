@@ -2,14 +2,14 @@
 
 use App\Contracts\ITeamRepository;
 use App\Contracts\UserRole;
-use App\Http\Requests\Team\Index as IndexRequest;
-use App\Http\Requests\Team\Store as StoreRequest;
-use App\Http\Requests\Team\Update as UpdateRequest;
-use App\Role;
+use App\Http\Requests\Team\Index;
+use App\Http\Requests\Team\Store;
+use App\Http\Requests\Team\Update;
 use Illuminate\Http\JsonResponse;
 
 /**
  * Class TeamController
+ *
  * @package App\Http\Controllers
  */
 class TeamController extends Controller
@@ -21,6 +21,7 @@ class TeamController extends Controller
 
     /**
      * TeamController constructor.
+     *
      * @param ITeamRepository $teams
      */
     public function __construct(ITeamRepository $teams)
@@ -33,10 +34,12 @@ class TeamController extends Controller
 
     /**
      * Get list of teams.
-     * @param  IndexRequest $request
-     * @return JsonResponse
+     *
+     * @param \App\Http\Requests\Team\Index $request
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function index(IndexRequest $request): JsonResponse
+    public function index(Index $request): JsonResponse
     {
         if (\Auth::check()) {
             // If user is not a super admin, allow see only managed teams when
@@ -66,10 +69,12 @@ class TeamController extends Controller
 
     /**
      * Save new team to database and attach creator as owner of the team.
-     * @param  StoreRequest $request
-     * @return JsonResponse
+     *
+     * @param \App\Http\Requests\Team\Store $request
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(StoreRequest $request): JsonResponse
+    public function store(Store $request): JsonResponse
     {
         $user = $request->user();
         $details = $request->only(['name', 'short', 'logo',]);
@@ -77,7 +82,7 @@ class TeamController extends Controller
         try {
             $team = $this->teams->createAndAttachManager($details, $user);
         } catch (\Exception $exception) {
-            \Log::error('Could not create and attach manager', [$exception]);
+            report($exception);
             return new JsonResponse($exception->getMessage(), 507);
         }
 
@@ -86,10 +91,12 @@ class TeamController extends Controller
 
     /**
      * Get single team instance.
-     * @param  int $id
-     * @return JsonResponse
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function show($id)
+    public function show(int $id): JsonResponse
     {
         $team = $this->teams->find($id);
 
@@ -98,17 +105,20 @@ class TeamController extends Controller
 
     /**
      * Update existing team details.
-     * @param  UpdateRequest $request
-     * @param  int $teamId
-     * @return JsonResponse
+     *
+     * @param \App\Http\Requests\Team\Update $request
+     * @param int                            $id
+     *
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \App\Exceptions\RouteBindingOverlapException
      */
-    public function update(UpdateRequest $request, int $teamId): JsonResponse
+    public function update(Update $request, int $id): JsonResponse
     {
-        $team = $this->teams->find($teamId);
+        $team = $request->find('team');
 
         $details = $request->only(['name', 'short', 'logo']);
 
-        $this->teams->update($details, $teamId, $team);
+        $this->teams->update($details, $id, $team);
 
         return new JsonResponse($team);
     }

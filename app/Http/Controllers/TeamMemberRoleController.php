@@ -1,12 +1,13 @@
 <?php namespace App\Http\Controllers;
 
 use App\Contracts\ITeamMemberRepository as IMembers;
-use App\Http\Requests\TeamMemberRoles\Index as IndexRequest;
-use App\Http\Requests\TeamMemberRoles\Store as StoreRequest;
+use App\Http\Requests\TeamMemberRoles\Index;
+use App\Http\Requests\TeamMemberRoles\Store;
 use Illuminate\Http\JsonResponse;
 
 /**
  * Class TeamMemberRoleController
+ *
  * @package App\Http\Controllers
  */
 class TeamMemberRoleController extends Controller
@@ -18,6 +19,7 @@ class TeamMemberRoleController extends Controller
 
     /**
      * TeamMemberRoleController constructor.
+     *
      * @param \App\Contracts\ITeamMemberRepository $members
      */
     public function __construct(IMembers $members)
@@ -27,20 +29,18 @@ class TeamMemberRoleController extends Controller
     }
 
     /**
-     * @param  int $teamId
-     * @param  int $memberId
-     * @param  \App\Http\Requests\TeamMemberRoles\Index $request
-     * @return JsonResponse
+     * @param \App\Http\Requests\TeamMemberRoles\Index $request
+     * @param int                                      $teamId
+     * @param int                                      $id
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function index(
-        int $teamId,
-        int $memberId,
-        IndexRequest $request): JsonResponse
+    public function index(Index $request, int $teamId, int $id): JsonResponse
     {
         /** @var \App\TeamMember $member */
         $member = $this->members
             ->withTeamMemberRoles()
-            ->find($memberId, ['id', 'team_id']);
+            ->find($id, ['id', 'team_id']);
 
         $roles = $member->roles->map(function (\App\Role $role) {
             return $role->key;
@@ -50,17 +50,15 @@ class TeamMemberRoleController extends Controller
     }
 
     /**
-     * @param  int $teamId
-     * @param  int $memberId
-     * @param  \App\Http\Requests\TeamMemberRoles\Store $request
-     * @return JsonResponse
+     * @param int                                      $teamId
+     * @param int                                      $id
+     * @param \App\Http\Requests\TeamMemberRoles\Store $request
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(
-        int $teamId,
-        int $memberId,
-        StoreRequest $request): JsonResponse
+    public function store(Store $request, int $teamId, int $id): JsonResponse
     {
-        $this->members->sycnRoles($memberId, $request->roles);
+        $this->members->sycnRoles($id, $request->roles);
 
         return new JsonResponse(true);
     }

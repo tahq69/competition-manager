@@ -1,7 +1,7 @@
 <?php namespace App\Http\Requests\Competition;
 
+use App\Http\Requests\FormRequest;
 use App\Rules\AlphaDashSpace;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**

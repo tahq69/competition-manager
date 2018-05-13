@@ -1,6 +1,6 @@
 <?php namespace App\Http\Requests\TeamMemberRoles;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\FormRequest;
 
 /**
  * Class Update
@@ -15,13 +15,14 @@ class Store extends FormRequest
      * @param \App\Http\Requests\TeamMemberRoles\Policy $policy
      *
      * @return bool
+     * @throws \App\Exceptions\RouteBindingOverlapException
      */
     public function authorize(Policy $policy): bool
     {
-        $teamId = $this->route('team');
-        $memberId = $this->route('member');
+        /** @var \App\TeamMember $member */
+        $member = $this->find('member');
 
-        return $policy->canUpdate($teamId, $memberId);
+        return $policy->canUpdate($member->team_id, $member->id);
     }
 
     /**

@@ -3,30 +3,33 @@
 use App\CategoryGroup;
 use App\Contracts\ICategoryGroupRepository as IGroups;
 use App\Contracts\IDisciplineRepository as IDisciplines;
-use App\Http\Requests\Discipline\Update as UpdateDisciplineRequest;
-use App\Http\Requests\Discipline\Store as StoreDisciplineRequest;
+use App\Http\Requests\Discipline\Update;
+use App\Http\Requests\Discipline\Store;
+use DB;
 use Illuminate\Http\JsonResponse;
 
 /**
  * Class DisciplineController
+ *
  * @package App\Http\Controllers
  */
 class DisciplineController extends Controller
 {
     /**
-     * @var IDisciplines
+     * @var \App\Contracts\IDisciplineRepository
      */
     private $disciplines;
 
     /**
-     * @var IGroups
+     * @var \App\Contracts\ICategoryGroupRepository
      */
     private $groups;
 
     /**
      * CompetitionController constructor.
-     * @param IDisciplines $disciplines
-     * @param IGroups $groups
+     *
+     * @param \App\Contracts\IDisciplineRepository    $disciplines
+     * @param \App\Contracts\ICategoryGroupRepository $groups
      */
     public function __construct(IDisciplines $disciplines, IGroups $groups)
     {
@@ -39,8 +42,10 @@ class DisciplineController extends Controller
 
     /**
      * Display a listing of the resource.
-     * @param  int $competitionId
-     * @return JsonResponse
+     *
+     * @param int $competitionId
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index(int $competitionId): JsonResponse
     {
@@ -54,9 +59,11 @@ class DisciplineController extends Controller
 
     /**
      * Get single competition instance.
-     * @param  int $competitionId
-     * @param  int $id
-     * @return JsonResponse
+     *
+     * @param int $competitionId
+     * @param int $id
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function show(int $competitionId, int $id): JsonResponse
     {
@@ -69,13 +76,13 @@ class DisciplineController extends Controller
 
     /**
      * Store new instance of competition discipline.
-     * @param  int $competitionId
-     * @param  StoreDisciplineRequest $request
-     * @return JsonResponse
+     *
+     * @param int   $competitionId
+     * @param Store $request
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(
-        int $competitionId,
-        StoreDisciplineRequest $request): JsonResponse
+    public function store(Store $request, int $competitionId): JsonResponse
     {
         $details = $request->only([
             'title', 'short', 'type', 'game_type', 'description',
@@ -89,20 +96,22 @@ class DisciplineController extends Controller
 
     /**
      * Update existing instance of competition discipline.
-     * @param  int $competitionId
-     * @param  int $id
-     * @param  UpdateDisciplineRequest $request
-     * @return JsonResponse
-     * @throws \Exception|\Throwable
+     *
+     * @param \App\Http\Requests\Discipline\Update $request
+     * @param  int                                 $competitionId
+     * @param  int                                 $id
+     *
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \App\Exceptions\RouteBindingOverlapException
+     * @throws \Throwable
      */
     public function update(
+        Update $request,
         int $competitionId,
-        int $id,
-        UpdateDisciplineRequest $request): JsonResponse
+        int $id
+    ): JsonResponse
     {
-        $discipline = $this->disciplines
-            ->whereCompetition($competitionId)
-            ->find($id);
+        $discipline = $request->find('discipline');
 
         // Types is not allowed to update as they affect all data under already
         // existing discipline.
@@ -110,7 +119,7 @@ class DisciplineController extends Controller
             'title', 'short', 'type', 'game_type', 'description',
         ]);
 
-        \DB::transaction(function() use ($details, $id, $discipline) {
+        DB::transaction(function () use ($details, $id, &$discipline) {
             $this->disciplines->update($details, $id, $discipline);
 
             // Update category group names to be same as updated discipline.

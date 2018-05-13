@@ -1,6 +1,6 @@
 <?php namespace App\Http\Requests\TeamMemberRoles;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\FormRequest;
 
 /**
  * Class Index
@@ -15,13 +15,14 @@ class Index extends FormRequest
      * @param \App\Http\Requests\TeamMemberRoles\Policy $policy
      *
      * @return bool
+     * @throws \App\Exceptions\RouteBindingOverlapException
      */
     public function authorize(Policy $policy): bool
     {
-        $teamId = $this->route('team');
-        $memberId = $this->route('member');
+        /** @var \App\TeamMember $member */
+        $member = $this->find('member');
 
-        return $policy->canList($teamId, $memberId);
+        return $policy->canList($member->team_id, $member->id);
     }
 
     /**

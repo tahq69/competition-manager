@@ -1,8 +1,10 @@
 <?php namespace App\Http\Controllers;
 
-use App\Http\Requests\Competition\Index as IndexRequest;
-use App\Http\Requests\Competition\Store as StoreRequest;
-use App\Http\Requests\Competition\Update as UpdateRequest;
+use App\Contracts\ICompetitionRepository;
+use App\Contracts\ITeamRepository;
+use App\Http\Requests\Competition\Index;
+use App\Http\Requests\Competition\Store;
+use App\Http\Requests\Competition\Update;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 
@@ -19,11 +21,6 @@ class CompetitionController extends Controller
     private $competitions;
 
     /**
-     * @var \App\Contracts\IUserRepository
-     */
-    private $users;
-
-    /**
      * @var \App\Contracts\ITeamRepository
      */
     private $teams;
@@ -32,20 +29,16 @@ class CompetitionController extends Controller
      * CompetitionController constructor.
      *
      * @param \App\Contracts\ICompetitionRepository $competitions
-     * @param \App\Contracts\IUserRepository        $users
      * @param \App\Contracts\ITeamRepository        $teams
      */
     public function __construct(
-        \App\Contracts\ICompetitionRepository $competitions,
-        \App\Contracts\IUserRepository $users,
-        \App\Contracts\ITeamRepository $teams
-    )
+        ICompetitionRepository $competitions,
+        ITeamRepository $teams)
     {
         $this->middleware('auth:api')
             ->except('index', 'show');
 
         $this->competitions = $competitions;
-        $this->users = $users;
         $this->teams = $teams;
     }
 
@@ -56,7 +49,7 @@ class CompetitionController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(IndexRequest $request): JsonResponse
+    public function index(Index $request): JsonResponse
     {
         $orderingMapping = [
             'id' => 'id',
@@ -91,7 +84,7 @@ class CompetitionController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(StoreRequest $request): JsonResponse
+    public function store(Store $request): JsonResponse
     {
         $validatedInput = array_keys($request->rules());
         $details = $request->only($validatedInput);
@@ -127,23 +120,21 @@ class CompetitionController extends Controller
      * Update the specified competition in storage.
      *
      * @param \App\Http\Requests\Competition\Update $request
-     * @param int                                   $competitionId
+     * @param int                                   $id
      *
      * @return \Illuminate\Http\JsonResponse
+     * @throws \App\Exceptions\RouteBindingOverlapException
      */
-    public function update(
-        UpdateRequest $request,
-        int $competitionId
-    ): JsonResponse
+    public function update(Update $request, int $id): JsonResponse
     {
         $validatedInput = array_keys($request->rules());
         $details = $request->only($validatedInput);
         $details['registration_till'] = new Carbon($details['registration_till']);
         $details['organization_date'] = new Carbon($details['organization_date']);
 
-        $competition = $this->competitions->find($competitionId);
+        $competition = $request->find('competition');
 
-        $this->competitions->update($details, $competitionId, $competition);
+        $this->competitions->update($details, $id, $competition);
 
         return new JsonResponse($competition);
     }

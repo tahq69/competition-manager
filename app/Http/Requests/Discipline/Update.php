@@ -1,8 +1,7 @@
 <?php namespace App\Http\Requests\Discipline;
 
-use App\Contracts\IDisciplineRepository as IDisciplines;
 use App\Discipline;
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
@@ -16,20 +15,18 @@ class Update extends FormRequest
      * Determine if the user is authorized to make this request.
      *
      * @param \App\Http\Requests\Discipline\Policy $policy
-     * @param \App\Contracts\IDisciplineRepository $disciplines
      *
      * @return bool
+     * @throws \App\Exceptions\RouteBindingOverlapException
      */
-    public function authorize(Policy $policy, IDisciplines $disciplines): bool
+    public function authorize(Policy $policy): bool
     {
-        $disciplineId = $this->route('discipline');
-        $discipline = $disciplines->find(
-            $disciplineId, ['id', 'competition_id', 'team_id']
-        );
-        $competitionId = $discipline->competition_id;
-        $teamId = $discipline->team_id;
+        /** @var \App\Discipline $discipline */
+        $discipline = $this->find('discipline');
 
-        return $policy->canUpdate($teamId, $competitionId, $disciplineId);
+        return $policy->canUpdate(
+            $discipline->team_id, $discipline->competition_id, $discipline->id
+        );
     }
 
     /**

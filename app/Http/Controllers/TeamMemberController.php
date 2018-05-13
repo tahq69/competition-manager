@@ -2,33 +2,35 @@
 
 use App\Contracts\ITeamMemberRepository;
 use App\Contracts\ITeamRepository;
-use App\Http\Requests\TeamMembers\Index as IndexRequest;
-use App\Http\Requests\TeamMembers\Store as StoreRequest;
-use App\Http\Requests\TeamMembers\Update as UpdateRequest;
+use App\Http\Requests\TeamMembers\Index;
+use App\Http\Requests\TeamMembers\Store;
+use App\Http\Requests\TeamMembers\Update;
 use App\Team;
 use App\TeamMember;
 use Illuminate\Http\JsonResponse;
 
 /**
  * Class TeamMemberController
+ *
  * @package App\Http\Controllers
  */
 class TeamMemberController extends Controller
 {
     /**
-     * @var ITeamRepository
+     * @var \App\Contracts\ITeamRepository
      */
     private $teams;
 
     /**
-     * @var ITeamMemberRepository
+     * @var \App\Contracts\ITeamMemberRepository
      */
     private $members;
 
     /**
      * TeamController constructor.
-     * @param ITeamRepository $teams
-     * @param ITeamMemberRepository $members
+     *
+     * @param \App\Contracts\ITeamRepository       $teams
+     * @param \App\Contracts\ITeamMemberRepository $members
      */
     public function __construct(
         ITeamRepository $teams,
@@ -43,11 +45,14 @@ class TeamMemberController extends Controller
 
     /**
      * Get list of team members.
-     * @param  int $teamId
-     * @param  IndexRequest $request
-     * @return JsonResponse
+     *
+     * @param \App\Http\Requests\TeamMembers\Index $request
+     * @param int                                  $teamId
+     *
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \App\Exceptions\RouteBindingOverlapException
      */
-    public function index(int $teamId, IndexRequest $request): JsonResponse
+    public function index(Index $request, int $teamId): JsonResponse
     {
         $orderingMapping = [
             'id' => 'id',
@@ -57,12 +62,13 @@ class TeamMemberController extends Controller
             'membership_type' => 'membership_type',
         ];
 
-        $team = $this->teams->find($teamId, ['id']);
+        /** @var \App\Team $team */
+        $team = $request->find('team');
         $members = $this->members
             ->setupOrdering($request, $orderingMapping)
             ->filterByTeam($team->id)
             ->paginate($request->per_page ?: 15, [], [
-                'id', 'name', 'team_id', 'user_id', 'membership_type'
+                'id', 'name', 'team_id', 'user_id', 'membership_type',
             ]);
 
         return new JsonResponse($members);
@@ -70,27 +76,32 @@ class TeamMemberController extends Controller
 
     /**
      * Get single team member instance.
-     * @param  int $teamId
-     * @param  int $memberId
-     * @return JsonResponse
+     *
+     * @param int $teamId
+     * @param int $id
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function show(int $teamId, int $memberId): JsonResponse
+    public function show(int $teamId, int $id): JsonResponse
     {
-        $team = $this->members->find($memberId);
+        $team = $this->members->find($id);
 
         return new JsonResponse($team);
     }
 
     /**
      * Store new instance of team member.
-     * @param  int $teamId
-     * @param  \App\Http\Requests\TeamMembers\Store $request
-     * @return JsonResponse
+     *
+     * @param \App\Http\Requests\TeamMembers\Store $request
+     * @param int                                  $teamId
+     *
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \App\Exceptions\RouteBindingOverlapException
      */
-    public function store(int $teamId, StoreRequest $request): JsonResponse
+    public function store(Store $request, int $teamId): JsonResponse
     {
         /** @var Team $team */
-        $team = $this->teams->find($teamId);
+        $team = $request->find('team');
         $details = $request->only(['user_id', 'name']);
         $details['user_id'] = $details['user_id'] > 0 ? $details['user_id'] : null;
 
@@ -103,17 +114,17 @@ class TeamMemberController extends Controller
 
     /**
      * Update existing instance of team member.
-     * @param  int $teamId
-     * @param  int $id
-     * @param  \App\Http\Requests\TeamMembers\Update $request
-     * @return JsonResponse
+     *
+     * @param \App\Http\Requests\TeamMembers\Update $request
+     * @param int                                   $teamId
+     * @param int                                   $id
+     *
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \App\Exceptions\RouteBindingOverlapException
      */
-    public function update(
-        int $teamId,
-        int $id,
-        UpdateRequest $request): JsonResponse
+    public function update(Update $request, int $teamId, int $id): JsonResponse
     {
-        $member = $this->members->find($id);
+        $member = $request->find('member');
         $details = $request->only(['user_id', 'name']);
         $details['user_id'] = $details['user_id'] > 0 ? $details['user_id'] : null;
 
@@ -121,7 +132,7 @@ class TeamMemberController extends Controller
             array_key_exists('user_id', $details) &&
             $member->user_id != $details['user_id']
         ) {
-            $team = $this->teams->find($teamId);
+            $team = $request->find('team');
             $details['membership_type'] = TeamMember::INVITED;
 
             /* TODO: implement messaging service

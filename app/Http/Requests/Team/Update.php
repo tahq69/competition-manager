@@ -1,7 +1,7 @@
 <?php namespace App\Http\Requests\Team;
 
+use App\Http\Requests\FormRequest;
 use App\Rules\RelativeUrl;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
@@ -17,12 +17,14 @@ class Update extends FormRequest
      * @param \App\Http\Requests\Team\Policy $policy
      *
      * @return bool
+     * @throws \App\Exceptions\RouteBindingOverlapException
      */
     public function authorize(Policy $policy): bool
     {
-        $teamId = $this->route('team');
+        /** @var \App\Team $team */
+        $team = $this->find('team');
 
-        return $policy->canUpdate($teamId);
+        return $policy->canUpdate($team->id);
     }
 
     /**

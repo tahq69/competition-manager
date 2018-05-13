@@ -1,7 +1,7 @@
 <?php namespace App\Http\Requests\TeamMembers;
 
+use App\Http\Requests\FormRequest;
 use App\TeamMember;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
@@ -17,10 +17,14 @@ class Store extends FormRequest
      * @param \App\Http\Requests\TeamMembers\Policy $policy
      *
      * @return bool
+     * @throws \App\Exceptions\RouteBindingOverlapException
      */
     public function authorize(Policy $policy)
     {
-        return $policy->canStore($this->route('team'));
+        /** @var \App\Team $team */
+        $team = $this->find('team');
+
+        return $policy->canStore($team->id);
     }
 
     /**
