@@ -1,8 +1,8 @@
 <?php namespace App\Http\Requests\Category;
 
 use App\Category;
-use App\Contracts\ICategoryRepository as ICategories;
-use Illuminate\Foundation\Http\FormRequest;
+use App\Contracts\ICategoryRepository;
+use App\Http\Requests\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
@@ -16,20 +16,18 @@ class Update extends FormRequest
      * Determine if the user is authorized to make this request.
      *
      * @param \App\Http\Requests\Category\Policy $policy
-     * @param \App\Contracts\ICategoryRepository $categories
      *
      * @return bool
+     * @throws \App\Exceptions\RouteBindingOverlapException
      */
-    public function authorize(Policy $policy, ICategories $categories): bool
+    public function authorize(Policy $policy): bool
     {
-        $catId = $this->route('category');
+        /** @var \App\Category $category */
+        $category = $this->find('category');
 
-        /** @var \App\Category $cat */
-        $cat = $categories->find($catId, ['id', 'competition_id', 'team_id']);
-        $teamId = $cat->team_id;
-        $cmId = $cat->competition_id;
-
-        return $policy->canUpdate($teamId, $cmId, $catId);
+        return $policy->canUpdate(
+            $category->team_id, $category->competition_id, $category->id
+        );
     }
 
     /**

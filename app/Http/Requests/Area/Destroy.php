@@ -1,7 +1,5 @@
 <?php namespace App\Http\Requests\Area;
 
-use App\Area;
-use App\Contracts\IAreaRepository as IAreas;
 use App\Http\Requests\FormRequest;
 
 /**
@@ -17,12 +15,12 @@ class Destroy extends FormRequest
      * @param \App\Http\Requests\Area\Policy $policy
      *
      * @return bool
-     * @throws \Exception
+     * @throws \App\Exceptions\RouteBindingOverlapException
      */
     public function authorize(Policy $policy): bool
     {
         /** @var \App\Area $area */
-        $area = $this->resolve('area');
+        $area = $this->find('area');
 
         return $policy->canDestroy(
             $area->team_id, $area->competition_id, $area->id

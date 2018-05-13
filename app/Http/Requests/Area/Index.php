@@ -1,6 +1,6 @@
 <?php namespace App\Http\Requests\Area;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\FormRequest;
 
 /**
  * Class Index

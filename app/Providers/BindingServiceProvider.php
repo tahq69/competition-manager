@@ -1,6 +1,7 @@
 <?php namespace App\Providers;
 
 use App\Contracts\IRepository;
+use App\Exceptions\RouteBindingOverlapException;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -46,7 +47,7 @@ class BindingServiceProvider extends ServiceProvider
      * @param string $tableName Table full or partial name.
      *
      * @return \App\Contracts\IRepository
-     * @throws \Exception
+     * @throws \App\Exceptions\RouteBindingOverlapException
      */
     public static function resolveRepository(string $tableName): IRepository
     {
@@ -58,9 +59,8 @@ class BindingServiceProvider extends ServiceProvider
             return strpos($instance->getTable(), str_plural($tableName)) !== false;
         });
 
-        if (count($repos) !== 1) throw new \Exception(
-            'Found invalid count of repositories for request parameter. ' .
-            'Please check parameter binding namings to avoid overlaps.'
+        if (count($repos) !== 1) throw new RouteBindingOverlapException(
+            $tableName, $repos
         );
 
         return app($repos[array_keys($repos)[0]]);

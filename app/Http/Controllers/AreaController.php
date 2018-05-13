@@ -72,10 +72,11 @@ class AreaController extends Controller
      * @param int                           $cmId
      *
      * @return \Illuminate\Http\JsonResponse
+     * @throws \App\Exceptions\RouteBindingOverlapException
      */
     public function store(Store $request, int $cmId): JsonResponse
     {
-        $competition = $request->getCompetition();
+        $competition = $request->find('competition');
 
         $validatedInput = array_keys($request->rules());
         $details = $request->only($validatedInput);
@@ -109,10 +110,11 @@ class AreaController extends Controller
      * @param int                            $id
      *
      * @return \Illuminate\Http\JsonResponse
+     * @throws \App\Exceptions\RouteBindingOverlapException
      */
     public function update(Update $request, int $cmId, int $id): JsonResponse
     {
-        $area = $request->getArea();
+        $area = $request->find('area');
 
         $validatedInput = array_keys($request->rules());
         $details = $request->only($validatedInput);
@@ -130,11 +132,18 @@ class AreaController extends Controller
      * @param int                             $id
      *
      * @return \Illuminate\Http\JsonResponse
-     * @throws \Exception
+     * @throws \App\Exceptions\RouteBindingOverlapException
      */
     public function destroy(Destroy $request, int $cmId, int $id): JsonResponse
     {
-        $request->resolve('area')->delete();
+        $area = $request->find('area');
+
+        try {
+            $area->delete();
+        } catch (\Exception $e) {
+            report($e);
+            return new JsonResponse(false);
+        }
 
         return new JsonResponse(true);
     }

@@ -1,11 +1,8 @@
 <?php namespace App\Http\Requests\Area;
 
 use App\Area;
-use App\Competition;
-use App\Contracts\ICompetitionRepository as ICompetitions;
+use App\Http\Requests\FormRequest;
 use App\Rules\AlphaDashSpace;
-use App\Team;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
@@ -16,35 +13,17 @@ use Illuminate\Validation\Rule;
 class Store extends FormRequest
 {
     /**
-     * @var null|\App\Competition
-     */
-    private $cm = null;
-
-    /**
-     * Get request competition model.
-     *
-     * @return \App\Competition
-     */
-    public function getCompetition(): Competition
-    {
-        if (is_null($this->cm)) {
-            $cmId = $this->route('competition');
-            $this->cm = app(ICompetitions::class)->find($cmId);
-        }
-
-        return $this->cm;
-    }
-
-    /**
      * Determine if the user is authorized to make this request.
      *
      * @param \App\Http\Requests\Area\Policy $policy
      *
      * @return bool
+     * @throws \App\Exceptions\RouteBindingOverlapException
      */
     public function authorize(Policy $policy): bool
     {
-        $cm = $this->getCompetition();
+        /** @var \App\Competition $cm */
+        $cm = $this->find('competition');
 
         return $policy->canStore($cm->team_id, $cm->id);
     }
