@@ -35,6 +35,11 @@ $this->resource('competitions.disciplines', 'DisciplineController', [
     'only' => ['index', 'show', 'update', 'store'],
 ]);
 
+$this->get(
+    '/competitions/{competition}/disciplines/{discipline}/categories',
+    'CategoryGroupController@categories'
+)->name('competitions.disciplines.categories');
+
 $this->resource('competitions.disciplines.groups', 'CategoryGroupController', [
     'only' => ['index', 'show', 'store', 'update', 'destroy'],
 ]);

@@ -7,6 +7,7 @@ use Tests\TestCase;
 
 /**
  * Class CategoryGroupTest
+ *
  * @package Tests\Feature
  */
 class CategoryGroupTest extends TestCase
@@ -15,11 +16,11 @@ class CategoryGroupTest extends TestCase
 
     /**
      * A basic competition discipline groups list request.
+     *
      * @return void
      */
     function testCanGetGroupsList()
     {
-        $admin = $this->createSuperAdmin();
         $groups = $this->createGroups(3);
         $cmId = $groups[0]->competition_id;
         $disciplineId = $groups[0]->discipline_id;
@@ -56,7 +57,79 @@ class CategoryGroupTest extends TestCase
     }
 
     /**
+     * A basic competition discipline groups list with categories request.
+     *
+     * @group CategoryGroup
+     * @return void
+     */
+    function testCanGetGroupsListWithCategories()
+    {
+        $groups = $this->createGroups(2);
+
+        collect($groups)->each(function ($group) {
+            $this->createCategories(2, $group->id);
+        });
+
+        $cmId = $groups[0]->competition_id;
+        $disciplineId = $groups[0]->discipline_id;
+
+        $uri = "/api/competitions/{$cmId}/disciplines/{$disciplineId}/categories";
+        $response = $this->get($uri);
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([[
+                'competition_id' => $cmId,
+                'discipline_id' => $disciplineId,
+                'title' => $groups[0]->title,
+                'short' => $groups[0]->short,
+                'order' => $groups[0]->order,
+                'id' => $groups[0]->id,
+                'categories' => [
+                    [
+                        'competition_id' => $cmId,
+                        'discipline_id' => $disciplineId,
+                        'category_group_id' => $groups[0]->id,
+                        'title' => $groups[0]->categories[0]->title,
+                        'id' => $groups[0]->categories[0]->id,
+                    ],
+                    [
+                        'competition_id' => $cmId,
+                        'discipline_id' => $disciplineId,
+                        'category_group_id' => $groups[0]->id,
+                        'title' => $groups[0]->categories[1]->title,
+                        'id' => $groups[0]->categories[1]->id,
+                    ],
+                ],
+            ], [
+                'competition_id' => $cmId,
+                'discipline_id' => $disciplineId,
+                'title' => $groups[1]->title,
+                'short' => $groups[1]->short,
+                'order' => $groups[1]->order,
+                'id' => $groups[1]->id,
+                'categories' => [
+                    [
+                        'competition_id' => $cmId,
+                        'discipline_id' => $disciplineId,
+                        'category_group_id' => $groups[1]->id,
+                        'id' => $groups[1]->categories[0]->id,
+                    ],
+                    [
+                        'competition_id' => $cmId,
+                        'discipline_id' => $disciplineId,
+                        'category_group_id' => $groups[1]->id,
+                        'id' => $groups[1]->categories[1]->id,
+                    ],
+                ],
+            ]]);
+
+        $this->assertJsonCount($response, 2);
+    }
+
+    /**
      * A basic competition discipline group request.
+     *
      * @return void
      */
     public function testCanGetGroupEntry()
@@ -84,6 +157,7 @@ class CategoryGroupTest extends TestCase
 
     /**
      * A basic competition discipline group create request.
+     *
      * @return void
      */
     public function testCanCreateGroup()
@@ -131,6 +205,7 @@ class CategoryGroupTest extends TestCase
 
     /**
      * A basic competition discipline group update request.
+     *
      * @return void
      */
     public function testCanUpdateGroup()

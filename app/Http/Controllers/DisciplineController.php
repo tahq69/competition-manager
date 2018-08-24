@@ -2,9 +2,10 @@
 
 use App\CategoryGroup;
 use App\Contracts\ICategoryGroupRepository as IGroups;
+use App\Contracts\ICompetitionRepository as ICompetitions;
 use App\Contracts\IDisciplineRepository as IDisciplines;
-use App\Http\Requests\Discipline\Update;
 use App\Http\Requests\Discipline\Store;
+use App\Http\Requests\Discipline\Update;
 use DB;
 use Illuminate\Http\JsonResponse;
 
@@ -26,18 +27,28 @@ class DisciplineController extends Controller
     private $groups;
 
     /**
+     * @var \App\Contracts\ICompetitionRepository
+     */
+    private $competitions;
+
+    /**
      * CompetitionController constructor.
      *
      * @param \App\Contracts\IDisciplineRepository    $disciplines
      * @param \App\Contracts\ICategoryGroupRepository $groups
+     * @param \App\Contracts\ICompetitionRepository   $competitions
      */
-    public function __construct(IDisciplines $disciplines, IGroups $groups)
+    public function __construct(
+        IDisciplines $disciplines,
+        IGroups $groups,
+        ICompetitions $competitions)
     {
         $this->middleware('auth:api')
             ->except('index', 'show');
 
         $this->disciplines = $disciplines;
         $this->groups = $groups;
+        $this->competitions = $competitions;
     }
 
     /**
@@ -88,6 +99,10 @@ class DisciplineController extends Controller
             'title', 'short', 'type', 'game_type', 'description',
             'competition_id', 'category_group_type', 'category_type',
         ]);
+
+        /** @var \App\Competition $competition */
+        $competition = $this->competitions->find($competitionId, ['id', 'team_id']);
+        $details['team_id'] = $competition->team_id;
 
         $discipline = $this->disciplines->create($details);
 

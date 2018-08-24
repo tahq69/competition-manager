@@ -5,6 +5,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class Discipline
+ *
  * @package App
  */
 class Discipline extends Model
@@ -13,17 +14,28 @@ class Discipline extends Model
 
     const TYPE_KICKBOXING = "KICKBOXING";
 
+    const TYPES = [
+        self::TYPE_KICKBOXING,
+    ];
+
     const CAT_TYPE_WEIGHT = "WEIGHT";
     const CAT_TYPE_AGE = "AGE";
 
+    const CAT_TYPES = [
+        self::CAT_TYPE_WEIGHT,
+        self::CAT_TYPE_AGE,
+    ];
+
     /**
      * The table associated with the model.
+     *
      * @var string
      */
     protected $table = 'disciplines';
 
     /**
      * The attributes that are mass assignable.
+     *
      * @var array
      */
     protected $fillable = [
@@ -44,6 +56,7 @@ class Discipline extends Model
 
     /**
      * The attributes that should be mutated to dates.
+     *
      * @var array
      */
     protected $dates = [

@@ -8,6 +8,7 @@ use Illuminate\Support\Collection;
 
 /**
  * Class Repository
+ *
  * @package App\Repositories
  */
 abstract class Repository implements IRepository
@@ -32,6 +33,7 @@ abstract class Repository implements IRepository
 
     /**
      * Get the table associated with the repository model.
+     *
      * @return string
      */
     public function getTable(): string
@@ -41,14 +43,17 @@ abstract class Repository implements IRepository
 
     /**
      * Get current repository full model class name
+     *
      * @return string
      */
     abstract function modelClass(): string;
 
     /**
      * Set repository queryable ordering
+     *
      * @param string $by
      * @param string $direction
+     *
      * @return $this
      */
     public function orderBy($by = 'id', $direction = 'desc')
@@ -61,10 +66,12 @@ abstract class Repository implements IRepository
     /**
      * Set repository queryable ordering from a request and sort column mapping
      * array.
+     *
      * @param \Illuminate\Http\Request $request
-     * @param array $mapping
-     * @param string $defaultOrder
-     * @param string $defaultDirection
+     * @param array                    $mapping
+     * @param string                   $defaultOrder
+     * @param string                   $defaultDirection
+     *
      * @return $this
      */
     public function setupOrdering(
@@ -74,7 +81,9 @@ abstract class Repository implements IRepository
         $defaultDirection = 'desc'
     )
     {
-        $directions = ['asc', 'desc'];
+        $directions = ['ascending' => 'asc', 'descending' => 'desc'];
+        $long_directions = array_keys($directions);
+        $short_directions = array_values($directions);
 
         $by = $defaultOrder;
         $direction = $defaultDirection;
@@ -83,7 +92,11 @@ abstract class Repository implements IRepository
             $by = $mapping[$request->sort_by];
         }
 
-        if (in_array($request->sort_direction, $directions)) {
+        if (in_array($request->sort_direction, $long_directions)) {
+            $direction = $directions[$request->sort_direction];
+        }
+
+        if (in_array($request->sort_direction, $short_directions)) {
             $direction = $request->sort_direction;
         }
 
@@ -94,8 +107,10 @@ abstract class Repository implements IRepository
 
     /**
      * Find single instance of model
+     *
      * @param * $id
      * @param array $columns
+     *
      * @return Model
      */
     public function find($id, array $columns = ['*'])
@@ -109,8 +124,10 @@ abstract class Repository implements IRepository
 
     /**
      * Get collection of models
+     *
      * @param array $columns
      * @param array $filters
+     *
      * @return Collection
      * @throws \Exception
      */
@@ -127,7 +144,9 @@ abstract class Repository implements IRepository
 
     /**
      * Create new instance in of model in database
+     *
      * @param array $input
+     *
      * @return Model
      * @throws \Throwable
      */
@@ -142,9 +161,11 @@ abstract class Repository implements IRepository
 
     /**
      * Update existing instance in database
+     *
      * @param array $input
-     * @param int $id
+     * @param int   $id
      * @param Model $model
+     *
      * @return Model
      */
     public function update(array $input, $id, Model $model = null)
@@ -162,7 +183,9 @@ abstract class Repository implements IRepository
 
     /**
      * Delete record in database
+     *
      * @param int $id
+     *
      * @return boolean
      * @throws \Exception
      */
@@ -173,7 +196,9 @@ abstract class Repository implements IRepository
 
     /**
      * Get count of queryable records
+     *
      * @param  bool $reset
+     *
      * @return integer
      */
     public function count(bool $reset = true): int
@@ -187,7 +212,9 @@ abstract class Repository implements IRepository
 
     /**
      * Set filter params to querable
+     *
      * @param array $filters
+     *
      * @return $this
      * @throws \Exception
      */
@@ -211,6 +238,7 @@ abstract class Repository implements IRepository
 
     /**
      * Get actual query
+     *
      * @return Builder
      */
     protected function getQuery(): Builder
@@ -224,7 +252,9 @@ abstract class Repository implements IRepository
 
     /**
      * Update actual query with new operation.
+     *
      * @param  callable $queryFunction
+     *
      * @return $this
      */
     protected function setQuery(callable $queryFunction)
@@ -235,7 +265,9 @@ abstract class Repository implements IRepository
 
     /**
      * Set the relationships that should be eager loaded.
+     *
      * @param  mixed $relations
+     *
      * @return $this
      */
     protected function with($relations)
@@ -247,10 +279,12 @@ abstract class Repository implements IRepository
 
     /**
      * Set where statement on current query.
+     *
      * @param  string|array|\Closure $column
-     * @param  string $operator
-     * @param  mixed $value
-     * @param  string $boolean
+     * @param  string                $operator
+     * @param  mixed                 $value
+     * @param  string                $boolean
+     *
      * @return $this
      */
     protected function setWhere($column, $operator = null, $value = null,
@@ -265,10 +299,12 @@ abstract class Repository implements IRepository
 
     /**
      * Add a "where in" clause to the query.
+     *
      * @param  string $column
-     * @param  mixed $values
+     * @param  mixed  $values
      * @param  string $boolean
-     * @param  bool $not
+     * @param  bool   $not
+     *
      * @return $this
      */
     protected function setWhereIn(string $column, $values, $boolean = 'and',

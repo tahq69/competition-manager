@@ -26,7 +26,7 @@ class CategoryGroupController extends Controller
     public function __construct(ICategoryGroupRepository $groups)
     {
         $this->middleware('auth:api')
-            ->except('index', 'show');
+            ->except('index', 'show', 'categories');
 
         $this->groups = $groups;
     }
@@ -54,6 +54,29 @@ class CategoryGroupController extends Controller
     }
 
     /**
+     * Display a listing of the resource with categories.
+     *
+     * @param int $competitionId
+     * @param int $disciplineId
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function categories(int $competitionId, int $disciplineId): JsonResponse
+    {
+        $groups = $this->groups
+            ->whereCompetition($competitionId)
+            ->whereDiscipline($disciplineId)
+            ->withCategories()
+            ->sortByOrder()
+            ->get([
+                'competition_id', 'discipline_id', 'id', 'max', 'min', 'order',
+                'rounds', 'short', 'time', 'title', 'type',
+            ]);
+
+        return new JsonResponse($groups);
+    }
+
+    /**
      * Store new instance of resource instance.
      *
      * @param \App\Http\Requests\CategoryGroup\Store $request
@@ -76,7 +99,10 @@ class CategoryGroupController extends Controller
 
         /** @var \App\Discipline $discipline */
         $discipline = $request->find('discipline');
-        $groupCount = $this->groups->whereDiscipline($disciplineId)->count();
+        $groupCount = $this->groups
+            ->whereCompetition($competitionId)
+            ->whereDiscipline($disciplineId)
+            ->count();
 
         // Filling information from parent records.
         $details['order'] = $groupCount + 1;
