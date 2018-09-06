@@ -97,7 +97,9 @@ class AreaController extends Controller
      */
     public function show(int $cmId, int $areaId): JsonResponse
     {
-        $area = $this->areas->find($areaId);
+        $area = $this->areas
+            ->whereCompetition($cmId)
+            ->find($areaId);
 
         return new JsonResponse($area);
     }

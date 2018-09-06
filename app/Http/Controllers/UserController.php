@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 /**
  * Class UserController
+ *
  * @package App\Http\Controllers
  */
 class UserController extends Controller
@@ -18,6 +19,7 @@ class UserController extends Controller
 
     /**
      * UserController constructor.
+     *
      * @param IUserRepository $users
      */
     public function __construct(IUserRepository $users)
@@ -33,7 +35,9 @@ class UserController extends Controller
 
     /**
      * Display authenticated user resource data.
+     *
      * @param \Illuminate\Http\Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function user(Request $request): JsonResponse
@@ -48,7 +52,9 @@ class UserController extends Controller
 
     /**
      * Search user entries by name property.
+     *
      * @param \Illuminate\Http\Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function search(Request $request): JsonResponse
@@ -62,6 +68,7 @@ class UserController extends Controller
 
     /**
      * Display a listing of the resource.
+     *
      * @return \Illuminate\Http\Response
      */
     public function index()
@@ -71,7 +78,9 @@ class UserController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     *
      * @param  StoreUser $request
+     *
      * @return JsonResponse
      */
     public function store(StoreUser $request): JsonResponse
@@ -87,7 +96,9 @@ class UserController extends Controller
 
     /**
      * Display the specified resource.
+     *
      * @param  int $id
+     *
      * @return JsonResponse
      */
     public function show($id): JsonResponse
@@ -99,8 +110,10 @@ class UserController extends Controller
 
     /**
      * Update the specified resource in storage.
+     *
      * @param  \Illuminate\Http\Request $request
-     * @param  int $id
+     * @param  int                      $id
+     *
      * @return JsonResponse
      */
     public function update(Request $request, int $id): JsonResponse
@@ -110,7 +123,9 @@ class UserController extends Controller
 
     /**
      * Remove the specified resource from storage.
+     *
      * @param  int $id
+     *
      * @return JsonResponse
      */
     public function destroy($id): JsonResponse
