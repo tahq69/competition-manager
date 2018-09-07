@@ -5,23 +5,33 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class Message
+ *
  * @package App
  */
 class Message extends Model
 {
     use HasAuditTrait;
 
+    const TYPES = [
+        self::USER_MESSAGE,
+        self::TEAM_INVITATION,
+        self::TEAM_MEMBER_INVITATION
+    ];
+
     const USER_MESSAGE = 'USER_MESSAGE';
+    const TEAM_INVITATION = 'TEAM_MEMBER_INVITATION';
     const TEAM_MEMBER_INVITATION = 'TEAM_MEMBER_INVITATION';
 
     /**
      * The table associated with the model.
+     *
      * @var string
      */
     protected $table = 'messages';
 
     /**
      * The attributes that are mass assignable.
+     *
      * @var array
      */
     protected $fillable = [
@@ -45,23 +55,26 @@ class Message extends Model
 
     /**
      * The attributes that should be mutated to dates.
+     *
      * @var array
      */
     protected $dates = [
         'created_at',
-        'updated_at'
+        'updated_at',
     ];
 
     /**
      * The accessors to append to the model's array form.
+     *
      * @var array
      */
     protected $appends = [
-        'date_from_now'
+        'date_from_now',
     ];
 
     /**
      * The attributes that should be casted to native types.
+     *
      * @var array
      */
     protected $casts = [

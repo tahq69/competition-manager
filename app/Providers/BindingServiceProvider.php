@@ -28,8 +28,8 @@ class BindingServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        /*$this->app->bind(\App\Contracts\IMessageRepository::class, \App\Repositories\MessageRepository::class);
-        $this->app->bind(\App\Contracts\IPostRepository::class, \App\Repositories\PostRepository::class);*/
+        $this->app->bind(\App\Contracts\IMessageRepository::class, \App\Repositories\MessageRepository::class);
+        /*$this->app->bind(\App\Contracts\IPostRepository::class, \App\Repositories\PostRepository::class);*/
         $this->app->bind(\App\Contracts\IAreaRepository::class, \App\Repositories\AreaRepository::class);
         $this->app->bind(\App\Contracts\ICategoryGroupRepository::class, \App\Repositories\CategoryGroupRepository::class);
         $this->app->bind(\App\Contracts\ICategoryRepository::class, \App\Repositories\CategoryRepository::class);

@@ -5,6 +5,7 @@ use App\Contracts\ITeamRepository;
 use App\Http\Requests\TeamMembers\Index;
 use App\Http\Requests\TeamMembers\Store;
 use App\Http\Requests\TeamMembers\Update;
+use App\Services\MessagingService;
 use App\Team;
 use App\TeamMember;
 use Illuminate\Http\JsonResponse;
@@ -27,20 +28,28 @@ class TeamMemberController extends Controller
     private $members;
 
     /**
+     * @var \App\Services\MessagingService
+     */
+    private $messaging;
+
+    /**
      * TeamController constructor.
      *
      * @param \App\Contracts\ITeamRepository       $teams
      * @param \App\Contracts\ITeamMemberRepository $members
+     * @param \App\Services\MessagingService       $messaging
      */
     public function __construct(
         ITeamRepository $teams,
-        ITeamMemberRepository $members)
+        ITeamMemberRepository $members,
+        MessagingService $messaging)
     {
         $this->middleware('auth:api')
             ->except('index');
 
         $this->teams = $teams;
         $this->members = $members;
+        $this->messaging = $messaging;
     }
 
     /**
@@ -84,7 +93,7 @@ class TeamMemberController extends Controller
      */
     public function show(int $teamId, int $id): JsonResponse
     {
-        $team = $this->members->find($id);
+        $team = $this->members->filterByTeam($teamId)->find($id);
 
         return new JsonResponse($team);
     }
@@ -100,13 +109,15 @@ class TeamMemberController extends Controller
      */
     public function store(Store $request, int $teamId): JsonResponse
     {
+        $userId = $request->user()->id;
+
         /** @var Team $team */
         $team = $request->find('team');
         $details = $request->only(['user_id', 'name']);
         $details['user_id'] = $details['user_id'] > 0 ? $details['user_id'] : null;
 
         $member = $details['user_id'] > 0 ?
-            $this->inviteMember($team, $details, $request->user()->id) :
+            $this->inviteMember($team, $details, $userId) :
             $this->createMember($team, $details);
 
         return new JsonResponse($member);
@@ -124,6 +135,9 @@ class TeamMemberController extends Controller
      */
     public function update(Update $request, int $teamId, int $id): JsonResponse
     {
+        $userId = $request->user()->id;
+
+        /** @var \App\TeamMember $member */
         $member = $request->find('member');
         $details = $request->only(['user_id', 'name']);
         $details['user_id'] = $details['user_id'] > 0 ? $details['user_id'] : null;
@@ -132,18 +146,15 @@ class TeamMemberController extends Controller
             array_key_exists('user_id', $details) &&
             $member->user_id != $details['user_id']
         ) {
+            /** @var \App\Team $team */
             $team = $request->find('team');
+
+            $recipientId = $details['user_id'];
             $details['membership_type'] = TeamMember::INVITED;
 
-            /* TODO: implement messaging service
-            $this->messaging->dismissTeamMemberInvitation(
-                $details['user_id'], $team->id
-            );
-
             $this->messaging->sendTeamMemberInvitation(
-                $request->user()->id, $details['user_id'], $team->name,
-                $member->id
-            ); */
+                $userId, $recipientId, $team, $member
+            );
         }
 
         $this->members->update($details, $id, $member);
@@ -151,16 +162,15 @@ class TeamMemberController extends Controller
         return new JsonResponse($member);
     }
 
-    private function inviteMember(
-        Team $team, array $details, int $managerId): TeamMember
+    private function inviteMember(Team $team, array $details, int $senderId): TeamMember
     {
+        $recipientId = $details['user_id'];
         $details['membership_type'] = TeamMember::INVITED;
         $member = $this->teams->createMember($team, $details);
 
-        /* TODO: implement messaging service
         $this->messaging->sendTeamMemberInvitation(
-            $managerId, $details['user_id'], $team->name, $member->id
-        ); */
+            $senderId, $recipientId, $team, $member
+        );
 
         return $member;
     }
