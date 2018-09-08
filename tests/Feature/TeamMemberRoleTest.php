@@ -12,7 +12,7 @@ class TeamMemberRoleTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testCanGetTeamMemberRolesList()
+    public function testUserCanGetOwnTeamMemberRolesList()
     {
         $user = $this->createUser();
         $teamId = $this->createTeam()->id;
@@ -31,7 +31,7 @@ class TeamMemberRoleTest extends TestCase
             ]);
     }
 
-    public function testSimpleUserCantGetTeamMemberRolesList()
+    public function testSimpleUserCanNOTGetTeamMemberRolesList()
     {
         $user = $this->createUser();
         $teamId = $this->createTeam()->id;
@@ -44,7 +44,7 @@ class TeamMemberRoleTest extends TestCase
         $response->assertStatus(403);
     }
 
-    public function testCanAssignTeamMemberRoles()
+    public function testManagerCanAssignTeamMemberRoles()
     {
         $user = $this->createUser();
         $teamId = $this->createTeam()->id;

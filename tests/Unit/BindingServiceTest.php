@@ -5,6 +5,7 @@ use App\Contracts\ICategoryGroupRepository;
 use App\Contracts\ICategoryRepository;
 use App\Contracts\ICompetitionRepository;
 use App\Contracts\IDisciplineRepository;
+use App\Contracts\IMessageRepository;
 use App\Contracts\ITeamMemberRepository;
 use App\Contracts\ITeamRepository;
 use App\Providers\BindingServiceProvider;
@@ -24,7 +25,13 @@ class BindingServiceTest extends TestCase
     {
         $repositories = BindingServiceProvider::getRepositories();
 
+        $this->assertTrue(in_array(ICompetitionRepository::class, $repositories));
+        $this->assertTrue(in_array(ICategoryRepository::class, $repositories));
+        $this->assertTrue(in_array(ICategoryGroupRepository::class, $repositories));
         $this->assertTrue(in_array(IAreaRepository::class, $repositories));
+        $this->assertTrue(in_array(IDisciplineRepository::class, $repositories));
+        $this->assertTrue(in_array(ITeamMemberRepository::class, $repositories));
+        $this->assertTrue(in_array(IMessageRepository::class, $repositories));
     }
 
     /**
@@ -66,6 +73,11 @@ class BindingServiceTest extends TestCase
         $this->assertInstanceOf(
             ITeamMemberRepository::class,
             BindingServiceProvider::resolveRepository('member')
+        );
+
+        $this->assertInstanceOf(
+            IMessageRepository::class,
+            BindingServiceProvider::resolveRepository('message')
         );
     }
 }

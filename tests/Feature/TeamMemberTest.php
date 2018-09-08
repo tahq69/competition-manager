@@ -1,21 +1,19 @@
 <?php namespace Tests\Feature;
 
+use App\Message;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
  * Class TeamMemberTest
+ *
  * @package Tests\Feature
  */
 class TeamMemberTest extends TestCase
 {
     use RefreshDatabase;
 
-    /**
-     * A basic team members list request.
-     * @return void
-     */
-    public function testCanGetTeamMembersList()
+    function testCanGetTeamMembersList()
     {
         $admin = $this->createSuperAdmin();
         $teams = factory(\App\Team::class, 2)->create();
@@ -53,10 +51,6 @@ class TeamMemberTest extends TestCase
             ]);
     }
 
-    /**
-     * A basic team member request test.
-     * @return void
-     */
     function testCanGetTeamMember()
     {
         $admin = $this->createSuperAdmin();
@@ -80,11 +74,6 @@ class TeamMemberTest extends TestCase
             ]);
     }
 
-    /**
-     * A team member request test where team has multiple members and we
-     * requesting not first one.
-     * @return void
-     */
     function testCanGetCorrectMember()
     {
         $admin = $this->createSuperAdmin();
@@ -108,10 +97,6 @@ class TeamMemberTest extends TestCase
             ]);
     }
 
-    /**
-     * A basic team member store request test.
-     * @return void
-     */
     function testCanStoreNewMemberForTeam()
     {
         $admin = $this->createSuperAdmin();
@@ -133,20 +118,18 @@ class TeamMemberTest extends TestCase
             ]);
     }
 
-    /**
-     * A team member store request test where user identifier is presented.
-     * @return void
-     */
     function testCanStoreNewMemberWithUserReferenceForTeam()
     {
         $admin = $this->createSuperAdmin();
         $team = factory(\App\Team::class)->create();
         $url = "/api/teams/{$team->id}/members";
 
-        $response = $this->actingAs($admin, 'api')->postJson($url, [
-            'name' => 'New member name',
-            'user_id' => $admin->id,
-        ]);
+        $response = $this
+            ->actingAs($admin, 'api')
+            ->postJson($url, [
+                'name' => 'New member name',
+                'user_id' => $admin->id,
+            ]);
 
         $response
             ->assertStatus(200)
@@ -156,29 +139,40 @@ class TeamMemberTest extends TestCase
                 'user_id' => $admin->id,
                 'membership_type' => 'invited',
             ]);
+
+        $payloadTeam = '"from_team_name":"' . $team->name . '"';
+        $payloadUser = '"from_user_name":"' . $admin->name . '"';
+        $payloadMember = '"member_id":' . $response->json()['id'];
+        $payload = "{{$payloadTeam},{$payloadUser},{$payloadMember}}";
+        $this->assertDatabaseHas('messages', [
+            'subject' => "{$admin->name} has invited you to join {$team->name} team",
+            'importance_level' => 7,
+            'to_id' => $admin->id,
+            'to_name' => $admin->name,
+            'from_id' => $admin->id,
+            'from_name' => $admin->name,
+            'type' => Message::TEAM_MEMBER_INVITATION,
+            'payload' => $payload,
+        ]);
     }
 
-    /**
-     * A basic team member update request test.
-     * @return void
-     */
     function testCanUpdateTeamMember()
     {
         $admin = $this->createSuperAdmin();
         $user = $this->createPostManager();
-        $teams = factory(\App\Team::class, 2)->create();
+        $team = factory(\App\Team::class, 2)->create()[0];
 
         factory(\App\TeamMember::class)->create([
-            'team_id' => $teams[0]->id,
+            'team_id' => $team->id,
             'user_id' => $admin->id,
         ]);
 
         $member = factory(\App\TeamMember::class)->create([
-            'team_id' => $teams[0]->id,
+            'team_id' => $team->id,
             'user_id' => $user->id,
         ]);
 
-        $url = "/api/teams/{$teams[0]->id}/members/{$member->id}";
+        $url = "/api/teams/{$team->id}/members/{$member->id}";
         $response = $this->actingAs($admin, 'api')->patchJson($url, [
             'name' => 'New Member Name',
             'user_id' => $member->user_id,
@@ -197,6 +191,61 @@ class TeamMemberTest extends TestCase
         $this->assertDatabaseHas('team_members', [
             'id' => $member->id,
             'name' => 'New Member Name',
+        ]);
+    }
+
+    function testCanUpdateTeamMemberWithNewUserInvitation()
+    {
+        $admin = $this->createSuperAdmin();
+        $user1 = $this->createPostManager();
+        $user2 = $this->createUser();
+        $team = factory(\App\Team::class, 2)->create()[0];
+
+        factory(\App\TeamMember::class)->create([
+            'team_id' => $team->id,
+            'user_id' => $admin->id,
+        ]);
+
+        $member = factory(\App\TeamMember::class)->create([
+            'team_id' => $team->id,
+            'user_id' => $user1->id,
+            'membership_type' => \App\TeamMember::MEMBER,
+        ]);
+
+        $url = "/api/teams/{$team->id}/members/{$member->id}";
+        $response = $this->actingAs($admin, 'api')->patchJson($url, [
+            'name' => 'New Member Name',
+            'user_id' => $user2->id, // adding new value here
+        ]);
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'id' => $member->id,
+                'name' => 'New Member Name',
+                'team_id' => $member->team_id,
+                'user_id' => $user2->id,
+                'membership_type' => \App\TeamMember::INVITED,
+            ]);
+
+        $this->assertDatabaseHas('team_members', [
+            'id' => $member->id,
+            'name' => 'New Member Name',
+        ]);
+
+        $payloadTeam = '"from_team_name":"' . $team->name . '"';
+        $payloadUser = '"from_user_name":"' . $admin->name . '"';
+        $payloadMember = '"member_id":' . $response->json()['id'];
+        $payload = "{{$payloadTeam},{$payloadUser},{$payloadMember}}";
+        $this->assertDatabaseHas('messages', [
+            'subject' => "{$admin->name} has invited you to join {$team->name} team",
+            'importance_level' => "7",
+            'to_id' => $user2->id,
+            'to_name' => $user2->name,
+            'from_id' => $admin->id,
+            'from_name' => $admin->name,
+            'type' => Message::TEAM_MEMBER_INVITATION,
+            'payload' => $payload,
         ]);
     }
 }
