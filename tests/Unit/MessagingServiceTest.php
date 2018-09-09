@@ -5,10 +5,22 @@ use App\Services\MessagingService;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+/**
+ * Class MessagingServiceTest
+ *
+ * @group   Message
+ * @package Tests\Unit
+ */
 class MessagingServiceTest extends TestCase
 {
     use RefreshDatabase;
 
+    /**
+     * Test properly prepares invitation message data.
+     *
+     * @group  Message_SendTeamMemberInvitation
+     * @return void
+     */
     public function testSendTeamMemberInvitation_ProperlyPreparesDataInMessage()
     {
         \App\User::unguard();

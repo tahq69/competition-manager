@@ -79,6 +79,7 @@ class Message extends Model
      */
     protected $casts = [
         'payload' => 'array',
+        'is_read' => 'boolean'
     ];
 
     /**

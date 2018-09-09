@@ -11,13 +11,13 @@ use Tests\RoleHelper;
  */
 trait UserFactories
 {
-    protected function createUser(array $attributes = [])
+    protected function createUser(array $attributes = []): \App\User
     {
         factory(User::class)->create();
         return factory(User::class)->create($attributes);
     }
 
-    protected function createSuperAdmin(): User
+    protected function createSuperAdmin(): \App\User
     {
         factory(User::class)->create();
         $user = factory(User::class)->create();
@@ -25,7 +25,7 @@ trait UserFactories
         return RoleHelper::userSync($user, UserRole::SUPER_ADMIN);
     }
 
-    protected function createPostManager(): User
+    protected function createPostManager(): \App\User
     {
         factory(User::class)->create();
         $user = factory(User::class)->create();
@@ -33,7 +33,7 @@ trait UserFactories
         return RoleHelper::userSync($user, UserRole::MANAGE_POSTS);
     }
 
-    protected function createTeamOwner(): User
+    protected function createTeamOwner(): \App\User
     {
         factory(User::class)->create();
         $user = factory(User::class)->create();

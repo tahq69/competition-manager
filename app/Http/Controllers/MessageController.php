@@ -34,7 +34,7 @@ class MessageController extends Controller
     }
 
     /**
-     * GET    /api/user/messages
+     * GET    /api/user/messages[?type=outbox]
      *
      * @param \Illuminate\Http\Request $request
      *
@@ -62,8 +62,9 @@ class MessageController extends Controller
         }
 
         $messages = $this->messages->paginate($perPage, [], [
-            'id', 'subject', 'body', 'to_id', 'is_read', 'importance_level',
-            'type', 'from_name', 'created_at', 'reply', 'reply_count', 'to_name',
+            'id', 'subject', 'body', 'to_id', 'to_name', 'is_read',
+            'importance_level', 'type', 'from_id', 'from_name', 'created_at',
+            'reply', 'reply_count',
         ]);
 
         return new JsonResponse($messages);
