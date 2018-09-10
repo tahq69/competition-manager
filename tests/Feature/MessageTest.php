@@ -428,6 +428,35 @@ class MessageTest extends TestCase
         ]);
     }
 
+    /**
+     * Test reply message without importance_level property.
+     *
+     * @group  Message_Reply
+     * @return void
+     */
+    function testReply_ShouldNotFailWhenImportanceLevelNotProvided()
+    {
+        // Assert
+        $sender = $this->createUser();
+        $incomingMsg = $this->createInboxMessage($sender, true);
+
+        $url = "/api/user/messages/{$incomingMsg->id}/reply";
+        $msg = [
+            'subject' => 'message_subject',
+            'body' => 'message_body',
+        ];
+
+        // Act
+        $response = $this->actingAs($sender, 'api')->postJson($url, $msg);
+
+        // Assert
+        $response->assertStatus(200)->assertJson([
+            'subject' => 'message_subject',
+            'body' => 'message_body',
+            'importance_level' => 10,
+        ]);
+    }
+
     private function createInboxMessage(\App\User $user, bool $isRead = false): \App\Message
     {
         $message = factory(\App\Message::class)->create([

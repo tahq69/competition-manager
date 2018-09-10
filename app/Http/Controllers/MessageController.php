@@ -134,7 +134,7 @@ class MessageController extends Controller
         $details['payload'] = [];
 
         $details['type'] = Message::USER_MESSAGE;
-        $details['importance_level'] = $details['importance_level'] ?: 10;
+        $details['importance_level'] = $request->get('importance_level') ?: 10;
 
         $newMessage = $this->messages->create($details);
 
