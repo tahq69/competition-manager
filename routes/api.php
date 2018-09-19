@@ -19,6 +19,11 @@ $this->apiResource('/users', 'UserController');
 $this->post('password/email', 'Auth\\ForgotPasswordController@sendResetLinkEmail');
 $this->post('password/reset', 'Auth\\ResetPasswordController@reset')->name('password.reset');
 
+$this->group(['prefix' => 'invitations/{invitation}'], function (Router $route) {
+    $route->get('team-member/{id}/confirm', 'InvitationController@confirmMember')->name('invitation.team-member.confirm');
+    $route->get('team-member/{id}/refuse', 'InvitationController@refuseMember')->name('invitation.team-member.refuse');
+});
+
 $this->resource('teams', 'TeamController', ['only' => ['index', 'show', 'store', 'update']]);
 $this->resource('teams.members', 'TeamMemberController', ['only' => ['index', 'show', 'store', 'update']]);
 $this->resource('teams.members.roles', 'TeamMemberRoleController', ['only' => ['index', 'store']]);
