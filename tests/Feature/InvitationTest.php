@@ -101,6 +101,15 @@ class InvitationTest extends TestCase
             'membership_type' => \App\TeamMember::MEMBER,
             'user_id' => $member->user_id,
         ]);
+
+        $this->assertDatabaseHas((new \App\Message())->getTable(), [
+            'id' => $invitation->id,
+            'payload' =>
+                '{"from_team_name":"' . $invitation->payload['from_team_name'] .
+                '","from_user_name":"' . $invitation->payload['from_user_name'] .
+                '","member_id":' . $invitation->payload['member_id'] .
+                ',"completed":true}',
+        ]);
     }
 
     /**
@@ -196,6 +205,15 @@ class InvitationTest extends TestCase
             'to_id' => $invitation->from_id,
             'reply' => $invitation->id,
             'type' => \App\Message::USER_MESSAGE,
+        ]);
+
+        $this->assertDatabaseHas((new \App\Message())->getTable(), [
+            'id' => $invitation->id,
+            'payload' =>
+                '{"from_team_name":"' . $invitation->payload['from_team_name'] .
+                '","from_user_name":"' . $invitation->payload['from_user_name'] .
+                '","member_id":' . $invitation->payload['member_id'] .
+                ',"completed":true}',
         ]);
     }
 

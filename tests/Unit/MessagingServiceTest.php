@@ -54,6 +54,7 @@ class MessagingServiceTest extends TestCase
                     'from_team_name' => 'team_name',
                     'from_user_name' => 'sender',
                     'member_id' => 123,
+                    'completed' => false,
                 ],
             ], $details);
 

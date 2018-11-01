@@ -143,7 +143,8 @@ class TeamMemberTest extends TestCase
         $payloadTeam = '"from_team_name":"' . $team->name . '"';
         $payloadUser = '"from_user_name":"' . $admin->name . '"';
         $payloadMember = '"member_id":' . $response->json()['id'];
-        $payload = "{{$payloadTeam},{$payloadUser},{$payloadMember}}";
+        $completed = '"completed":false';
+        $payload = "{{$payloadTeam},{$payloadUser},{$payloadMember},{$completed}}";
         $this->assertDatabaseHas('messages', [
             'subject' => "{$admin->name} has invited you to join {$team->name} team",
             'importance_level' => 7,
@@ -236,7 +237,8 @@ class TeamMemberTest extends TestCase
         $payloadTeam = '"from_team_name":"' . $team->name . '"';
         $payloadUser = '"from_user_name":"' . $admin->name . '"';
         $payloadMember = '"member_id":' . $response->json()['id'];
-        $payload = "{{$payloadTeam},{$payloadUser},{$payloadMember}}";
+        $completed = '"completed":false';
+        $payload = "{{$payloadTeam},{$payloadUser},{$payloadMember},{$completed}}";
         $this->assertDatabaseHas('messages', [
             'subject' => "{$admin->name} has invited you to join {$team->name} team",
             'importance_level' => "7",

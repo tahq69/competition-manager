@@ -20,3 +20,9 @@
 
 Create password grant client: `php artisan passport:client --password`
 Generate model docs from db definitions: `php artisan ide-helper:models`
+
+#### Testing
+
+To run tests on defined group: `phpunit --group Invitation`
+
+To run tests on single method: `phpunit --filter testConfirmMember_UserCanConfirmInvitation`

@@ -5,6 +5,7 @@ use App\Contracts\IUserRepository;
 use App\Message;
 use App\Team;
 use App\TeamMember;
+use App\User;
 
 /**
  * Class MessagingService
@@ -74,6 +75,7 @@ class MessagingService
                 'from_team_name' => $team->name,
                 'from_user_name' => $sender->name,
                 'member_id' => $member->id,
+                'completed' => false,
             ],
         ];
 
@@ -81,5 +83,47 @@ class MessagingService
         $createdMessage = $this->messages->create($message);
 
         return $createdMessage;
+    }
+
+    /**
+     * Completes message payload.
+     *
+     * @param \App\Message $message
+     */
+    public function completeMessage(\App\Message $message)
+    {
+        $payload = $message->payload;
+        $payload['completed'] = true;
+
+        $this->messages->update(compact('payload'), $message->id, $message);
+    }
+
+    /**
+     * @param \App\User    $user
+     * @param \App\Message $message
+     *
+     * @return \App\Message
+     */
+    public function refuseTeamMemberInvitation(User $user, Message $message)
+    {
+        $response = [
+            'subject' => 'Re: ' . $message->subject,
+            'body' => __('User refused your invitation to become team member.'),
+            'from_id' => $user->id,
+            'from_name' => $user->name,
+            'to_name' => $message->from_name,
+            'to_id' => $message->from_id,
+            'reply' => $message->id,
+            'reply_count' => $message->reply_count + 1,
+            'payload' => [],
+            'type' => Message::USER_MESSAGE,
+            'importance_level' => 7,
+        ];
+
+        /** @var \App\Message $newMessage */
+        $newMessage = $this->messages->create($response);
+        $this->completeMessage($message);
+
+        return $newMessage;
     }
 }
